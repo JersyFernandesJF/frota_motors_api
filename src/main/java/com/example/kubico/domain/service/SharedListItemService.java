@@ -1,0 +1,67 @@
+package com.example.kubico.domain.service;
+
+import com.example.kubico.domain.model.Property;
+import com.example.kubico.domain.model.SharedList;
+import com.example.kubico.domain.model.SharedListItem;
+import com.example.kubico.infrastructure.dto.SharedListItemCreateDTO;
+import com.example.kubico.infrastructure.dto.SharedListItemResponseDTO;
+import com.example.kubico.infrastructure.mapper.SharedListItemMapper;
+import com.example.kubico.infrastructure.persistence.PropertyRepository;
+import com.example.kubico.infrastructure.persistence.SharedListItemRepository;
+import com.example.kubico.infrastructure.persistence.SharedListRepository;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SharedListItemService {
+
+  @Autowired private SharedListItemRepository sharedListItemRepository;
+
+  @Autowired private SharedListRepository sharedListRepository;
+
+  @Autowired private PropertyRepository propertyRepository;
+
+  public SharedListItemResponseDTO create(SharedListItemCreateDTO dto) {
+    SharedList list =
+        sharedListRepository
+            .findById(dto.listId())
+            .orElseThrow(() -> new EntityNotFoundException("SharedList not found"));
+
+    Property property =
+        propertyRepository
+            .findById(dto.propertyId())
+            .orElseThrow(() -> new EntityNotFoundException("Property not found"));
+
+    SharedListItem item = new SharedListItem();
+    item.setList(list);
+    item.setProperty(property);
+
+    SharedListItem saved = sharedListItemRepository.save(item);
+    return SharedListItemMapper.toResponse(saved);
+  }
+
+  public List<SharedListItemResponseDTO> getAll() {
+    return sharedListItemRepository.findAll().stream()
+        .map(SharedListItemMapper::toResponse)
+        .collect(Collectors.toList());
+  }
+
+  public SharedListItemResponseDTO getById(UUID id) {
+    SharedListItem item =
+        sharedListItemRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("SharedListItem not found"));
+    return SharedListItemMapper.toResponse(item);
+  }
+
+  public void delete(UUID id) {
+    if (!sharedListItemRepository.existsById(id)) {
+      throw new EntityNotFoundException("SharedListItem not found");
+    }
+    sharedListItemRepository.deleteById(id);
+  }
+}
