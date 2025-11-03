@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: frota_motors_postgres
+    environment:
+      POSTGRES_DB: frota_motors
+      POSTGRES_USER: frota_user
+      POSTGRES_PASSWORD: frota_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frota_user -d frota_motors"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - frota_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frota_motors_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/frota_motors
+      SPRING_DATASOURCE_USERNAME: frota_user
+      SPRING_DATASOURCE_PASSWORD: frota_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_SHOW_SQL: "false"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_FLYWAY_ENABLED: "true"
+      SERVER_PORT: 9090
+      SPRINGDOC_API_DOCS_ENABLED: "true"
+      SPRINGDOC_SWAGGER_UI_PATH: /swagger-ui.html
+      SPRINGDOC_SWAGGER_UI_URL: /v3/api-docs
+      SPRINGDOC_API_DOCS_PATH: /v3/api-docs
+    ports:
+      - "9090:9090"
+    networks:
+      - frota_network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/swagger-ui.html || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_data:
+
+networks:
+  frota_network:
+    driver: bridge
+

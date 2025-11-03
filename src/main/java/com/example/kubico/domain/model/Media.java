@@ -19,8 +19,16 @@ public class Media {
   private UUID id;
 
   @ManyToOne
-  @JoinColumn(name = "property_id", nullable = false)
+  @JoinColumn(name = "property_id")
   private Property property;
+
+  @ManyToOne
+  @JoinColumn(name = "vehicle_id")
+  private Vehicle vehicle;
+
+  @ManyToOne
+  @JoinColumn(name = "part_id")
+  private Part part;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "media_type", nullable = false)
