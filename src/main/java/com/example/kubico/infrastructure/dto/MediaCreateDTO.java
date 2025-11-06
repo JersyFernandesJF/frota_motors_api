@@ -6,4 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record MediaCreateDTO(
-    @NotNull UUID propertyId, @NotNull MediaType mediaType, @NotBlank String url) {}
+    UUID propertyId,
+    UUID vehicleId,
+    UUID partId,
+    @NotNull MediaType mediaType,
+    String url) {}

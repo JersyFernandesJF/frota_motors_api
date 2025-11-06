@@ -2,6 +2,7 @@ package com.example.kubico.infrastructure.web;
 
 import com.example.kubico.domain.model.Property;
 import com.example.kubico.domain.service.PropertyService;
+import com.example.kubico.infrastructure.dto.PageResponseDTO;
 import com.example.kubico.infrastructure.dto.PropertyResponseDTO;
 import com.example.kubico.infrastructure.mapper.PropertyMapper;
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,29 +27,45 @@ public class PropertyController {
   @Autowired private PropertyService propertyService;
 
   @GetMapping("/search")
-  public ResponseEntity<List<PropertyResponseDTO>> search(
+  public ResponseEntity<PageResponseDTO<PropertyResponseDTO>> search(
       @RequestParam(required = false) Double minArea,
       @RequestParam(required = false) Double maxArea,
       @RequestParam(required = false) List<String> types,
       @RequestParam(required = false) Integer bathrooms,
       @RequestParam(required = false) Integer rooms,
       @RequestParam(required = false) Integer floors,
-      @RequestParam(required = false) Integer year) {
+      @RequestParam(required = false) Integer year,
+      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
 
-    List<PropertyResponseDTO> response =
-        propertyService.search(minArea, maxArea, types, bathrooms, rooms, floors, year).stream()
+    Page<Property> page =
+        propertyService.search(minArea, maxArea, types, bathrooms, rooms, floors, year, pageable);
+
+    List<PropertyResponseDTO> content =
+        page.getContent().stream()
             .map(PropertyMapper::toResponse)
             .collect(Collectors.toList());
+
+    PageResponseDTO<PropertyResponseDTO> response =
+        PageResponseDTO.of(
+            content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<List<PropertyResponseDTO>> getAll() {
-    List<PropertyResponseDTO> response =
-        propertyService.getAll().stream()
+  public ResponseEntity<PageResponseDTO<PropertyResponseDTO>> getAll(
+      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+    Page<Property> page = propertyService.getAll(pageable);
+
+    List<PropertyResponseDTO> content =
+        page.getContent().stream()
             .map(PropertyMapper::toResponse)
             .collect(Collectors.toList());
+
+    PageResponseDTO<PropertyResponseDTO> response =
+        PageResponseDTO.of(
+            content, page.getNumber(), page.getSize(), page.getTotalElements());
+
     return ResponseEntity.ok(response);
   }
 

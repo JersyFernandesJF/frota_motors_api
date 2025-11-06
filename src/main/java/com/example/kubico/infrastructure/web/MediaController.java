@@ -4,15 +4,21 @@ import com.example.kubico.domain.model.Media;
 import com.example.kubico.domain.service.MediaService;
 import com.example.kubico.infrastructure.dto.MediaCreateDTO;
 import com.example.kubico.infrastructure.dto.MediaResponseDTO;
+import com.example.kubico.infrastructure.dto.PageResponseDTO;
 import com.example.kubico.infrastructure.mapper.MediaMapper;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1/media")
@@ -23,9 +29,19 @@ public class MediaController {
   @Autowired private MediaService mediaService;
 
   @GetMapping
-  public ResponseEntity<List<MediaResponseDTO>> getAll() {
-    List<MediaResponseDTO> response =
-        mediaService.getAll().stream().map(MediaMapper::toResponse).collect(Collectors.toList());
+  public ResponseEntity<PageResponseDTO<MediaResponseDTO>> getAll(
+      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+    Page<Media> page = mediaService.getAll(pageable);
+
+    List<MediaResponseDTO> content =
+        page.getContent().stream()
+            .map(MediaMapper::toResponse)
+            .collect(Collectors.toList());
+
+    PageResponseDTO<MediaResponseDTO> response =
+        PageResponseDTO.of(
+            content, page.getNumber(), page.getSize(), page.getTotalElements());
+
     return ResponseEntity.ok(response);
   }
 
@@ -38,6 +54,19 @@ public class MediaController {
   @PostMapping
   public ResponseEntity<MediaResponseDTO> create(@RequestBody MediaCreateDTO dto) {
     Media media = mediaService.create(dto);
+    return ResponseEntity.ok(MediaMapper.toResponse(media));
+  }
+
+  @PostMapping("/upload")
+  public ResponseEntity<MediaResponseDTO> uploadFile(
+      @RequestParam("file") MultipartFile file,
+      @RequestParam(required = false) UUID propertyId,
+      @RequestParam(required = false) UUID vehicleId,
+      @RequestParam(required = false) UUID partId,
+      @RequestParam com.example.kubico.domain.enums.MediaType mediaType)
+      throws IOException {
+    MediaCreateDTO dto = new MediaCreateDTO(propertyId, vehicleId, partId, mediaType, null);
+    Media media = mediaService.createWithFile(file, dto);
     return ResponseEntity.ok(MediaMapper.toResponse(media));
   }
 

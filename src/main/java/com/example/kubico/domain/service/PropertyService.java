@@ -6,6 +6,8 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,10 @@ public class PropertyService {
 
   public List<Property> getAll() {
     return propertyRepository.findAll();
+  }
+
+  public Page<Property> getAll(Pageable pageable) {
+    return propertyRepository.findAll(pageable);
   }
 
   public Property getById(UUID id) {
@@ -78,5 +84,26 @@ public class PropertyService {
     return propertyRepository
         .findByAreaM2BetweenAndTypeInAndBathroomsGreaterThanEqualAndRoomsGreaterThanEqualAndTotalFloorsGreaterThanEqualAndYearBuiltGreaterThanEqual(
             min, max, propertyTypes, minBathrooms, minRooms, minFloors, minYear);
+  }
+
+  public Page<Property> search(
+      Double minArea,
+      Double maxArea,
+      List<String> types,
+      Integer bathrooms,
+      Integer rooms,
+      Integer floors,
+      Integer year,
+      Pageable pageable) {
+    // Validate area range
+    if (minArea != null && maxArea != null && minArea > maxArea) {
+      throw new IllegalArgumentException("minArea cannot be greater than maxArea");
+    }
+
+    List<String> propertyTypes =
+        (types != null && !types.isEmpty()) ? types : List.of("FOR_RENT", "FOR_SALE");
+
+    return propertyRepository.searchPageable(
+        minArea, maxArea, propertyTypes, bathrooms, rooms, floors, year, pageable);
   }
 }

@@ -1,6 +1,9 @@
 package com.example.kubico.infrastructure.mapper;
 
 import com.example.kubico.domain.model.Media;
+import com.example.kubico.domain.model.Part;
+import com.example.kubico.domain.model.Property;
+import com.example.kubico.domain.model.Vehicle;
 import com.example.kubico.infrastructure.dto.MediaCreateDTO;
 import com.example.kubico.infrastructure.dto.MediaResponseDTO;
 
@@ -15,6 +18,17 @@ public class MediaMapper {
 
   public static Media toEntity(MediaCreateDTO dto) {
     Media media = new Media();
+    media.setMediaType(dto.mediaType());
+    media.setUrl(dto.url());
+    return media;
+  }
+
+  public static Media toEntity(
+      MediaCreateDTO dto, Property property, Vehicle vehicle, Part part) {
+    Media media = new Media();
+    media.setProperty(property);
+    media.setVehicle(vehicle);
+    media.setPart(part);
     media.setMediaType(dto.mediaType());
     media.setUrl(dto.url());
     return media;
