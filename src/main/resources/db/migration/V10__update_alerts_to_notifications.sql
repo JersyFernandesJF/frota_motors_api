@@ -1,0 +1,23 @@
+-- Rename alerts table to notifications
+ALTER TABLE alerts RENAME TO notifications;
+
+-- Add new columns
+ALTER TABLE notifications ADD COLUMN user_id UUID;
+ALTER TABLE notifications ADD COLUMN type VARCHAR(50);
+ALTER TABLE notifications ADD COLUMN title VARCHAR(255);
+ALTER TABLE notifications ADD COLUMN message TEXT;
+ALTER TABLE notifications ADD COLUMN is_read BOOLEAN DEFAULT false;
+ALTER TABLE notifications ADD COLUMN related_entity_type VARCHAR(50);
+ALTER TABLE notifications ADD COLUMN related_entity_id UUID;
+ALTER TABLE notifications ADD COLUMN action_url VARCHAR(500);
+ALTER TABLE notifications ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- Add foreign key constraint
+ALTER TABLE notifications ADD CONSTRAINT fk_notification_user FOREIGN KEY (user_id) REFERENCES users(id);
+
+-- Create indexes
+CREATE INDEX idx_notifications_user ON notifications(user_id);
+CREATE INDEX idx_notifications_type ON notifications(type);
+CREATE INDEX idx_notifications_is_read ON notifications(is_read);
+CREATE INDEX idx_notifications_created_at ON notifications(created_at);
+

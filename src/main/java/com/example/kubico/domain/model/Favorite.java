@@ -23,8 +23,16 @@ public class Favorite {
   private User user;
 
   @ManyToOne
-  @JoinColumn(name = "property_id", nullable = false)
+  @JoinColumn(name = "property_id")
   private Property property;
+
+  @ManyToOne
+  @JoinColumn(name = "vehicle_id")
+  private Vehicle vehicle;
+
+  @ManyToOne
+  @JoinColumn(name = "part_id")
+  private Part part;
 
   @CreationTimestamp
   @Column(name = "created_at", updatable = false)

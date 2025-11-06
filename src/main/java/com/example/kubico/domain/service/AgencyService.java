@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +32,10 @@ public class AgencyService {
 
   public List<Agency> getAllAgencies() {
     return agencyRepository.findAll();
+  }
+
+  public Page<Agency> getAllAgencies(Pageable pageable) {
+    return agencyRepository.findAll(pageable);
   }
 
   public Agency getAgencyById(UUID id) {

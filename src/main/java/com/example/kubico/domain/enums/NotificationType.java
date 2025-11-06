@@ -1,0 +1,15 @@
+package com.example.kubico.domain.enums;
+
+public enum NotificationType {
+  NEW_MESSAGE,
+  ORDER_UPDATE,
+  RENTAL_REMINDER,
+  COMPLAINT_UPDATE,
+  PAYMENT_RECEIVED,
+  PAYMENT_FAILED,
+  REVIEW_RECEIVED,
+  FAVORITE_UPDATE,
+  SYSTEM_ANNOUNCEMENT,
+  OTHER
+}
+
