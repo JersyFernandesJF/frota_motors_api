@@ -73,9 +73,11 @@ public class SecurityConfig {
         configuration.addAllowedOrigin(origin.trim());
       }
     } else {
-      // Default: allow localhost for development
+      // Default: allow localhost for development and production domains
       configuration.addAllowedOrigin("http://localhost:3000");
       configuration.addAllowedOrigin("http://localhost:8080");
+      configuration.addAllowedOrigin("https://api.frotamotors.com");
+      configuration.addAllowedOrigin("http://api.frotamotors.com");
     }
 
     configuration.addAllowedHeader("*");
