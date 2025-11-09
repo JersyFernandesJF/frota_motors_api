@@ -1,0 +1,72 @@
+package com.example.frotamotors.infrastructure.mapper;
+
+import com.example.frotamotors.domain.model.Media;
+import com.example.frotamotors.domain.model.Property;
+import com.example.frotamotors.infrastructure.dto.MediaResponseDTO;
+import com.example.frotamotors.infrastructure.dto.PropertyCreateDTO;
+import com.example.frotamotors.infrastructure.dto.PropertyResponseDTO;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class PropertyMapper {
+
+  private PropertyMapper() {}
+
+  public static MediaResponseDTO toMediaResponseDTO(Media media) {
+    if (media == null) return null;
+
+    return new MediaResponseDTO(
+        media.getId(), media.getMediaType(), media.getUrl(), media.getUploadedAt());
+  }
+
+  public static PropertyResponseDTO toResponse(Property property) {
+    List<MediaResponseDTO> mediaList = null;
+
+    if (property.getMedia() != null && !property.getMedia().isEmpty()) {
+      mediaList =
+          property.getMedia().stream()
+              .map(PropertyMapper::toMediaResponseDTO)
+              .collect(Collectors.toList());
+    }
+
+    return new PropertyResponseDTO(
+        property.getId(),
+        property.getOwner(),
+        property.getAgency(),
+        property.getTitle(),
+        property.getDescription(),
+        property.getType(),
+        property.getStatus(),
+        property.getPrice(),
+        property.getCurrency(),
+        property.getAreaM2(),
+        property.getRooms(),
+        property.getBathrooms(),
+        property.getFloor(),
+        property.getTotalFloors(),
+        property.getYearBuilt(),
+        property.getEnergyCertificate(),
+        mediaList, // aqui usamos a lista convertida, ou null se não houver medias
+        property.getCreatedAt(),
+        property.getUpdatedAt());
+  }
+
+  public static PropertyResponseDTO toEntity(PropertyCreateDTO dto) {
+    Property property = new Property();
+    property.setTitle(dto.title());
+    property.setDescription(dto.description());
+    property.setType(dto.type());
+    property.setStatus(dto.status());
+    property.setPrice(BigDecimal.valueOf(dto.price()));
+    property.setCurrency(dto.currency());
+    property.setAreaM2(dto.areaM2());
+    property.setRooms(dto.rooms());
+    property.setBathrooms(dto.bathrooms());
+    property.setFloor(dto.floor());
+    property.setTotalFloors(dto.totalFloors());
+    property.setYearBuilt(dto.yearBuilt());
+    property.setEnergyCertificate(dto.energyCertificate());
+    return PropertyMapper.toResponse(property);
+  }
+}

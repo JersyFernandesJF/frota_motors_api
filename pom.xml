@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>kubico-api</artifactId>
+	<artifactId>frota-motors-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>kubico-api</name>
-	<description>kubico-api Real State API</description>
+	<name>frota-motors-api</name>
+	<description>frota-motors-api Real State API</description>
 	<url/>
 	<licenses>
 		<license/>
