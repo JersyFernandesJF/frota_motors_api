@@ -32,6 +32,15 @@ jobs:
         mkdir -p frota-motors-deploy-artifacts
         cp ./target/frota-motors-api-0.0.1-SNAPSHOT.jar frota-motors-deploy-artifacts/
      
+    - name: Criar diretório no servidor
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_AWS_SERVER_HOST }}
+        username: ${{ secrets.SSH_AWS_SERVER_USER_NAME }}
+        key: ${{ secrets.SSH_AWS_SERVER_PRIVATE_KEY }}
+        script: |
+          mkdir -p /home/ubuntu/frota-motors-deploy-artifacts
+
     - name: Direct upload to frota-motors-artifacts
       uses: appleboy/scp-action@master
       with:
@@ -39,7 +48,7 @@ jobs:
         username: ${{ secrets.SSH_AWS_SERVER_USER_NAME }}
         key: ${{ secrets.SSH_AWS_SERVER_PRIVATE_KEY }}
         source: "frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar"
-        target: "/home/ubuntu/"
+        target: "/home/ubuntu/frota-motors-deploy-artifacts/"
 
     - name: Parar instância antiga e iniciar nova
       uses: appleboy/ssh-action@master
@@ -58,6 +67,6 @@ jobs:
           fi
           
           sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 9090
-          chmod +x /home/ubuntu/frota-motors-api-0.0.1-SNAPSHOT.jar
+          chmod +x /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar
           
-          nohup java -jar /home/ubuntu/frota-motors-api-0.0.1-SNAPSHOT.jar > /home/ubuntu/frota-motors-api.log 2>&1 &
+          nohup java -jar /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar > /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api.log 2>&1 &
