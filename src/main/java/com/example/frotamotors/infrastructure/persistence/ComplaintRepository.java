@@ -1,17 +1,19 @@
 package com.example.frotamotors.infrastructure.persistence;
 
-import com.example.frotamotors.domain.enums.ComplaintPriority;
-import com.example.frotamotors.domain.enums.ComplaintStatus;
-import com.example.frotamotors.domain.enums.ComplaintType;
-import com.example.frotamotors.domain.model.Complaint;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.example.frotamotors.domain.enums.ComplaintPriority;
+import com.example.frotamotors.domain.enums.ComplaintStatus;
+import com.example.frotamotors.domain.enums.ComplaintType;
+import com.example.frotamotors.domain.model.Complaint;
 
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, UUID> {
@@ -75,8 +77,8 @@ public interface ComplaintRepository extends JpaRepository<Complaint, UUID> {
   Long countByPriority(ComplaintPriority priority);
 
   @Query(
-      value = "SELECT AVG(EXTRACT(EPOCH FROM (resolved_at - created_at)) / 3600.0) "
-          + "FROM complaints WHERE status = CAST(:status AS VARCHAR) AND resolved_at IS NOT NULL",
+      value = "SELECT AVG((EXTRACT(EPOCH FROM resolved_at) - EXTRACT(EPOCH FROM created_at)) / 3600.0) "
+          + "FROM complaints WHERE status = :status::text AND resolved_at IS NOT NULL",
       nativeQuery = true)
   Double getAverageResponseTime(@Param("status") ComplaintStatus status);
 }
