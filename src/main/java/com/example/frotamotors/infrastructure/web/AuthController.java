@@ -3,10 +3,10 @@ package com.example.frotamotors.infrastructure.web;
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.service.AuthService;
 import com.example.frotamotors.domain.service.UserService;
-import com.example.frotamotors.infrastructure.dto.AppleAuthRequestDTO;
+// import com.example.frotamotors.infrastructure.dto.AppleAuthRequestDTO; // Commented out - OAuth2 not configured
 import com.example.frotamotors.infrastructure.dto.AuthResponseDTO;
 import com.example.frotamotors.infrastructure.dto.ForgotPasswordRequestDTO;
-import com.example.frotamotors.infrastructure.dto.GoogleAuthRequestDTO;
+// import com.example.frotamotors.infrastructure.dto.GoogleAuthRequestDTO; // Commented out - OAuth2 not configured
 import com.example.frotamotors.infrastructure.dto.LoginRequestDTO;
 import com.example.frotamotors.infrastructure.dto.RefreshTokenRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ResetPasswordRequestDTO;
@@ -32,19 +32,20 @@ public class AuthController {
 
   @Autowired private UserService userService;
 
-  @PostMapping("/google")
-  public ResponseEntity<AuthResponseDTO> authenticateWithGoogle(
-      @Valid @RequestBody GoogleAuthRequestDTO request) {
-    AuthResponseDTO response = authService.authenticateOrCreateGoogleUser(request.idToken());
-    return ResponseEntity.ok(response);
-  }
+  // OAuth2 endpoints commented out - OAuth2 is not configured
+  // @PostMapping("/google")
+  // public ResponseEntity<AuthResponseDTO> authenticateWithGoogle(
+  //     @Valid @RequestBody GoogleAuthRequestDTO request) {
+  //   AuthResponseDTO response = authService.authenticateOrCreateGoogleUser(request.idToken());
+  //   return ResponseEntity.ok(response);
+  // }
 
-  @PostMapping("/apple")
-  public ResponseEntity<AuthResponseDTO> authenticateWithApple(
-      @Valid @RequestBody AppleAuthRequestDTO request) {
-    AuthResponseDTO response = authService.authenticateOrCreateAppleUser(request.idToken());
-    return ResponseEntity.ok(response);
-  }
+  // @PostMapping("/apple")
+  // public ResponseEntity<AuthResponseDTO> authenticateWithApple(
+  //     @Valid @RequestBody AppleAuthRequestDTO request) {
+  //   AuthResponseDTO response = authService.authenticateOrCreateAppleUser(request.idToken());
+  //   return ResponseEntity.ok(response);
+  // }
 
   @PostMapping("/login")
   public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {

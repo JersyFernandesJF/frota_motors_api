@@ -43,9 +43,9 @@ public class AuthService {
 
   @Autowired private PasswordResetTokenRepository passwordResetTokenRepository;
 
-  @Autowired private GoogleTokenVerifier googleTokenVerifier;
+  @Autowired(required = false) private GoogleTokenVerifier googleTokenVerifier;
 
-  @Autowired private AppleTokenVerifier appleTokenVerifier;
+  @Autowired(required = false) private AppleTokenVerifier appleTokenVerifier;
 
   @Value("${jwt.refresh-expiration:604800000}") // 7 days default
   private long refreshTokenExpiration;
@@ -55,6 +55,9 @@ public class AuthService {
 
   @Transactional
   public AuthResponseDTO authenticateOrCreateGoogleUser(String idToken) {
+    if (googleTokenVerifier == null) {
+      throw new IllegalStateException("Google authentication is not configured");
+    }
     try {
       // Verify Google ID token
       GoogleIdToken.Payload payload = googleTokenVerifier.verifyToken(idToken);
@@ -129,6 +132,9 @@ public class AuthService {
 
   @Transactional
   public AuthResponseDTO authenticateOrCreateAppleUser(String idToken) {
+    if (appleTokenVerifier == null) {
+      throw new IllegalStateException("Apple authentication is not configured");
+    }
     try {
       // Verify Apple ID token
       JWTClaimsSet claimsSet = appleTokenVerifier.verifyToken(idToken);
