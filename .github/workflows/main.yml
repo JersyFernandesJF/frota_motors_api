@@ -68,7 +68,6 @@ jobs:
           
           echo "Limpando regras de iptables conflitantes (nginx faz o roteamento)..."
           sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 9090 2>/dev/null || true
-          sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080 2>/dev/null || true
           
           chmod +x /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar
           
