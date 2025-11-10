@@ -6,9 +6,9 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+// import org.springframework.stereotype.Component;
 
-@Component
+// @Component - Commented out to prevent auto-instantiation when OAuth2 is not configured
 public class GoogleTokenVerifier {
 
   @Value("${spring.security.oauth2.client.registration.google.client-id:}")
