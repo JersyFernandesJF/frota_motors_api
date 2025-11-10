@@ -16,7 +16,7 @@ import com.example.frotamotors.domain.enums.ComplaintType;
 import com.example.frotamotors.domain.model.Complaint;
 
 @Repository
-public interface ComplaintRepository extends JpaRepository<Complaint, UUID> {
+public interface ComplaintRepository extends JpaRepository<Complaint, UUID>, ComplaintRepositoryCustom {
   List<Complaint> findByReporterId(UUID reporterId);
 
   List<Complaint> findByStatus(ComplaintStatus status);
@@ -75,11 +75,5 @@ public interface ComplaintRepository extends JpaRepository<Complaint, UUID> {
   Long countByType(ComplaintType type);
 
   Long countByPriority(ComplaintPriority priority);
-
-  @Query(
-      value = "SELECT AVG((EXTRACT(EPOCH FROM resolved_at) - EXTRACT(EPOCH FROM created_at)) / 3600.0) "
-          + "FROM complaints WHERE status = CAST(:status AS VARCHAR) AND resolved_at IS NOT NULL",
-      nativeQuery = true)
-  Double getAverageResponseTime(@Param("status") ComplaintStatus status);
 }
 
