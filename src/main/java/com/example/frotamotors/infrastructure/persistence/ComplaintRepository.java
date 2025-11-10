@@ -78,7 +78,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, UUID> {
 
   @Query(
       value = "SELECT AVG((EXTRACT(EPOCH FROM resolved_at) - EXTRACT(EPOCH FROM created_at)) / 3600.0) "
-          + "FROM complaints WHERE status = :status::text AND resolved_at IS NOT NULL",
+          + "FROM complaints WHERE status = CAST(:status AS VARCHAR) AND resolved_at IS NOT NULL",
       nativeQuery = true)
   Double getAverageResponseTime(@Param("status") ComplaintStatus status);
 }
