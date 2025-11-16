@@ -2,6 +2,7 @@ package com.example.frotamotors.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +32,7 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(
@@ -45,15 +47,34 @@ public class SecurityConfig {
                     .frameOptions(frameOptions -> frameOptions.deny()))
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(
+                auth
+                    // Swagger e documentação
+                    .requestMatchers(
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/api/v1/auth/**",
-                        "/uploads/**")
+                        "/swagger-ui.html")
                     .permitAll()
+                    // Autenticação
+                    .requestMatchers("/api/v1/auth/**")
+                    .permitAll()
+                    // Uploads e mídia pública
+                    .requestMatchers("/uploads/**", "/api/v1/media/**")
+                    .permitAll()
+                    // Endpoints GET públicos (listagem, busca, detalhes)
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/v1/vehicles/**",
+                        "/api/v1/properties/**",
+                        "/api/v1/parts/**",
+                        "/api/v1/agencies/**",
+                        "/api/v1/reviews/**",
+                        "/api/v1/search/**",
+                        "/api/v1/locations/**")
+                    .permitAll()
+                    // Endpoints específicos com roles
                     .requestMatchers("/api/v1/users/**", "/api/v1/complaints/**")
                     .hasAnyRole("ADMIN", "BUYER", "OWNER", "AGENT")
+                    // Demais endpoints requerem autenticação
                     .anyRequest()
                     .authenticated())
         .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
@@ -76,6 +97,7 @@ public class SecurityConfig {
       // Default: allow localhost for development and production domains
       configuration.addAllowedOrigin("http://localhost:3000");
       configuration.addAllowedOrigin("http://localhost:8080");
+      configuration.addAllowedOrigin("http://localhost:9090");
       configuration.addAllowedOrigin("https://api.frotamotors.com");
       configuration.addAllowedOrigin("http://api.frotamotors.com");
     }

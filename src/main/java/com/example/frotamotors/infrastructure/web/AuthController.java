@@ -1,25 +1,30 @@
 package com.example.frotamotors.infrastructure.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.service.AuthService;
 import com.example.frotamotors.domain.service.UserService;
-// import com.example.frotamotors.infrastructure.dto.AppleAuthRequestDTO; // Commented out - OAuth2 not configured
 import com.example.frotamotors.infrastructure.dto.AuthResponseDTO;
 import com.example.frotamotors.infrastructure.dto.ForgotPasswordRequestDTO;
-// import com.example.frotamotors.infrastructure.dto.GoogleAuthRequestDTO; // Commented out - OAuth2 not configured
 import com.example.frotamotors.infrastructure.dto.LoginRequestDTO;
 import com.example.frotamotors.infrastructure.dto.RefreshTokenRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ResetPasswordRequestDTO;
 import com.example.frotamotors.infrastructure.dto.UserMeResponseDTO;
 import com.example.frotamotors.infrastructure.security.CustomUserDetailsService.CustomUserDetails;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
 @RestController
