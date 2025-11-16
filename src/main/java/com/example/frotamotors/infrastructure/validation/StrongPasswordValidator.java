@@ -37,4 +37,3 @@ public class StrongPasswordValidator implements ConstraintValidator<StrongPasswo
     return true;
   }
 }
-

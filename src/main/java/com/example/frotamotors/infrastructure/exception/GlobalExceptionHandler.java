@@ -116,8 +116,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponseDTO> handleGenericException(
-      Exception ex, WebRequest request) {
+  public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex, WebRequest request) {
     log.error("Unexpected error: ", ex);
     ErrorResponseDTO error =
         ErrorResponseDTO.of(
@@ -128,4 +127,3 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
   }
 }
-

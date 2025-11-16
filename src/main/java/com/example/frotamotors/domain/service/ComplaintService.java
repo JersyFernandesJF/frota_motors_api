@@ -10,8 +10,8 @@ import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.ComplaintCreateDTO;
-import com.example.frotamotors.infrastructure.dto.ComplaintResolveRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ComplaintDismissRequestDTO;
+import com.example.frotamotors.infrastructure.dto.ComplaintResolveRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
 import com.example.frotamotors.infrastructure.mapper.ComplaintMapper;
 import com.example.frotamotors.infrastructure.persistence.AgencyRepository;
@@ -104,7 +104,12 @@ public class ComplaintService {
 
     Complaint complaint =
         ComplaintMapper.toEntity(
-            dto, reporter, reportedUser, reportedVehicle, reportedPart, reportedProperty,
+            dto,
+            reporter,
+            reportedUser,
+            reportedVehicle,
+            reportedPart,
+            reportedProperty,
             reportedAgency);
     return complaintRepository.save(complaint);
   }
@@ -300,7 +305,9 @@ public class ComplaintService {
 
     // Response time (average time from creation to resolution)
     Double avgResponseTime = complaintRepository.getAverageResponseTime(ComplaintStatus.RESOLVED);
-    stats.put("responseTime", Map.of("average", avgResponseTime != null ? avgResponseTime : 0.0, "unit", "hours"));
+    stats.put(
+        "responseTime",
+        Map.of("average", avgResponseTime != null ? avgResponseTime : 0.0, "unit", "hours"));
 
     return stats;
   }
@@ -310,4 +317,3 @@ public class ComplaintService {
     return "Export functionality will be implemented with ExportService";
   }
 }
-

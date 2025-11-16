@@ -42,4 +42,3 @@ public class Conversation {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

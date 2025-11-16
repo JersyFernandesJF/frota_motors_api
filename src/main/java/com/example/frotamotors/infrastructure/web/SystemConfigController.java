@@ -126,8 +126,7 @@ public class SystemConfigController {
       Map<String, Object> value = null;
       if (config.getValue() != null && !config.getValue().isEmpty()) {
         value =
-            objectMapper.readValue(
-                config.getValue(), new TypeReference<Map<String, Object>>() {});
+            objectMapper.readValue(config.getValue(), new TypeReference<Map<String, Object>>() {});
       }
       SystemConfigResponseDTO response =
           new SystemConfigResponseDTO(
@@ -167,8 +166,7 @@ public class SystemConfigController {
       Map<String, Object> value = null;
       if (updated.getValue() != null && !updated.getValue().isEmpty()) {
         value =
-            objectMapper.readValue(
-                updated.getValue(), new TypeReference<Map<String, Object>>() {});
+            objectMapper.readValue(updated.getValue(), new TypeReference<Map<String, Object>>() {});
       }
       SystemConfigResponseDTO response =
           new SystemConfigResponseDTO(
@@ -198,4 +196,3 @@ public class SystemConfigController {
     }
   }
 }
-

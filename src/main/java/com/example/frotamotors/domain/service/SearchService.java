@@ -115,4 +115,3 @@ public class SearchService {
         (long) propertyDTOs.size());
   }
 }
-

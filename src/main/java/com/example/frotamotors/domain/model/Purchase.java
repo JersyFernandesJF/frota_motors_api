@@ -74,4 +74,3 @@ public class Purchase {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

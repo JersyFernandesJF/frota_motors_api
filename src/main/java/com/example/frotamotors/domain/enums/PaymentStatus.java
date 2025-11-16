@@ -8,4 +8,3 @@ public enum PaymentStatus {
   REFUNDED,
   CANCELLED
 }
-

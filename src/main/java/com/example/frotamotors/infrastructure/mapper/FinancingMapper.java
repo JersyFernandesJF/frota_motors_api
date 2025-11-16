@@ -53,16 +53,18 @@ public class FinancingMapper {
 
     // Calculate monthly payment using compound interest formula
     // M = P * [r(1+r)^n] / [(1+r)^n - 1]
-    BigDecimal monthlyRate = dto.interestRate().divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP)
-        .divide(BigDecimal.valueOf(12), 6, RoundingMode.HALF_UP);
+    BigDecimal monthlyRate =
+        dto.interestRate()
+            .divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP)
+            .divide(BigDecimal.valueOf(12), 6, RoundingMode.HALF_UP);
     BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
     BigDecimal onePlusRPowerN = onePlusR.pow(dto.loanTermMonths());
     BigDecimal numerator = monthlyRate.multiply(onePlusRPowerN);
     BigDecimal denominator = onePlusRPowerN.subtract(BigDecimal.ONE);
-    BigDecimal monthlyPayment = financingAmount.multiply(numerator).divide(denominator, 2, RoundingMode.HALF_UP);
+    BigDecimal monthlyPayment =
+        financingAmount.multiply(numerator).divide(denominator, 2, RoundingMode.HALF_UP);
     financing.setMonthlyPayment(monthlyPayment);
 
     return financing;
   }
 }
-

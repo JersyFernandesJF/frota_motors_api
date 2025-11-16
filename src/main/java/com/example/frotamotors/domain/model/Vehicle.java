@@ -140,4 +140,3 @@ public class Vehicle {
 
   @UpdateTimestamp private LocalDateTime updatedAt;
 }
-

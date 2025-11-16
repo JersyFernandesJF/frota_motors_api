@@ -90,7 +90,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   @Query("SELECT v.type, COUNT(v) FROM Vehicle v GROUP BY v.type")
   List<Object[]> countByType();
 
-  @Query(value = "SELECT brand, COUNT(*) as count FROM vehicles GROUP BY brand ORDER BY count DESC LIMIT 5", nativeQuery = true)
+  @Query(
+      value =
+          "SELECT brand, COUNT(*) as count FROM vehicles GROUP BY brand ORDER BY count DESC LIMIT 5",
+      nativeQuery = true)
   List<Object[]> findTopBrands();
 
   @Query("SELECT COUNT(v) FROM Vehicle v WHERE v.owner.id = :ownerId AND v.status = 'FOR_SALE'")
@@ -101,4 +104,3 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
 
   Long countByModerationStatus(ListingModerationStatus moderationStatus);
 }
-

@@ -19,4 +19,3 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
   @Query("UPDATE PasswordResetToken p SET p.used = true WHERE p.user.id = :userId")
   void invalidateAllUserTokens(@Param("userId") UUID userId);
 }
-

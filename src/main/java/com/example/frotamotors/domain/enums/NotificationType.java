@@ -12,4 +12,3 @@ public enum NotificationType {
   SYSTEM_ANNOUNCEMENT,
   OTHER
 }
-

@@ -51,4 +51,3 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
 
   Page<Purchase> findByType(OrderType type, Pageable pageable);
 }
-

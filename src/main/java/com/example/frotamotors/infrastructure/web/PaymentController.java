@@ -34,35 +34,37 @@ public class PaymentController {
       @RequestParam(required = false) UUID payerId,
       @RequestParam(required = false) PaymentStatus status,
       @RequestParam(required = false) PaymentMethod method,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Payment> page = paymentService.search(payerId, status, method, pageable);
 
     List<PaymentResponseDTO> content =
-        page.getContent().stream()
-            .map(PaymentMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PaymentMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PaymentResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<PaymentResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Payment> page = paymentService.getAll(pageable);
 
     List<PaymentResponseDTO> content =
-        page.getContent().stream()
-            .map(PaymentMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PaymentMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PaymentResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -70,17 +72,18 @@ public class PaymentController {
   @GetMapping("/payer/{payerId}")
   public ResponseEntity<PageResponseDTO<PaymentResponseDTO>> getByPayer(
       @PathVariable UUID payerId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Payment> page = paymentService.getByPayer(payerId, pageable);
 
     List<PaymentResponseDTO> content =
-        page.getContent().stream()
-            .map(PaymentMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PaymentMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PaymentResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -88,17 +91,18 @@ public class PaymentController {
   @GetMapping("/purchase/{purchaseId}")
   public ResponseEntity<PageResponseDTO<PaymentResponseDTO>> getByPurchase(
       @PathVariable UUID purchaseId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Payment> page = paymentService.getByPurchase(purchaseId, pageable);
 
     List<PaymentResponseDTO> content =
-        page.getContent().stream()
-            .map(PaymentMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PaymentMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PaymentResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -106,17 +110,18 @@ public class PaymentController {
   @GetMapping("/status/{status}")
   public ResponseEntity<PageResponseDTO<PaymentResponseDTO>> getByStatus(
       @PathVariable PaymentStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Payment> page = paymentService.getByStatus(status, pageable);
 
     List<PaymentResponseDTO> content =
-        page.getContent().stream()
-            .map(PaymentMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PaymentMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PaymentResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -176,4 +181,3 @@ public class PaymentController {
     return ResponseEntity.noContent().build();
   }
 }
-

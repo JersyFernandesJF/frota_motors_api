@@ -45,4 +45,3 @@ public class SystemConfig {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

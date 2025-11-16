@@ -48,37 +48,39 @@ public class VehicleController {
       @RequestParam(required = false) Integer minYear,
       @RequestParam(required = false) Integer maxYear,
       @RequestParam(required = false) String fuelType,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Vehicle> page =
         vehicleService.search(
             type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType, pageable);
 
     List<VehicleResponseDTO> content =
-        page.getContent().stream()
-            .map(VehicleMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<VehicleResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Vehicle> page = vehicleService.getAll(pageable);
 
     List<VehicleResponseDTO> content =
-        page.getContent().stream()
-            .map(VehicleMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<VehicleResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -86,17 +88,18 @@ public class VehicleController {
   @GetMapping("/owner/{ownerId}")
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByOwner(
       @PathVariable UUID ownerId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByOwner(ownerId, pageable);
 
     List<VehicleResponseDTO> content =
-        page.getContent().stream()
-            .map(VehicleMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<VehicleResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -104,17 +107,18 @@ public class VehicleController {
   @GetMapping("/agency/{agencyId}")
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByAgency(
       @PathVariable UUID agencyId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByAgency(agencyId, pageable);
 
     List<VehicleResponseDTO> content =
-        page.getContent().stream()
-            .map(VehicleMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<VehicleResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -122,17 +126,18 @@ public class VehicleController {
   @GetMapping("/type/{type}")
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByType(
       @PathVariable VehicleType type,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByType(type, pageable);
 
     List<VehicleResponseDTO> content =
-        page.getContent().stream()
-            .map(VehicleMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<VehicleResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -140,17 +145,18 @@ public class VehicleController {
   @GetMapping("/status/{status}")
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByStatus(
       @PathVariable VehicleStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByStatus(status, pageable);
 
     List<VehicleResponseDTO> content =
-        page.getContent().stream()
-            .map(VehicleMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<VehicleResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -184,7 +190,8 @@ public class VehicleController {
   @PostMapping("{id}/approve")
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<VehicleResponseDTO> approveVehicle(
-      @PathVariable UUID id, @Valid @RequestBody(required = false) VehicleApproveRequestDTO request) {
+      @PathVariable UUID id,
+      @Valid @RequestBody(required = false) VehicleApproveRequestDTO request) {
     String notes = request != null ? request.notes() : null;
     Vehicle vehicle = vehicleService.approveVehicle(id, notes);
     return ResponseEntity.ok(VehicleMapper.toResponse(vehicle));
@@ -194,8 +201,7 @@ public class VehicleController {
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<VehicleResponseDTO> rejectVehicle(
       @PathVariable UUID id, @Valid @RequestBody VehicleRejectRequestDTO request) {
-    Vehicle vehicle =
-        vehicleService.rejectVehicle(id, request.reason(), request.notifySeller());
+    Vehicle vehicle = vehicleService.rejectVehicle(id, request.reason(), request.notifySeller());
     return ResponseEntity.ok(VehicleMapper.toResponse(vehicle));
   }
 
@@ -203,7 +209,11 @@ public class VehicleController {
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<PageResponseDTO<VehicleHistoryResponseDTO>> getVehicleHistory(
       @PathVariable UUID id,
-      @PageableDefault(size = 20, sort = "changedAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "changedAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<VehicleHistory> page = vehicleService.getVehicleHistory(id, pageable);
 
     List<VehicleHistoryResponseDTO> content =
@@ -221,8 +231,7 @@ public class VehicleController {
             .collect(Collectors.toList());
 
     PageResponseDTO<VehicleHistoryResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -235,4 +244,3 @@ public class VehicleController {
     return ResponseEntity.ok(java.util.Map.of("message", result));
   }
 }
-

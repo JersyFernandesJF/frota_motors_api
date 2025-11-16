@@ -29,8 +29,7 @@ public class PaymentMapper {
         payment.getUpdatedAt());
   }
 
-  public static Payment toEntity(
-      PaymentCreateDTO dto, Purchase purchase, User payer) {
+  public static Payment toEntity(PaymentCreateDTO dto, Purchase purchase, User payer) {
     Payment payment = new Payment();
     payment.setPurchase(purchase);
     payment.setPayer(payer);
@@ -44,4 +43,3 @@ public class PaymentMapper {
     return payment;
   }
 }
-

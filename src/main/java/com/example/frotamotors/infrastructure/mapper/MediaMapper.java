@@ -23,8 +23,7 @@ public class MediaMapper {
     return media;
   }
 
-  public static Media toEntity(
-      MediaCreateDTO dto, Property property, Vehicle vehicle, Part part) {
+  public static Media toEntity(MediaCreateDTO dto, Property property, Vehicle vehicle, Part part) {
     Media media = new Media();
     media.setProperty(property);
     media.setVehicle(vehicle);

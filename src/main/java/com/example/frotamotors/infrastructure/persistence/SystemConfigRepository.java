@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SystemConfigRepository extends JpaRepository<SystemConfig, UUID> {
   Optional<SystemConfig> findByKey(String key);
-  
+
   java.util.List<SystemConfig> findByCategory(String category);
 }
-

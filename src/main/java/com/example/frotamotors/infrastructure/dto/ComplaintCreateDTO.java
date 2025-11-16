@@ -14,4 +14,3 @@ public record ComplaintCreateDTO(
     UUID reportedPartId,
     UUID reportedPropertyId,
     UUID reportedAgencyId) {}
-

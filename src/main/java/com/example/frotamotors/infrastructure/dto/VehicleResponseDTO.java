@@ -36,4 +36,3 @@ public record VehicleResponseDTO(
     List<MediaResponseDTO> media,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

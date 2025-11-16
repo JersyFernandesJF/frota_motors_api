@@ -9,4 +9,3 @@ public enum InspectionStatus {
   CANCELLED,
   RESCHEDULED
 }
-

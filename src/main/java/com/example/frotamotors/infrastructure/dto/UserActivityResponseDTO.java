@@ -12,4 +12,3 @@ public record UserActivityResponseDTO(
     UUID relatedEntityId,
     Map<String, Object> metadata,
     LocalDateTime createdAt) {}
-

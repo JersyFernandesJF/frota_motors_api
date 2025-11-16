@@ -62,4 +62,3 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID> {
 
   Page<Inspection> findByStatus(InspectionStatus status, Pageable pageable);
 }
-

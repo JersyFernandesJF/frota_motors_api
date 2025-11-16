@@ -7,4 +7,3 @@ public enum ComplaintStatus {
   REJECTED,
   DISMISSED
 }
-

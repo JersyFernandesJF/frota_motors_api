@@ -142,7 +142,7 @@ public class PaymentService {
     Payment saved = paymentRepository.save(payment);
 
     // Update purchase status
-      saved.getPurchase().setStatus(com.example.frotamotors.domain.enums.OrderStatus.REFUNDED);
+    saved.getPurchase().setStatus(com.example.frotamotors.domain.enums.OrderStatus.REFUNDED);
     purchaseRepository.save(saved.getPurchase());
 
     return saved;
@@ -188,4 +188,3 @@ public class PaymentService {
     return paymentRepository.findByStatus(status, pageable);
   }
 }
-

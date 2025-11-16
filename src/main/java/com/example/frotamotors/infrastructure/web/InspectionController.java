@@ -49,17 +49,18 @@ public class InspectionController {
   @GetMapping
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<PageResponseDTO<InspectionResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Inspection> page = inspectionService.getAll(pageable);
 
     List<InspectionResponseDTO> content =
-        page.getContent().stream()
-            .map(InspectionMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(InspectionMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<InspectionResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -71,18 +72,19 @@ public class InspectionController {
       @RequestParam(required = false) UUID inspectorId,
       @RequestParam(required = false) UUID vehicleId,
       @RequestParam(required = false) InspectionStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Inspection> page =
         inspectionService.search(buyerId, sellerId, inspectorId, vehicleId, status, pageable);
 
     List<InspectionResponseDTO> content =
-        page.getContent().stream()
-            .map(InspectionMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(InspectionMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<InspectionResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -137,4 +139,3 @@ public class InspectionController {
     return ResponseEntity.noContent().build();
   }
 }
-

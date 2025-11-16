@@ -59,4 +59,3 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
           + "(:type = 'RENTAL' AND r.reviewedRental.id = :entityId)")
   Long getReviewCount(@Param("type") String type, @Param("entityId") UUID entityId);
 }
-

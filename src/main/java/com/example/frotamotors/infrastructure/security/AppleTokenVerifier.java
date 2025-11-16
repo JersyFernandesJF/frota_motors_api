@@ -15,6 +15,7 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import java.net.URL;
 import java.text.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+
 // import org.springframework.stereotype.Component;
 
 // @Component - Commented out to prevent auto-instantiation when OAuth2 is not configured
@@ -69,4 +70,3 @@ public class AppleTokenVerifier {
     }
   }
 }
-

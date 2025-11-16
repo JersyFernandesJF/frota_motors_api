@@ -13,4 +13,3 @@ public record DashboardStatsDTO(
     BigDecimal totalRevenue,
     TrendDTO usersTrend,
     TrendDTO listingsTrend) {}
-

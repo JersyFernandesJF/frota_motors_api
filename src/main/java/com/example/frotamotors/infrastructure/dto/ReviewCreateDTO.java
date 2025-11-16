@@ -16,4 +16,3 @@ public record ReviewCreateDTO(
     UUID reviewedPartId,
     UUID reviewedAgencyId,
     UUID reviewedRentalId) {}
-

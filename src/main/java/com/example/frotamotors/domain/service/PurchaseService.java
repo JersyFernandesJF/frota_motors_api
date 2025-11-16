@@ -66,8 +66,7 @@ public class PurchaseService {
         throw new IllegalStateException("Part is already sold");
       }
       // Check quantity availability
-      if (part.getQuantityAvailable() != null
-          && part.getQuantityAvailable() < dto.quantity()) {
+      if (part.getQuantityAvailable() != null && part.getQuantityAvailable() < dto.quantity()) {
         throw new IllegalStateException("Insufficient quantity available");
       }
     }
@@ -80,13 +79,10 @@ public class PurchaseService {
       // Vehicle status will be updated when order is confirmed
     } else if (part != null) {
       int newQuantity =
-          part.getQuantityAvailable() != null
-              ? part.getQuantityAvailable() - dto.quantity()
-              : 0;
+          part.getQuantityAvailable() != null ? part.getQuantityAvailable() - dto.quantity() : 0;
       part.setQuantityAvailable(newQuantity);
       if (newQuantity == 0) {
-        part.setStatus(
-            com.example.frotamotors.domain.enums.PartStatus.OUT_OF_STOCK);
+        part.setStatus(com.example.frotamotors.domain.enums.PartStatus.OUT_OF_STOCK);
       }
       partRepository.save(part);
     }
@@ -128,8 +124,7 @@ public class PurchaseService {
 
     // Update item status
     if (purchase.getVehicle() != null) {
-      purchase.getVehicle().setStatus(
-          com.example.frotamotors.domain.enums.VehicleStatus.SOLD);
+      purchase.getVehicle().setStatus(com.example.frotamotors.domain.enums.VehicleStatus.SOLD);
       vehicleRepository.save(purchase.getVehicle());
     } else if (purchase.getPart() != null) {
       // Part status already updated on creation
@@ -149,8 +144,7 @@ public class PurchaseService {
 
     // Restore item availability
     if (purchase.getVehicle() != null) {
-      purchase.getVehicle().setStatus(
-          com.example.frotamotors.domain.enums.VehicleStatus.FOR_SALE);
+      purchase.getVehicle().setStatus(com.example.frotamotors.domain.enums.VehicleStatus.FOR_SALE);
       vehicleRepository.save(purchase.getVehicle());
     } else if (purchase.getPart() != null) {
       int restoredQuantity =
@@ -176,7 +170,8 @@ public class PurchaseService {
     return purchaseRepository.search(buyerId, status, type);
   }
 
-  public Page<Purchase> search(UUID buyerId, OrderStatus status, OrderType type, Pageable pageable) {
+  public Page<Purchase> search(
+      UUID buyerId, OrderStatus status, OrderType type, Pageable pageable) {
     return purchaseRepository.searchPageable(buyerId, status, type, pageable);
   }
 
@@ -204,4 +199,3 @@ public class PurchaseService {
     return purchaseRepository.findByType(type, pageable);
   }
 }
-

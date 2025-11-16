@@ -33,35 +33,37 @@ public class NotificationController {
       @RequestParam UUID userId,
       @RequestParam(required = false) Boolean isRead,
       @RequestParam(required = false) NotificationType type,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Alerts> page = notificationService.search(userId, isRead, type, pageable);
 
     List<NotificationResponseDTO> content =
-        page.getContent().stream()
-            .map(NotificationMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(NotificationMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<NotificationResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<NotificationResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Alerts> page = notificationService.getAll(pageable);
 
     List<NotificationResponseDTO> content =
-        page.getContent().stream()
-            .map(NotificationMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(NotificationMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<NotificationResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -69,17 +71,18 @@ public class NotificationController {
   @GetMapping("/user/{userId}")
   public ResponseEntity<PageResponseDTO<NotificationResponseDTO>> getByUser(
       @PathVariable UUID userId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Alerts> page = notificationService.getByUser(userId, pageable);
 
     List<NotificationResponseDTO> content =
-        page.getContent().stream()
-            .map(NotificationMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(NotificationMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<NotificationResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -87,17 +90,18 @@ public class NotificationController {
   @GetMapping("/user/{userId}/unread")
   public ResponseEntity<PageResponseDTO<NotificationResponseDTO>> getUnreadByUser(
       @PathVariable UUID userId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Alerts> page = notificationService.getUnreadByUser(userId, pageable);
 
     List<NotificationResponseDTO> content =
-        page.getContent().stream()
-            .map(NotificationMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(NotificationMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<NotificationResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -138,4 +142,3 @@ public class NotificationController {
     return ResponseEntity.noContent().build();
   }
 }
-

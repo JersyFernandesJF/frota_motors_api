@@ -22,4 +22,3 @@ public record PartCreateDTO(
     String conditionType,
     Integer quantityAvailable,
     Integer warrantyMonths) {}
-

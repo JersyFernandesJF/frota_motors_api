@@ -1,15 +1,5 @@
 package com.example.frotamotors.domain.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.example.frotamotors.domain.model.Media;
 import com.example.frotamotors.domain.model.Part;
 import com.example.frotamotors.domain.model.Property;
@@ -20,8 +10,15 @@ import com.example.frotamotors.infrastructure.persistence.MediaRepository;
 import com.example.frotamotors.infrastructure.persistence.PartRepository;
 import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
-
 import jakarta.persistence.EntityNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class MediaService {
@@ -68,12 +65,8 @@ public class MediaService {
     String fileUrl = fileStorageService.storeFile(file);
     MediaCreateDTO dtoWithUrl =
         new MediaCreateDTO(
-            dto.propertyId(),
-            dto.vehicleId(),
-            dto.partId(),
-            dto.mediaType(),
-            fileUrl);
-    
+            dto.propertyId(), dto.vehicleId(), dto.partId(), dto.mediaType(), fileUrl);
+
     Property property = null;
     Vehicle vehicle = null;
     Part part = null;

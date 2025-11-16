@@ -33,4 +33,3 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {
       @Param("endDate") LocalDateTime endDate,
       Pageable pageable);
 }
-

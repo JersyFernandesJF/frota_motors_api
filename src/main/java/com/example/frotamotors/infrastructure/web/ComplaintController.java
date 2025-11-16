@@ -1,9 +1,23 @@
 package com.example.frotamotors.infrastructure.web;
 
+import com.example.frotamotors.domain.enums.ComplaintPriority;
+import com.example.frotamotors.domain.enums.ComplaintStatus;
+import com.example.frotamotors.domain.enums.ComplaintType;
+import com.example.frotamotors.domain.model.Complaint;
+import com.example.frotamotors.domain.service.ComplaintService;
+import com.example.frotamotors.infrastructure.dto.ComplaintCreateDTO;
+import com.example.frotamotors.infrastructure.dto.ComplaintDismissRequestDTO;
+import com.example.frotamotors.infrastructure.dto.ComplaintResolveRequestDTO;
+import com.example.frotamotors.infrastructure.dto.ComplaintResponseDTO;
+import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
+import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
+import com.example.frotamotors.infrastructure.mapper.ComplaintMapper;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,23 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.frotamotors.domain.enums.ComplaintPriority;
-import com.example.frotamotors.domain.enums.ComplaintStatus;
-import com.example.frotamotors.domain.enums.ComplaintType;
-import com.example.frotamotors.domain.model.Complaint;
-import com.example.frotamotors.domain.service.ComplaintService;
-import com.example.frotamotors.infrastructure.dto.ComplaintCreateDTO;
-import com.example.frotamotors.infrastructure.dto.ComplaintDismissRequestDTO;
-import com.example.frotamotors.infrastructure.dto.ComplaintResolveRequestDTO;
-import com.example.frotamotors.infrastructure.dto.ComplaintResponseDTO;
-import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
-import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
-import com.example.frotamotors.infrastructure.mapper.ComplaintMapper;
-import jakarta.validation.Valid;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1/complaints")
@@ -52,35 +49,37 @@ public class ComplaintController {
       @RequestParam(required = false) ComplaintStatus status,
       @RequestParam(required = false) ComplaintType type,
       @RequestParam(required = false) UUID reporterId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Complaint> page = complaintService.search(status, type, reporterId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getAll(pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -88,17 +87,18 @@ public class ComplaintController {
   @GetMapping("/reporter/{reporterId}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReporter(
       @PathVariable UUID reporterId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByReporter(reporterId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -106,17 +106,18 @@ public class ComplaintController {
   @GetMapping("/status/{status}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByStatus(
       @PathVariable ComplaintStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByStatus(status, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -124,17 +125,18 @@ public class ComplaintController {
   @GetMapping("/type/{type}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByType(
       @PathVariable ComplaintType type,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByType(type, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -142,17 +144,18 @@ public class ComplaintController {
   @GetMapping("/reported-user/{reportedUserId}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReportedUser(
       @PathVariable UUID reportedUserId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByReportedUser(reportedUserId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -160,17 +163,18 @@ public class ComplaintController {
   @GetMapping("/reported-vehicle/{reportedVehicleId}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReportedVehicle(
       @PathVariable UUID reportedVehicleId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByReportedVehicle(reportedVehicleId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -178,17 +182,18 @@ public class ComplaintController {
   @GetMapping("/reported-part/{reportedPartId}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReportedPart(
       @PathVariable UUID reportedPartId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByReportedPart(reportedPartId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -196,17 +201,18 @@ public class ComplaintController {
   @GetMapping("/reported-property/{reportedPropertyId}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReportedProperty(
       @PathVariable UUID reportedPropertyId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByReportedProperty(reportedPropertyId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -214,17 +220,18 @@ public class ComplaintController {
   @GetMapping("/reported-agency/{reportedAgencyId}")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReportedAgency(
       @PathVariable UUID reportedAgencyId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Complaint> page = complaintService.getByReportedAgency(reportedAgencyId, pageable);
 
     List<ComplaintResponseDTO> content =
-        page.getContent().stream()
-            .map(ComplaintMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -299,4 +306,3 @@ public class ComplaintController {
     return ResponseEntity.ok(java.util.Map.of("message", result));
   }
 }
-

@@ -23,4 +23,3 @@ public record PaymentResponseDTO(
     String failureReason,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

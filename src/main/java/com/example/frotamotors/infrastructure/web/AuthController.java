@@ -1,16 +1,5 @@
 package com.example.frotamotors.infrastructure.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.service.AuthService;
 import com.example.frotamotors.domain.service.UserService;
@@ -21,10 +10,19 @@ import com.example.frotamotors.infrastructure.dto.RefreshTokenRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ResetPasswordRequestDTO;
 import com.example.frotamotors.infrastructure.dto.UserMeResponseDTO;
 import com.example.frotamotors.infrastructure.security.CustomUserDetailsService.CustomUserDetails;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -59,7 +57,8 @@ public class AuthController {
   }
 
   @PostMapping("/refresh")
-  public ResponseEntity<AuthResponseDTO> refresh(@Valid @RequestBody RefreshTokenRequestDTO request) {
+  public ResponseEntity<AuthResponseDTO> refresh(
+      @Valid @RequestBody RefreshTokenRequestDTO request) {
     AuthResponseDTO response = authService.refreshToken(request.refreshToken());
     return ResponseEntity.ok(response);
   }
@@ -75,8 +74,7 @@ public class AuthController {
   }
 
   @PostMapping("/forgot-password")
-  public ResponseEntity<Void> forgotPassword(
-      @Valid @RequestBody ForgotPasswordRequestDTO request) {
+  public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO request) {
     authService.requestPasswordReset(request);
     return ResponseEntity.ok().build();
   }
@@ -96,14 +94,14 @@ public class AuthController {
       if (user == null) {
         return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
       }
-      
+
       // Ensure permissions are set
       if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
         // This should not happen, but handle it gracefully
         user.setPermissions(authService.getDefaultPermissions(user.getRole()));
         user = userService.updateUser(user);
       }
-      
+
       UserMeResponseDTO response =
           new UserMeResponseDTO(
               user.getId(),
@@ -118,4 +116,3 @@ public class AuthController {
     return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
   }
 }
-

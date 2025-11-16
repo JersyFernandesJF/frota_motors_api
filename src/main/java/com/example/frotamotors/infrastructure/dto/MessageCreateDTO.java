@@ -6,4 +6,3 @@ import java.util.UUID;
 
 public record MessageCreateDTO(
     @NotNull UUID conversationId, @NotNull UUID senderId, @NotBlank String content) {}
-

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserBlockRepository extends JpaRepository<UserBlock, UUID> {
   Optional<UserBlock> findByBlockerIdAndBlockedId(UUID blockerId, UUID blockedId);
-  
+
   boolean existsByBlockerIdAndBlockedId(UUID blockerId, UUID blockedId);
 }
-

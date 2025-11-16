@@ -9,4 +9,3 @@ public enum ComplaintType {
   COPYRIGHT_VIOLATION,
   OTHER
 }
-

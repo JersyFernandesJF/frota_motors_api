@@ -121,7 +121,8 @@ public class MessageService {
 
   @Transactional
   public void markMessagesAsRead(UUID conversationId, UUID userId) {
-    List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
+    List<Message> messages =
+        messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
     messages.stream()
         .filter(m -> !m.getSender().getId().equals(userId) && !m.getIsRead())
         .forEach(m -> m.setIsRead(true));
@@ -153,7 +154,8 @@ public class MessageService {
             .findById(blockedId)
             .orElseThrow(() -> new EntityNotFoundException("Blocked user not found"));
 
-    Optional<UserBlock> existing = userBlockRepository.findByBlockerIdAndBlockedId(blockerId, blockedId);
+    Optional<UserBlock> existing =
+        userBlockRepository.findByBlockerIdAndBlockedId(blockerId, blockedId);
     if (existing.isPresent()) {
       throw new IllegalStateException("User is already blocked");
     }
@@ -191,4 +193,3 @@ public class MessageService {
     return "Export functionality will be implemented with ExportService";
   }
 }
-

@@ -15,9 +15,9 @@ import com.example.frotamotors.infrastructure.dto.UserResponseDTO;
 import com.example.frotamotors.infrastructure.dto.UserSuspendRequestDTO;
 import com.example.frotamotors.infrastructure.dto.UserUpdateDTO;
 import com.example.frotamotors.infrastructure.mapper.UserMapper;
+import com.example.frotamotors.infrastructure.security.CustomUserDetailsService.CustomUserDetails;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.frotamotors.infrastructure.security.CustomUserDetailsService.CustomUserDetails;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -48,17 +48,18 @@ public class UserController {
       @RequestParam(required = false) Role role,
       @RequestParam(required = false) UserStatus status,
       @RequestParam(required = false) String search,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<User> page = userService.getAllUsers(pageable, role, status, search);
 
     List<UserResponseDTO> content =
-        page.getContent().stream()
-            .map(UserMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(UserMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<UserResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -86,7 +87,8 @@ public class UserController {
   }
 
   @PutMapping("{id}")
-  @PreAuthorize("hasRole('ADMIN') or (hasAnyRole('BUYER', 'OWNER', 'AGENT') and @securityUtils.isCurrentUser(#id))")
+  @PreAuthorize(
+      "hasRole('ADMIN') or (hasAnyRole('BUYER', 'OWNER', 'AGENT') and @securityUtils.isCurrentUser(#id))")
   public ResponseEntity<UserResponseDTO> updateUser(
       @PathVariable UUID id, @Valid @RequestBody UserUpdateDTO dto) {
     User updated = userService.updateUser(id, dto);
@@ -135,9 +137,13 @@ public class UserController {
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<PageResponseDTO<UserActivityResponseDTO>> getActivityHistory(
       @PathVariable UUID id,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<UserActivity> page = userService.getActivityHistory(id, pageable);
-    
+
     ObjectMapper objectMapper = new ObjectMapper();
     List<UserActivityResponseDTO> content =
         page.getContent().stream()
@@ -173,8 +179,7 @@ public class UserController {
             .collect(Collectors.toList());
 
     PageResponseDTO<UserActivityResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }

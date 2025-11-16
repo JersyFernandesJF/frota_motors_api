@@ -32,4 +32,3 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
           + "ORDER BY c.lastMessageAt DESC NULLS LAST, c.updatedAt DESC")
   Page<Conversation> findByUserId(@Param("userId") UUID userId, Pageable pageable);
 }
-

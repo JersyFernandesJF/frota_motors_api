@@ -29,4 +29,3 @@ public record PartResponseDTO(
     List<MediaResponseDTO> media,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

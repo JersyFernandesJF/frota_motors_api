@@ -21,4 +21,3 @@ public record InspectionResponseDTO(
     String cancellationReason,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

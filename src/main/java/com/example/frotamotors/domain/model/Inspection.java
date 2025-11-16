@@ -71,4 +71,3 @@ public class Inspection {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

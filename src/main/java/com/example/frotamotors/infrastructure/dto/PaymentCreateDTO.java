@@ -11,4 +11,3 @@ public record PaymentCreateDTO(
     String transactionId,
     String paymentReference,
     String notes) {}
-

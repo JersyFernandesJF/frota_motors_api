@@ -6,4 +6,3 @@ public enum ComplaintPriority {
   MEDIUM,
   LOW
 }
-

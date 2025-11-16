@@ -159,4 +159,3 @@ public class InspectionService {
     inspectionRepository.deleteById(id);
   }
 }
-

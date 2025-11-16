@@ -26,4 +26,3 @@ public record PurchaseResponseDTO(
     String notes,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

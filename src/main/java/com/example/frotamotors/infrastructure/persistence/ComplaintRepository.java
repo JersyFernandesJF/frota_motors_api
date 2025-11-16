@@ -1,8 +1,11 @@
 package com.example.frotamotors.infrastructure.persistence;
 
+import com.example.frotamotors.domain.enums.ComplaintPriority;
+import com.example.frotamotors.domain.enums.ComplaintStatus;
+import com.example.frotamotors.domain.enums.ComplaintType;
+import com.example.frotamotors.domain.model.Complaint;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,13 +13,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.frotamotors.domain.enums.ComplaintPriority;
-import com.example.frotamotors.domain.enums.ComplaintStatus;
-import com.example.frotamotors.domain.enums.ComplaintType;
-import com.example.frotamotors.domain.model.Complaint;
-
 @Repository
-public interface ComplaintRepository extends JpaRepository<Complaint, UUID>, ComplaintRepositoryCustom {
+public interface ComplaintRepository
+    extends JpaRepository<Complaint, UUID>, ComplaintRepositoryCustom {
   List<Complaint> findByReporterId(UUID reporterId);
 
   List<Complaint> findByStatus(ComplaintStatus status);
@@ -76,4 +75,3 @@ public interface ComplaintRepository extends JpaRepository<Complaint, UUID>, Com
 
   Long countByPriority(ComplaintPriority priority);
 }
-

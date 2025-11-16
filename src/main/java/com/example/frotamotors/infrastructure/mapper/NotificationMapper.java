@@ -36,4 +36,3 @@ public class NotificationMapper {
     return notification;
   }
 }
-

@@ -9,4 +9,3 @@ public record SearchResultDTO(
     Long totalVehicles,
     Long totalParts,
     Long totalProperties) {}
-

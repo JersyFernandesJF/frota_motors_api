@@ -30,17 +30,18 @@ public class ReviewController {
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getAll(pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -48,17 +49,18 @@ public class ReviewController {
   @GetMapping("/reviewer/{reviewerId}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByReviewer(
       @PathVariable UUID reviewerId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByReviewer(reviewerId, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -66,17 +68,18 @@ public class ReviewController {
   @GetMapping("/type/{type}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByType(
       @PathVariable ReviewType type,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByType(type, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -84,17 +87,18 @@ public class ReviewController {
   @GetMapping("/user/{userId}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByReviewedUser(
       @PathVariable UUID userId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByReviewedUser(userId, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -102,17 +106,18 @@ public class ReviewController {
   @GetMapping("/vehicle/{vehicleId}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByReviewedVehicle(
       @PathVariable UUID vehicleId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByReviewedVehicle(vehicleId, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -120,17 +125,18 @@ public class ReviewController {
   @GetMapping("/part/{partId}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByReviewedPart(
       @PathVariable UUID partId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByReviewedPart(partId, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -138,17 +144,18 @@ public class ReviewController {
   @GetMapping("/agency/{agencyId}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByReviewedAgency(
       @PathVariable UUID agencyId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByReviewedAgency(agencyId, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -156,17 +163,18 @@ public class ReviewController {
   @GetMapping("/rental/{rentalId}")
   public ResponseEntity<PageResponseDTO<ReviewResponseDTO>> getByReviewedRental(
       @PathVariable UUID rentalId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> page = reviewService.getByReviewedRental(rentalId, pageable);
 
     List<ReviewResponseDTO> content =
-        page.getContent().stream()
-            .map(ReviewMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(ReviewMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<ReviewResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -210,4 +218,3 @@ public class ReviewController {
     return ResponseEntity.noContent().build();
   }
 }
-

@@ -63,11 +63,7 @@ public class FinancingService {
   }
 
   public Page<Financing> search(
-      UUID buyerId,
-      UUID sellerId,
-      UUID vehicleId,
-      FinancingStatus status,
-      Pageable pageable) {
+      UUID buyerId, UUID sellerId, UUID vehicleId, FinancingStatus status, Pageable pageable) {
     return financingRepository.searchPageable(buyerId, sellerId, vehicleId, status, pageable);
   }
 
@@ -111,8 +107,9 @@ public class FinancingService {
     // Income to expenses ratio
     if (request.monthlyIncome().compareTo(BigDecimal.ZERO) > 0) {
       BigDecimal ratio =
-          request.monthlyExpenses().divide(
-              request.monthlyIncome(), 2, java.math.RoundingMode.HALF_UP);
+          request
+              .monthlyExpenses()
+              .divide(request.monthlyIncome(), 2, java.math.RoundingMode.HALF_UP);
       if (ratio.compareTo(BigDecimal.valueOf(0.3)) < 0) {
         score += 50; // Low debt-to-income ratio
       } else if (ratio.compareTo(BigDecimal.valueOf(0.5)) < 0) {
@@ -163,4 +160,3 @@ public class FinancingService {
     financingRepository.deleteById(id);
   }
 }
-

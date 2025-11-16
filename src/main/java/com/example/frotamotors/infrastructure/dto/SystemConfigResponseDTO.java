@@ -14,4 +14,3 @@ public record SystemConfigResponseDTO(
     String updatedByName,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

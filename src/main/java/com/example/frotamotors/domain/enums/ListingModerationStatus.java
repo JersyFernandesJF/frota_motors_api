@@ -6,4 +6,3 @@ public enum ListingModerationStatus {
   REJECTED,
   EXPIRED
 }
-

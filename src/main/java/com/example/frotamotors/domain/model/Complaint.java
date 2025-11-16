@@ -93,4 +93,3 @@ public class Complaint {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

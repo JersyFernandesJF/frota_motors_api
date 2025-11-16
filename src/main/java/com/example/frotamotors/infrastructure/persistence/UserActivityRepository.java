@@ -11,4 +11,3 @@ import org.springframework.stereotype.Repository;
 public interface UserActivityRepository extends JpaRepository<UserActivity, UUID> {
   Page<UserActivity> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 }
-
