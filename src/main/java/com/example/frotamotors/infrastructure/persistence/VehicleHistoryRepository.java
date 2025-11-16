@@ -11,4 +11,3 @@ import org.springframework.stereotype.Repository;
 public interface VehicleHistoryRepository extends JpaRepository<VehicleHistory, UUID> {
   Page<VehicleHistory> findByVehicleIdOrderByChangedAtDesc(UUID vehicleId, Pageable pageable);
 }
-

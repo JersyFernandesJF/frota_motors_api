@@ -46,4 +46,3 @@ public interface NotificationRepository extends JpaRepository<Alerts, UUID> {
 
   Long countByUserIdAndIsRead(UUID userId, Boolean isRead);
 }
-

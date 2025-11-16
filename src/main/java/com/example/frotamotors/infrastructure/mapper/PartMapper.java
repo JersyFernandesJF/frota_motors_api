@@ -27,9 +27,7 @@ public class PartMapper {
 
     if (part.getMedia() != null && !part.getMedia().isEmpty()) {
       mediaList =
-          part.getMedia().stream()
-              .map(PartMapper::toMediaResponseDTO)
-              .collect(Collectors.toList());
+          part.getMedia().stream().map(PartMapper::toMediaResponseDTO).collect(Collectors.toList());
     }
 
     return new PartResponseDTO(
@@ -74,4 +72,3 @@ public class PartMapper {
     return part;
   }
 }
-

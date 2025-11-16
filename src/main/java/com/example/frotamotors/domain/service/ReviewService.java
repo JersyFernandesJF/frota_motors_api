@@ -95,7 +95,12 @@ public class ReviewService {
 
     Review review =
         ReviewMapper.toEntity(
-            dto, reviewer, reviewedUser, reviewedVehicle, reviewedPart, reviewedAgency,
+            dto,
+            reviewer,
+            reviewedUser,
+            reviewedVehicle,
+            reviewedPart,
+            reviewedAgency,
             reviewedRental);
     return reviewRepository.save(review);
   }
@@ -197,4 +202,3 @@ public class ReviewService {
     return reviewRepository.getReviewCount(type.name(), entityId);
   }
 }
-

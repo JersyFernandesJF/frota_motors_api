@@ -11,4 +11,3 @@ public record MessageResponseDTO(
     String content,
     Boolean isRead,
     LocalDateTime createdAt) {}
-

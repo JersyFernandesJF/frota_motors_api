@@ -13,4 +13,3 @@ public enum VehicleType {
   ATV,
   OTHER
 }
-

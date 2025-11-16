@@ -13,4 +13,3 @@ public record UserMeResponseDTO(
     List<String> permissions,
     String avatar,
     LocalDateTime lastLogin) {}
-

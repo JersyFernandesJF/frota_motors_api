@@ -40,37 +40,39 @@ public class PartController {
       @RequestParam(required = false) String name,
       @RequestParam(required = false) String partNumber,
       @RequestParam(required = false) String oemNumber,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Part> page =
         partService.search(
             category, status, minPrice, maxPrice, brand, name, partNumber, oemNumber, pageable);
 
     List<PartResponseDTO> content =
-        page.getContent().stream()
-            .map(PartMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PartResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<PartResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Part> page = partService.getAll(pageable);
 
     List<PartResponseDTO> content =
-        page.getContent().stream()
-            .map(PartMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PartResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -78,17 +80,18 @@ public class PartController {
   @GetMapping("/seller/{sellerId}")
   public ResponseEntity<PageResponseDTO<PartResponseDTO>> getBySeller(
       @PathVariable UUID sellerId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Part> page = partService.getBySeller(sellerId, pageable);
 
     List<PartResponseDTO> content =
-        page.getContent().stream()
-            .map(PartMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PartResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -96,17 +99,18 @@ public class PartController {
   @GetMapping("/agency/{agencyId}")
   public ResponseEntity<PageResponseDTO<PartResponseDTO>> getByAgency(
       @PathVariable UUID agencyId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Part> page = partService.getByAgency(agencyId, pageable);
 
     List<PartResponseDTO> content =
-        page.getContent().stream()
-            .map(PartMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PartResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -114,17 +118,18 @@ public class PartController {
   @GetMapping("/category/{category}")
   public ResponseEntity<PageResponseDTO<PartResponseDTO>> getByCategory(
       @PathVariable PartCategory category,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Part> page = partService.getByCategory(category, pageable);
 
     List<PartResponseDTO> content =
-        page.getContent().stream()
-            .map(PartMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PartResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -132,17 +137,18 @@ public class PartController {
   @GetMapping("/status/{status}")
   public ResponseEntity<PageResponseDTO<PartResponseDTO>> getByStatus(
       @PathVariable PartStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Part> page = partService.getByStatus(status, pageable);
 
     List<PartResponseDTO> content =
-        page.getContent().stream()
-            .map(PartMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PartResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -172,4 +178,3 @@ public class PartController {
     return ResponseEntity.noContent().build();
   }
 }
-

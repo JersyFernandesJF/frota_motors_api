@@ -26,4 +26,3 @@ public record FinancingResponseDTO(
     LocalDateTime rejectedAt,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

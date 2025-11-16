@@ -61,8 +61,7 @@ public class VehicleMapper {
         vehicle.getUpdatedAt());
   }
 
-  public static Vehicle toEntity(
-      VehicleCreateDTO dto, User owner, Agency agency) {
+  public static Vehicle toEntity(VehicleCreateDTO dto, User owner, Agency agency) {
     Vehicle vehicle = new Vehicle();
     vehicle.setOwner(owner);
     vehicle.setAgency(agency);
@@ -89,4 +88,3 @@ public class VehicleMapper {
     return vehicle;
   }
 }
-

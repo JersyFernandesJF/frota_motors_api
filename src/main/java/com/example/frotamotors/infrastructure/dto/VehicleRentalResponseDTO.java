@@ -30,4 +30,3 @@ public record VehicleRentalResponseDTO(
     Integer mileageAtReturn,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

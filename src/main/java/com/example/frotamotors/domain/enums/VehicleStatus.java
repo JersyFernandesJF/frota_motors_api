@@ -7,4 +7,3 @@ public enum VehicleStatus {
   UNAVAILABLE,
   RESERVED
 }
-

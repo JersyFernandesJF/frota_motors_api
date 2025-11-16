@@ -114,20 +114,16 @@ public class VehicleRentalService {
     existing.setAgency(agency);
     existing.setStartDate(dto.startDate());
     existing.setEndDate(dto.endDate());
-    existing.setDailyRate(
-        java.math.BigDecimal.valueOf(dto.dailyRate()));
+    existing.setDailyRate(java.math.BigDecimal.valueOf(dto.dailyRate()));
     existing.setCurrency(dto.currency());
     existing.setDepositAmount(
-        dto.depositAmount() != null
-            ? java.math.BigDecimal.valueOf(dto.depositAmount())
-            : null);
+        dto.depositAmount() != null ? java.math.BigDecimal.valueOf(dto.depositAmount()) : null);
     existing.setNotes(dto.notes());
     existing.setPickupLocation(dto.pickupLocation());
     existing.setReturnLocation(dto.returnLocation());
 
     // Recalculate total amount
-    long days =
-        java.time.temporal.ChronoUnit.DAYS.between(dto.startDate(), dto.endDate()) + 1;
+    long days = java.time.temporal.ChronoUnit.DAYS.between(dto.startDate(), dto.endDate()) + 1;
     existing.setTotalAmount(existing.getDailyRate().multiply(java.math.BigDecimal.valueOf(days)));
 
     return vehicleRentalRepository.save(existing);
@@ -221,4 +217,3 @@ public class VehicleRentalService {
     return vehicleRentalRepository.findByStatus(status, pageable);
   }
 }
-

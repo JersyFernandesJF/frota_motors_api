@@ -6,4 +6,3 @@ import java.util.UUID;
 
 public record ConversationResponseDTO(
     UUID id, User user1, User user2, LocalDateTime lastMessageAt, LocalDateTime createdAt) {}
-

@@ -54,4 +54,3 @@ public interface FinancingRepository extends JpaRepository<Financing, UUID> {
 
   Page<Financing> findByStatus(FinancingStatus status, Pageable pageable);
 }
-

@@ -34,35 +34,37 @@ public class PurchaseController {
       @RequestParam(required = false) UUID buyerId,
       @RequestParam(required = false) OrderStatus status,
       @RequestParam(required = false) OrderType type,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Purchase> page = purchaseService.search(buyerId, status, type, pageable);
 
     List<PurchaseResponseDTO> content =
-        page.getContent().stream()
-            .map(PurchaseMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PurchaseMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PurchaseResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<PurchaseResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Purchase> page = purchaseService.getAll(pageable);
 
     List<PurchaseResponseDTO> content =
-        page.getContent().stream()
-            .map(PurchaseMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PurchaseMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PurchaseResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -70,17 +72,18 @@ public class PurchaseController {
   @GetMapping("/buyer/{buyerId}")
   public ResponseEntity<PageResponseDTO<PurchaseResponseDTO>> getByBuyer(
       @PathVariable UUID buyerId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Purchase> page = purchaseService.getByBuyer(buyerId, pageable);
 
     List<PurchaseResponseDTO> content =
-        page.getContent().stream()
-            .map(PurchaseMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PurchaseMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PurchaseResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -88,17 +91,18 @@ public class PurchaseController {
   @GetMapping("/status/{status}")
   public ResponseEntity<PageResponseDTO<PurchaseResponseDTO>> getByStatus(
       @PathVariable OrderStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Purchase> page = purchaseService.getByStatus(status, pageable);
 
     List<PurchaseResponseDTO> content =
-        page.getContent().stream()
-            .map(PurchaseMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PurchaseMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PurchaseResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -106,17 +110,18 @@ public class PurchaseController {
   @GetMapping("/type/{type}")
   public ResponseEntity<PageResponseDTO<PurchaseResponseDTO>> getByType(
       @PathVariable OrderType type,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Purchase> page = purchaseService.getByType(type, pageable);
 
     List<PurchaseResponseDTO> content =
-        page.getContent().stream()
-            .map(PurchaseMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PurchaseMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PurchaseResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -160,4 +165,3 @@ public class PurchaseController {
     return ResponseEntity.noContent().build();
   }
 }
-

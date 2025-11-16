@@ -33,8 +33,7 @@ public class PurchaseMapper {
         purchase.getUpdatedAt());
   }
 
-  public static Purchase toEntity(
-      PurchaseCreateDTO dto, User buyer, Vehicle vehicle, Part part) {
+  public static Purchase toEntity(PurchaseCreateDTO dto, User buyer, Vehicle vehicle, Part part) {
     Purchase purchase = new Purchase();
     purchase.setBuyer(buyer);
     purchase.setType(dto.type());
@@ -63,4 +62,3 @@ public class PurchaseMapper {
     return purchase;
   }
 }
-

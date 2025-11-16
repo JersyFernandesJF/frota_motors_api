@@ -51,17 +51,18 @@ public class MessageController {
   @GetMapping("/conversation/{conversationId}")
   public ResponseEntity<PageResponseDTO<MessageResponseDTO>> getMessages(
       @PathVariable UUID conversationId,
-      @PageableDefault(size = 50, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 50,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Message> page = messageService.getMessagesByConversation(conversationId, pageable);
 
     List<MessageResponseDTO> content =
-        page.getContent().stream()
-            .map(MessageMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(MessageMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<MessageResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -69,7 +70,11 @@ public class MessageController {
   @GetMapping("/user/{userId}/conversations")
   public ResponseEntity<PageResponseDTO<ConversationResponseDTO>> getConversations(
       @PathVariable UUID userId,
-      @PageableDefault(size = 20, sort = "lastMessageAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "lastMessageAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Conversation> page = messageService.getConversationsByUser(userId, pageable);
 
     List<ConversationResponseDTO> content =
@@ -85,8 +90,7 @@ public class MessageController {
             .collect(Collectors.toList());
 
     PageResponseDTO<ConversationResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -119,7 +123,8 @@ public class MessageController {
 
   @PostMapping("/block")
   public ResponseEntity<Void> blockUser(
-      @RequestParam UUID blockedId, @Valid @RequestBody(required = false) UserBlockRequestDTO request) {
+      @RequestParam UUID blockedId,
+      @Valid @RequestBody(required = false) UserBlockRequestDTO request) {
     UUID blockerId = SecurityUtils.getCurrentUserId();
     String reason = request != null ? request.reason() : null;
     messageService.blockUser(blockerId, blockedId, reason);
@@ -136,7 +141,11 @@ public class MessageController {
   @GetMapping("/admin/conversations")
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<PageResponseDTO<ConversationResponseDTO>> getAllConversations(
-      @PageableDefault(size = 20, sort = "lastMessageAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "lastMessageAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Conversation> page = messageService.getAllConversations(pageable);
 
     List<ConversationResponseDTO> content =
@@ -152,8 +161,7 @@ public class MessageController {
             .collect(Collectors.toList());
 
     PageResponseDTO<ConversationResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -161,17 +169,18 @@ public class MessageController {
   @GetMapping("/admin/messages")
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<PageResponseDTO<MessageResponseDTO>> getAllMessages(
-      @PageableDefault(size = 50, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 50,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Message> page = messageService.getAllMessages(pageable);
 
     List<MessageResponseDTO> content =
-        page.getContent().stream()
-            .map(MessageMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(MessageMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<MessageResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -184,4 +193,3 @@ public class MessageController {
     return ResponseEntity.ok(java.util.Map.of("message", result));
   }
 }
-

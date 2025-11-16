@@ -38,4 +38,3 @@ public class VehicleHistory {
   @Column(nullable = false, updatable = false)
   private LocalDateTime changedAt;
 }
-

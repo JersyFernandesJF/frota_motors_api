@@ -10,4 +10,3 @@ public record InspectionCreateDTO(
     LocalDateTime scheduledAt,
     String location,
     String notes) {}
-

@@ -68,8 +68,7 @@ public class SystemConfigService {
       if (config.getValue() == null || config.getValue().isEmpty()) {
         return new HashMap<>();
       }
-      return objectMapper.readValue(
-          config.getValue(), new TypeReference<Map<String, Object>>() {});
+      return objectMapper.readValue(config.getValue(), new TypeReference<Map<String, Object>>() {});
     } catch (Exception e) {
       return new HashMap<>();
     }
@@ -102,4 +101,3 @@ public class SystemConfigService {
     return configRepository.save(config);
   }
 }
-

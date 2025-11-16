@@ -20,4 +20,3 @@ public record AuditLogResponseDTO(
     Integer statusCode,
     String errorMessage,
     LocalDateTime createdAt) {}
-

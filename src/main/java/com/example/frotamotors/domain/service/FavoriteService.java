@@ -37,29 +37,33 @@ public class FavoriteService {
 
     // Validate that exactly one entity is provided
     int entityCount = 0;
-    var property = dto.propertyId() != null
-        ? propertyRepository
-            .findById(dto.propertyId())
-            .orElseThrow(() -> new EntityNotFoundException("Property not found"))
-        : null;
+    var property =
+        dto.propertyId() != null
+            ? propertyRepository
+                .findById(dto.propertyId())
+                .orElseThrow(() -> new EntityNotFoundException("Property not found"))
+            : null;
     if (property != null) entityCount++;
 
-    var vehicle = dto.vehicleId() != null
-        ? vehicleRepository
-            .findById(dto.vehicleId())
-            .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"))
-        : null;
+    var vehicle =
+        dto.vehicleId() != null
+            ? vehicleRepository
+                .findById(dto.vehicleId())
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"))
+            : null;
     if (vehicle != null) entityCount++;
 
-    var part = dto.partId() != null
-        ? partRepository
-            .findById(dto.partId())
-            .orElseThrow(() -> new EntityNotFoundException("Part not found"))
-        : null;
+    var part =
+        dto.partId() != null
+            ? partRepository
+                .findById(dto.partId())
+                .orElseThrow(() -> new EntityNotFoundException("Part not found"))
+            : null;
     if (part != null) entityCount++;
 
     if (entityCount != 1) {
-      throw new IllegalArgumentException("Exactly one entity (property, vehicle, or part) must be provided");
+      throw new IllegalArgumentException(
+          "Exactly one entity (property, vehicle, or part) must be provided");
     }
 
     Favorite favorite = FavoriteMapper.toEntity(dto, user, property, vehicle, part);

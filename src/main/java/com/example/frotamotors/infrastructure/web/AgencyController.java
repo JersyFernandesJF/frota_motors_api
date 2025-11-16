@@ -27,17 +27,18 @@ public class AgencyController {
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<AgencyResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Agency> page = agencyService.getAllAgencies(pageable);
 
     List<AgencyResponseDTO> content =
-        page.getContent().stream()
-            .map(AgencyMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(AgencyMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<AgencyResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }

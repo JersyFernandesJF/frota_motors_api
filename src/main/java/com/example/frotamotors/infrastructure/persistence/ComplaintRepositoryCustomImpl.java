@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ComplaintRepositoryCustomImpl implements ComplaintRepositoryCustom {
 
-  @PersistenceContext
-  private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
   @Override
   public Double getAverageResponseTime(ComplaintStatus status) {
@@ -25,4 +24,3 @@ public class ComplaintRepositoryCustomImpl implements ComplaintRepositoryCustom 
     return result != null ? ((Number) result).doubleValue() : null;
   }
 }
-

@@ -5,4 +5,3 @@ import java.util.UUID;
 
 public record InspectionUpdateDTO(
     LocalDateTime scheduledAt, String location, String notes, UUID inspectorId) {}
-

@@ -11,4 +11,3 @@ public record VehicleHistoryResponseDTO(
     UUID changedById,
     String changedByName,
     LocalDateTime changedAt) {}
-

@@ -17,4 +17,3 @@ public record VehicleRentalCreateDTO(
     String notes,
     String pickupLocation,
     String returnLocation) {}
-

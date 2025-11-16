@@ -24,4 +24,3 @@ public record AuthResponseDTO(
     this(token, refreshToken, userId, email, name, role, null);
   }
 }
-

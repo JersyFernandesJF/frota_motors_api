@@ -16,4 +16,3 @@ public record NotificationResponseDTO(
     UUID relatedEntityId,
     String actionUrl,
     LocalDateTime createdAt) {}
-

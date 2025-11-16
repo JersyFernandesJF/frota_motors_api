@@ -69,4 +69,3 @@ public interface VehicleRentalRepository extends JpaRepository<VehicleRental, UU
       @Param("startDate") LocalDate startDate,
       @Param("endDate") LocalDate endDate);
 }
-

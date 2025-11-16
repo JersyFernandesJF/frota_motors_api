@@ -62,4 +62,3 @@ public class Review {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

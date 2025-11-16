@@ -22,4 +22,3 @@ public record ReviewResponseDTO(
     String comment,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

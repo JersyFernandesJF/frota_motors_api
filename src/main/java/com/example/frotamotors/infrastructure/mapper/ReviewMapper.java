@@ -50,4 +50,3 @@ public class ReviewMapper {
     return review;
   }
 }
-

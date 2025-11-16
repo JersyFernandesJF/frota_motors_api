@@ -235,13 +235,7 @@ public class VehicleService {
     Vehicle saved = vehicleRepository.save(vehicle);
 
     // Log history
-    logVehicleHistory(
-        saved.getId(),
-        "rejected",
-        "pending",
-        "rejected",
-        adminId,
-        reason);
+    logVehicleHistory(saved.getId(), "rejected", "pending", "rejected", adminId, reason);
 
     // TODO: Notify seller if requested
     if (notifySeller != null && notifySeller) {
@@ -282,4 +276,3 @@ public class VehicleService {
     }
   }
 }
-

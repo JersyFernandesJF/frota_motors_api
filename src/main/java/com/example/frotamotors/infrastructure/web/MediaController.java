@@ -30,17 +30,18 @@ public class MediaController {
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<MediaResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Media> page = mediaService.getAll(pageable);
 
     List<MediaResponseDTO> content =
-        page.getContent().stream()
-            .map(MediaMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(MediaMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<MediaResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }

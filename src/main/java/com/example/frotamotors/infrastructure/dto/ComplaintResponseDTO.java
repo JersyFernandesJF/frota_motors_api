@@ -25,4 +25,3 @@ public record ComplaintResponseDTO(
     String adminNotes,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

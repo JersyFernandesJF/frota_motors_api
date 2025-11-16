@@ -94,4 +94,3 @@ public class NotificationService {
     return notificationRepository.countByUserIdAndIsRead(userId, false);
   }
 }
-

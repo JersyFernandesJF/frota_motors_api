@@ -74,4 +74,3 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
 
   Page<Part> findByStatus(PartStatus status, Pageable pageable);
 }
-

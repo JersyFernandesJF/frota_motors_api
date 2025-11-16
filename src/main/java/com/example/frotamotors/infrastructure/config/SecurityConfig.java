@@ -1,5 +1,8 @@
 package com.example.frotamotors.infrastructure.config;
 
+import com.example.frotamotors.infrastructure.security.JwtAuthenticationFilter;
+import com.example.frotamotors.infrastructure.security.RateLimitingFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,11 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import com.example.frotamotors.infrastructure.security.JwtAuthenticationFilter;
-import com.example.frotamotors.infrastructure.security.RateLimitingFilter;
-
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -39,20 +37,14 @@ public class SecurityConfig {
             headers ->
                 headers
                     .httpStrictTransportSecurity(
-                        hstsConfig ->
-                            hstsConfig
-                                .maxAgeInSeconds(31536000)
-                                .includeSubDomains(true))
+                        hstsConfig -> hstsConfig.maxAgeInSeconds(31536000).includeSubDomains(true))
                     .contentTypeOptions(contentTypeOptions -> {})
                     .frameOptions(frameOptions -> frameOptions.deny()))
         .authorizeHttpRequests(
             auth ->
                 auth
                     // Swagger e documentação
-                    .requestMatchers(
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html")
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
                     // Autenticação
                     .requestMatchers("/api/v1/auth/**")

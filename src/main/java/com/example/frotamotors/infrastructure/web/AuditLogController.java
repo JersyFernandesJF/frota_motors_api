@@ -39,9 +39,15 @@ public class AuditLogController {
       @RequestParam(required = false) UUID userId,
       @RequestParam(required = false) String action,
       @RequestParam(required = false) String entityType,
-      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-      @PageableDefault(size = 50, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime startDate,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime endDate,
+      @PageableDefault(
+              size = 50,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<AuditLog> page =
         auditLogService.search(userId, action, entityType, startDate, endDate, pageable);
 
@@ -100,10 +106,8 @@ public class AuditLogController {
             .collect(Collectors.toList());
 
     PageResponseDTO<AuditLogResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 }
-

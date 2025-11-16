@@ -41,38 +41,34 @@ public class DashboardService {
   public DashboardStatsDTO getStats() {
     Long totalUsers = userRepository.count();
     Long totalListings = vehicleRepository.count();
-    
-    Long pendingApprovals = vehicleRepository.countByModerationStatus(ListingModerationStatus.PENDING);
-    
-    Long pendingReports =
-        complaintRepository.countByStatus(ComplaintStatus.PENDING);
-    
+
+    Long pendingApprovals =
+        vehicleRepository.countByModerationStatus(ListingModerationStatus.PENDING);
+
+    Long pendingReports = complaintRepository.countByStatus(ComplaintStatus.PENDING);
+
     Long totalMessages = messageRepository.count();
-    
+
     // New users this month
     LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-    Long newUsersThisMonth =
-        userRepository.countByCreatedAtAfter(startOfMonth.atStartOfDay());
-    
+    Long newUsersThisMonth = userRepository.countByCreatedAtAfter(startOfMonth.atStartOfDay());
+
     // Conversion rate (completed payments / total payments)
     Long totalPayments = paymentRepository.count();
-    Long completedPayments =
-        paymentRepository.countByStatus(PaymentStatus.COMPLETED);
+    Long completedPayments = paymentRepository.countByStatus(PaymentStatus.COMPLETED);
     Double conversionRate = 0.0;
     if (totalPayments > 0) {
+      conversionRate = (completedPayments.doubleValue() / totalPayments.doubleValue()) * 100.0;
       conversionRate =
-          (completedPayments.doubleValue() / totalPayments.doubleValue()) * 100.0;
-      conversionRate = BigDecimal.valueOf(conversionRate)
-          .setScale(2, RoundingMode.HALF_UP)
-          .doubleValue();
+          BigDecimal.valueOf(conversionRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
-    
+
     // Total revenue (sum of completed payments)
     BigDecimal totalRevenue = paymentRepository.sumAmountByStatus(PaymentStatus.COMPLETED);
     if (totalRevenue == null) {
       totalRevenue = BigDecimal.ZERO;
     }
-    
+
     // Trends (simplified - comparing this month vs last month)
     LocalDate startOfLastMonth = startOfMonth.minusMonths(1);
     LocalDate endOfLastMonth = startOfMonth.minusDays(1);
@@ -80,7 +76,7 @@ public class DashboardService {
     Long usersLastMonth =
         userRepository.countByCreatedAtBetween(
             startOfLastMonth.atStartOfDay(), endOfLastMonth.atTime(23, 59, 59));
-    
+
     Double usersTrendValue = 0.0;
     Boolean usersTrendPositive = true;
     if (usersLastMonth > 0) {
@@ -91,17 +87,14 @@ public class DashboardService {
       usersTrendPositive = usersTrendValue >= 0;
       usersTrendValue = Math.abs(usersTrendValue);
       usersTrendValue =
-          BigDecimal.valueOf(usersTrendValue)
-              .setScale(2, RoundingMode.HALF_UP)
-              .doubleValue();
+          BigDecimal.valueOf(usersTrendValue).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
-    
-    Long listingsThisMonth =
-        vehicleRepository.countByCreatedAtAfter(startOfMonth.atStartOfDay());
+
+    Long listingsThisMonth = vehicleRepository.countByCreatedAtAfter(startOfMonth.atStartOfDay());
     Long listingsLastMonth =
         vehicleRepository.countByCreatedAtBetween(
             startOfLastMonth.atStartOfDay(), endOfLastMonth.atTime(23, 59, 59));
-    
+
     Double listingsTrendValue = 0.0;
     Boolean listingsTrendPositive = true;
     if (listingsLastMonth > 0) {
@@ -112,11 +105,9 @@ public class DashboardService {
       listingsTrendPositive = listingsTrendValue >= 0;
       listingsTrendValue = Math.abs(listingsTrendValue);
       listingsTrendValue =
-          BigDecimal.valueOf(listingsTrendValue)
-              .setScale(2, RoundingMode.HALF_UP)
-              .doubleValue();
+          BigDecimal.valueOf(listingsTrendValue).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
-    
+
     return new DashboardStatsDTO(
         totalUsers,
         totalListings,
@@ -133,7 +124,7 @@ public class DashboardService {
   public List<ChartDataDTO> getListingsGrowth(String period) {
     LocalDate endDate = LocalDate.now();
     LocalDate startDate;
-    
+
     switch (period) {
       case "7d":
         startDate = endDate.minusDays(7);
@@ -150,20 +141,20 @@ public class DashboardService {
       default:
         startDate = endDate.minusDays(30);
     }
-    
+
     List<ChartDataDTO> data = new ArrayList<>();
     LocalDate currentDate = startDate;
-    
+
     while (!currentDate.isAfter(endDate)) {
       LocalDateTime startOfDay = currentDate.atStartOfDay();
       LocalDateTime endOfDay = currentDate.atTime(23, 59, 59);
-      
+
       Long count = vehicleRepository.countByCreatedAtBetween(startOfDay, endOfDay);
       data.add(new ChartDataDTO(currentDate.format(DateTimeFormatter.ISO_DATE), count));
-      
+
       currentDate = currentDate.plusDays(1);
     }
-    
+
     return data;
   }
 
@@ -171,30 +162,26 @@ public class DashboardService {
     // Get distribution by vehicle type
     List<Object[]> results = vehicleRepository.countByType();
     List<CategoryDistributionDTO> distribution = new ArrayList<>();
-    
+
     String[] colors = {"#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#ef4444"};
     int colorIndex = 0;
-    
+
     for (Object[] result : results) {
-      com.example.frotamotors.domain.enums.VehicleType type = 
+      com.example.frotamotors.domain.enums.VehicleType type =
           (com.example.frotamotors.domain.enums.VehicleType) result[0];
       Long count = ((Number) result[1]).longValue();
       distribution.add(
-          new CategoryDistributionDTO(
-              type.name(), count, colors[colorIndex % colors.length]));
+          new CategoryDistributionDTO(type.name(), count, colors[colorIndex % colors.length]));
       colorIndex++;
     }
-    
+
     return distribution;
   }
 
   public List<TopBrandDTO> getTopBrands() {
     List<Object[]> results = vehicleRepository.findTopBrands();
     return results.stream()
-        .map(
-            result ->
-                new TopBrandDTO(
-                    (String) result[0], ((Number) result[1]).longValue()))
+        .map(result -> new TopBrandDTO((String) result[0], ((Number) result[1]).longValue()))
         .collect(Collectors.toList());
   }
 
@@ -205,18 +192,17 @@ public class DashboardService {
     } else {
       targetDate = LocalDate.now();
     }
-    
+
     List<UserActivityDTO> activity = new ArrayList<>();
-    
+
     for (int hour = 0; hour < 24; hour++) {
       LocalDateTime startOfHour = targetDate.atTime(hour, 0);
       LocalDateTime endOfHour = targetDate.atTime(hour, 59, 59);
-      
+
       Long count = userRepository.countByCreatedAtBetween(startOfHour, endOfHour);
       activity.add(new UserActivityDTO(String.format("%02d:00", hour), count));
     }
-    
+
     return activity;
   }
 }
-

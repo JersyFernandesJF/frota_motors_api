@@ -6,6 +6,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Value;
+
 // import org.springframework.stereotype.Component;
 
 // @Component - Commented out to prevent auto-instantiation when OAuth2 is not configured
@@ -30,7 +31,7 @@ public class GoogleTokenVerifier {
     }
 
     GoogleIdToken.Payload payload = idToken.getPayload();
-    
+
     // Verify issuer
     String issuer = payload.getIssuer();
     if (!issuer.equals("https://accounts.google.com") && !issuer.equals("accounts.google.com")) {
@@ -40,4 +41,3 @@ public class GoogleTokenVerifier {
     return payload;
   }
 }
-

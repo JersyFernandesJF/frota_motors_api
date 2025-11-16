@@ -85,4 +85,3 @@ public class Part {
 
   @UpdateTimestamp private LocalDateTime updatedAt;
 }
-

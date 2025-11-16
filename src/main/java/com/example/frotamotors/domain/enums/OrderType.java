@@ -4,4 +4,3 @@ public enum OrderType {
   VEHICLE,
   PART
 }
-

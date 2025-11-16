@@ -13,4 +13,3 @@ public record NotificationCreateDTO(
     String relatedEntityType,
     UUID relatedEntityId,
     String actionUrl) {}
-

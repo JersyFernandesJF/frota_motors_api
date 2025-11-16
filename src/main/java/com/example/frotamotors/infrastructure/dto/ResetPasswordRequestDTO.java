@@ -5,4 +5,3 @@ import jakarta.validation.constraints.NotBlank;
 
 public record ResetPasswordRequestDTO(
     @NotBlank String token, @NotBlank @StrongPassword String newPassword) {}
-

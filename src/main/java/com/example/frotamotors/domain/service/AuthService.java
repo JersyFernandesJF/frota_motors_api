@@ -43,9 +43,11 @@ public class AuthService {
 
   @Autowired private PasswordResetTokenRepository passwordResetTokenRepository;
 
-  @Autowired(required = false) private GoogleTokenVerifier googleTokenVerifier;
+  @Autowired(required = false)
+  private GoogleTokenVerifier googleTokenVerifier;
 
-  @Autowired(required = false) private AppleTokenVerifier appleTokenVerifier;
+  @Autowired(required = false)
+  private AppleTokenVerifier appleTokenVerifier;
 
   @Value("${jwt.refresh-expiration:604800000}") // 7 days default
   private long refreshTokenExpiration;
@@ -61,12 +63,12 @@ public class AuthService {
     try {
       // Verify Google ID token
       GoogleIdToken.Payload payload = googleTokenVerifier.verifyToken(idToken);
-      
+
       String googleId = payload.getSubject();
       String email = payload.getEmail();
       String name = (String) payload.get("name");
       String imageUrl = (String) payload.get("picture");
-      
+
       log.info("Google authentication successful for user: {}", email);
 
       Optional<User> existingUser = userRepository.findByGoogleId(googleId);
@@ -106,13 +108,13 @@ public class AuthService {
       // Update last login
       user.setLastLogin(LocalDateTime.now());
       user = userRepository.save(user);
-      
+
       // Ensure permissions are set
       if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
         user.setPermissions(getDefaultPermissions(user.getRole()));
         user = userRepository.save(user);
       }
-      
+
       String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
       String refreshToken = createRefreshToken(user);
 
@@ -138,11 +140,11 @@ public class AuthService {
     try {
       // Verify Apple ID token
       JWTClaimsSet claimsSet = appleTokenVerifier.verifyToken(idToken);
-      
+
       String appleId = claimsSet.getSubject();
       String email = (String) claimsSet.getClaim("email");
       String name = (String) claimsSet.getClaim("name");
-      
+
       log.info("Apple authentication successful for user: {}", email);
 
       Optional<User> existingUser = userRepository.findByAppleId(appleId);
@@ -174,13 +176,13 @@ public class AuthService {
       // Update last login
       user.setLastLogin(LocalDateTime.now());
       user = userRepository.save(user);
-      
+
       // Ensure permissions are set
       if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
         user.setPermissions(getDefaultPermissions(user.getRole()));
         user = userRepository.save(user);
       }
-      
+
       String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
       String refreshToken = createRefreshToken(user);
 
@@ -203,10 +205,11 @@ public class AuthService {
       User user =
           userRepository
               .findByEmail(request.email())
-              .orElseThrow(() -> {
-                log.warn("Login attempt with non-existent email: {}", request.email());
-                return new BadCredentialsException("Invalid email or password");
-              });
+              .orElseThrow(
+                  () -> {
+                    log.warn("Login attempt with non-existent email: {}", request.email());
+                    return new BadCredentialsException("Invalid email or password");
+                  });
 
       // Check if user has a password (OAuth users might not have one)
       if (user.getPasswordHash() == null || user.getPasswordHash().isEmpty()) {
@@ -221,17 +224,17 @@ public class AuthService {
       }
 
       log.info("Successful login for user: {}", request.email());
-      
+
       // Update last login
       user.setLastLogin(LocalDateTime.now());
       user = userRepository.save(user);
-      
+
       // Ensure permissions are set
       if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
         user.setPermissions(getDefaultPermissions(user.getRole()));
         user = userRepository.save(user);
       }
-      
+
       String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
       String refreshToken = createRefreshToken(user);
 
@@ -279,13 +282,13 @@ public class AuthService {
     }
 
     User user = refreshToken.getUser();
-    
+
     // Ensure permissions are set
     if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
       user.setPermissions(getDefaultPermissions(user.getRole()));
       user = userRepository.save(user);
     }
-    
+
     String newAccessToken = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
     String newRefreshToken = createRefreshToken(user);
 
@@ -310,11 +313,13 @@ public class AuthService {
       User user =
           userRepository
               .findByEmail(request.email())
-              .orElseThrow(() -> {
-                // Don't reveal if email exists for security
-                log.warn("Password reset requested for non-existent email: {}", request.email());
-                return new jakarta.persistence.EntityNotFoundException("User not found");
-              });
+              .orElseThrow(
+                  () -> {
+                    // Don't reveal if email exists for security
+                    log.warn(
+                        "Password reset requested for non-existent email: {}", request.email());
+                    return new jakarta.persistence.EntityNotFoundException("User not found");
+                  });
 
       log.info("Password reset requested for user: {}", request.email());
 
@@ -346,10 +351,11 @@ public class AuthService {
     PasswordResetToken resetToken =
         passwordResetTokenRepository
             .findByTokenAndUsedFalse(request.token())
-            .orElseThrow(() -> {
-              log.warn("Password reset attempt with invalid token");
-              return new BadCredentialsException("Invalid or expired reset token");
-            });
+            .orElseThrow(
+                () -> {
+                  log.warn("Password reset attempt with invalid token");
+                  return new BadCredentialsException("Invalid or expired reset token");
+                });
 
     if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
       log.warn("Password reset attempt with expired token");
@@ -363,7 +369,7 @@ public class AuthService {
 
     User user = resetToken.getUser();
     log.info("Password reset successful for user: {}", user.getEmail());
-    
+
     String encodedPassword = passwordEncoder.encode(request.newPassword());
     user.setPasswordHash(encodedPassword);
     userRepository.save(user);
@@ -411,4 +417,3 @@ public class AuthService {
     return permissions;
   }
 }
-

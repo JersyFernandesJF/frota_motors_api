@@ -9,7 +9,9 @@ import org.hibernate.annotations.CreationTimestamp;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_blocks", uniqueConstraints = @UniqueConstraint(columnNames = {"blocker_id", "blocked_id"}))
+@Table(
+    name = "user_blocks",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"blocker_id", "blocked_id"}))
 @NoArgsConstructor
 public class UserBlock {
   @Id
@@ -32,4 +34,3 @@ public class UserBlock {
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }
-

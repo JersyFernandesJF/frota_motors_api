@@ -8,4 +8,3 @@ public record CreditScoreSimulationDTO(
     Integer existingLoans,
     BigDecimal existingLoanAmount,
     Integer creditHistoryMonths) {}
-

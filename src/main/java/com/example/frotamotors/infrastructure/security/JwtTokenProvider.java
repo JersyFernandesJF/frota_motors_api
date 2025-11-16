@@ -26,19 +26,19 @@ public class JwtTokenProvider {
     if (secret == null || secret.isEmpty()) {
       secret = jwtSecret;
     }
-    
+
     if (secret == null || secret.isEmpty()) {
       throw new IllegalStateException(
           "JWT secret must be configured via JWT_SECRET environment variable or jwt.secret property");
     }
-    
+
     // Validate minimum key length (256 bits = 32 bytes)
     byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
     if (keyBytes.length < 32) {
       throw new IllegalStateException(
           "JWT secret must be at least 256 bits (32 bytes) long for security");
     }
-    
+
     return Keys.hmacShaKeyFor(keyBytes);
   }
 
@@ -74,11 +74,7 @@ public class JwtTokenProvider {
   }
 
   private Claims getAllClaimsFromToken(String token) {
-    return Jwts.parser()
-        .verifyWith(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload();
+    return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
   }
 
   public Boolean validateToken(String token) {
@@ -90,4 +86,3 @@ public class JwtTokenProvider {
     }
   }
 }
-

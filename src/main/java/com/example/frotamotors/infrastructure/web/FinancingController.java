@@ -47,17 +47,18 @@ public class FinancingController {
   @GetMapping
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<PageResponseDTO<FinancingResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Financing> page = financingService.getAll(pageable);
 
     List<FinancingResponseDTO> content =
-        page.getContent().stream()
-            .map(FinancingMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(FinancingMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<FinancingResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -68,18 +69,18 @@ public class FinancingController {
       @RequestParam(required = false) UUID sellerId,
       @RequestParam(required = false) UUID vehicleId,
       @RequestParam(required = false) FinancingStatus status,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
-    Page<Financing> page =
-        financingService.search(buyerId, sellerId, vehicleId, status, pageable);
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
+    Page<Financing> page = financingService.search(buyerId, sellerId, vehicleId, status, pageable);
 
     List<FinancingResponseDTO> content =
-        page.getContent().stream()
-            .map(FinancingMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(FinancingMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<FinancingResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -121,4 +122,3 @@ public class FinancingController {
     return ResponseEntity.noContent().build();
   }
 }
-

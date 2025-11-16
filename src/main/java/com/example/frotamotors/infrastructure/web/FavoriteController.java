@@ -27,17 +27,18 @@ public class FavoriteController {
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<FavoriteResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Favorite> page = favoriteService.getAllFavorites(pageable);
 
     List<FavoriteResponseDTO> content =
-        page.getContent().stream()
-            .map(FavoriteMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(FavoriteMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<FavoriteResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
@@ -45,17 +46,18 @@ public class FavoriteController {
   @GetMapping("/user/{userId}")
   public ResponseEntity<PageResponseDTO<FavoriteResponseDTO>> getByUser(
       @PathVariable UUID userId,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Favorite> page = favoriteService.getFavoritesByUser(userId, pageable);
 
     List<FavoriteResponseDTO> content =
-        page.getContent().stream()
-            .map(FavoriteMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(FavoriteMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<FavoriteResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }

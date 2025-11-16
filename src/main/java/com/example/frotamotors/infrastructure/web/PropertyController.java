@@ -35,36 +35,38 @@ public class PropertyController {
       @RequestParam(required = false) Integer rooms,
       @RequestParam(required = false) Integer floors,
       @RequestParam(required = false) Integer year,
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
 
     Page<Property> page =
         propertyService.search(minArea, maxArea, types, bathrooms, rooms, floors, year, pageable);
 
     List<PropertyResponseDTO> content =
-        page.getContent().stream()
-            .map(PropertyMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PropertyMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PropertyResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<PageResponseDTO<PropertyResponseDTO>> getAll(
-      @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(
+              size = 20,
+              sort = "createdAt",
+              direction = org.springframework.data.domain.Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Property> page = propertyService.getAll(pageable);
 
     List<PropertyResponseDTO> content =
-        page.getContent().stream()
-            .map(PropertyMapper::toResponse)
-            .collect(Collectors.toList());
+        page.getContent().stream().map(PropertyMapper::toResponse).collect(Collectors.toList());
 
     PageResponseDTO<PropertyResponseDTO> response =
-        PageResponseDTO.of(
-            content, page.getNumber(), page.getSize(), page.getTotalElements());
+        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }

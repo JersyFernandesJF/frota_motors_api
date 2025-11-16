@@ -12,4 +12,3 @@ public record PurchaseCreateDTO(
     @NotNull Integer quantity,
     String shippingAddress,
     String notes) {}
-

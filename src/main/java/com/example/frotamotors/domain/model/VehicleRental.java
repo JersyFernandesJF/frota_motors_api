@@ -82,4 +82,3 @@ public class VehicleRental {
 
   @UpdateTimestamp private LocalDateTime updatedAt;
 }
-

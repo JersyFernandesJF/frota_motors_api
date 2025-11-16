@@ -29,4 +29,3 @@ public record VehicleCreateDTO(
     Integer numberOfSeats,
     Integer previousOwners,
     Boolean accidentHistory) {}
-

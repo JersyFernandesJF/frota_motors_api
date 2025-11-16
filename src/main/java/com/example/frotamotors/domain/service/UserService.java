@@ -81,8 +81,7 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public Page<User> getAllUsers(
-      Pageable pageable, Role role, UserStatus status, String search) {
+  public Page<User> getAllUsers(Pageable pageable, Role role, UserStatus status, String search) {
     Specification<User> spec = (root, query, cb) -> cb.conjunction();
 
     if (role != null) {
@@ -112,8 +111,7 @@ public class UserService {
     User user =
         userRepository
             .findById(id)
-            .orElseThrow(
-                () -> new jakarta.persistence.EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
 
     user.setStatus(UserStatus.SUSPENDED);
 
@@ -155,8 +153,7 @@ public class UserService {
     User user =
         userRepository
             .findById(id)
-            .orElseThrow(
-                () -> new jakarta.persistence.EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
 
     user.setStatus(UserStatus.BANNED);
     user.setBannedAt(LocalDateTime.now());
@@ -187,8 +184,7 @@ public class UserService {
     User user =
         userRepository
             .findById(id)
-            .orElseThrow(
-                () -> new jakarta.persistence.EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
 
     user.setStatus(UserStatus.ACTIVE);
     user.setSuspendedUntil(null);
@@ -199,12 +195,7 @@ public class UserService {
 
     // Log activity
     logUserActivity(
-        saved.getId(),
-        "user_reactivated",
-        "User reactivated",
-        "user",
-        saved.getId(),
-        null);
+        saved.getId(), "user_reactivated", "User reactivated", "user", saved.getId(), null);
 
     return saved;
   }
@@ -213,8 +204,7 @@ public class UserService {
     User user =
         userRepository
             .findById(id)
-            .orElseThrow(
-                () -> new jakarta.persistence.EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
 
     // TODO: Implement email sending via EmailService
     // For now, just log the activity

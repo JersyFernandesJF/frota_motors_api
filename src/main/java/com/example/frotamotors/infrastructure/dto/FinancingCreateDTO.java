@@ -11,4 +11,3 @@ public record FinancingCreateDTO(
     BigDecimal downPayment,
     BigDecimal interestRate,
     Integer loanTermMonths) {}
-

@@ -35,4 +35,3 @@ public class Message {
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }
-
