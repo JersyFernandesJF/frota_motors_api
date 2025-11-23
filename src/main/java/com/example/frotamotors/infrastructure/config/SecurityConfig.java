@@ -34,41 +34,40 @@ public class SecurityConfig {
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(
-            headers ->
-                headers
-                    .httpStrictTransportSecurity(
-                        hstsConfig -> hstsConfig.maxAgeInSeconds(31536000).includeSubDomains(true))
-                    .contentTypeOptions(contentTypeOptions -> {})
-                    .frameOptions(frameOptions -> frameOptions.deny()))
+            headers -> headers
+                .httpStrictTransportSecurity(
+                    hstsConfig -> hstsConfig.maxAgeInSeconds(31536000).includeSubDomains(true))
+                .contentTypeOptions(contentTypeOptions -> {
+                })
+                .frameOptions(frameOptions -> frameOptions.deny()))
         .authorizeHttpRequests(
-            auth ->
-                auth
-                    // Swagger e documentação
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                    .permitAll()
-                    // Autenticação
-                    .requestMatchers("/api/v1/auth/**")
-                    .permitAll()
-                    // Uploads e mídia pública
-                    .requestMatchers("/uploads/**", "/api/v1/media/**")
-                    .permitAll()
-                    // Endpoints GET públicos (listagem, busca, detalhes)
-                    .requestMatchers(
-                        HttpMethod.GET,
-                        "/api/v1/vehicles/**",
-                        "/api/v1/properties/**",
-                        "/api/v1/parts/**",
-                        "/api/v1/agencies/**",
-                        "/api/v1/reviews/**",
-                        "/api/v1/search/**",
-                        "/api/v1/locations/**")
-                    .permitAll()
-                    // Endpoints específicos com roles
-                    .requestMatchers("/api/v1/users/**", "/api/v1/complaints/**")
-                    .hasAnyRole("ADMIN", "BUYER", "OWNER", "AGENT")
-                    // Demais endpoints requerem autenticação
-                    .anyRequest()
-                    .authenticated())
+            auth -> auth
+                // Swagger e documentação
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                .permitAll()
+                // Autenticação
+                .requestMatchers("/api/v1/auth/**")
+                .permitAll()
+                // Uploads e mídia pública
+                .requestMatchers("/uploads/**", "/api/v1/media/**")
+                .permitAll()
+                // Endpoints GET públicos (listagem, busca, detalhes)
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/api/v1/vehicles/**",
+                    "/api/v1/properties/**",
+                    "/api/v1/parts/**",
+                    "/api/v1/agencies/**",
+                    "/api/v1/reviews/**",
+                    "/api/v1/search/**",
+                    "/api/v1/locations/**")
+                .permitAll()
+                // Endpoints específicos com roles
+                .requestMatchers("/api/v1/users/**", "/api/v1/complaints/**")
+                .hasAnyRole("ADMIN", "BUYER", "OWNER", "AGENT")
+                // Demais endpoints requerem autenticação
+                .anyRequest()
+                .authenticated())
         .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
@@ -79,20 +78,8 @@ public class SecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowCredentials(true);
 
-    // Get allowed origins from environment variable or use default
-    String allowedOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
-    if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-      for (String origin : allowedOrigins.split(",")) {
-        configuration.addAllowedOrigin(origin.trim());
-      }
-    } else {
-      // Default: allow localhost for development and production domains
-      configuration.addAllowedOrigin("http://localhost:3000");
-      configuration.addAllowedOrigin("http://localhost:8080");
-      configuration.addAllowedOrigin("http://localhost:9090");
-      configuration.addAllowedOrigin("https://api.frotamotors.com");
-      configuration.addAllowedOrigin("http://api.frotamotors.com");
-    }
+    // Allow all origins using pattern to support credentials
+    configuration.addAllowedOriginPattern("*");
 
     configuration.addAllowedHeader("*");
     configuration.addAllowedMethod("*");
