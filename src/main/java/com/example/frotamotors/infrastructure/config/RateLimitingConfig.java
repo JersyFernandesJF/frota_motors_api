@@ -2,7 +2,6 @@ package com.example.frotamotors.infrastructure.config;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +15,7 @@ public class RateLimitingConfig {
   @Bean(name = "authRateLimiter")
   public Bucket authRateLimiter() {
     return Bucket.builder()
-        .addLimit(Bandwidth.classic(5, Refill.intervally(5, Duration.ofMinutes(1))))
+        .addLimit(Bandwidth.simple(5, Duration.ofMinutes(1)))
         .build();
   }
 
@@ -24,7 +23,7 @@ public class RateLimitingConfig {
   @Bean(name = "apiRateLimiter")
   public Bucket apiRateLimiter() {
     return Bucket.builder()
-        .addLimit(Bandwidth.classic(20, Refill.intervally(20, Duration.ofMinutes(1))))
+        .addLimit(Bandwidth.simple(20, Duration.ofMinutes(1)))
         .build();
   }
 
@@ -36,7 +35,7 @@ public class RateLimitingConfig {
         ip,
         key ->
             Bucket.builder()
-                .addLimit(Bandwidth.classic(10, Refill.intervally(10, Duration.ofMinutes(1))))
+                .addLimit(Bandwidth.simple(10, Duration.ofMinutes(1)))
                 .build());
   }
 }

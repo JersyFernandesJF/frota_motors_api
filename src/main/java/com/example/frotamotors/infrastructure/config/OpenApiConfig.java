@@ -1,17 +1,22 @@
 package com.example.frotamotors.infrastructure.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.servers.Server;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 @OpenAPIDefinition(
@@ -80,8 +85,45 @@ public class OpenApiConfig {
   @Bean
   public OperationCustomizer customizeOperation() {
     return (operation, handlerMethod) -> {
+      // Adicionar header customizado
       operation.addParametersItem(
           new Parameter().$ref("#/components/parameters/FrotaMotors-User-Nickname"));
+
+      // Corrigir parâmetro sort do Pageable
+      if (operation.getParameters() != null) {
+        Iterator<Parameter> paramIterator = operation.getParameters().iterator();
+        while (paramIterator.hasNext()) {
+          Parameter param = paramIterator.next();
+          if (param != null && "sort".equals(param.getName())) {
+            // Remover o parâmetro sort inválido (array)
+            if (param.getSchema() instanceof ArraySchema) {
+              paramIterator.remove();
+              // Adicionar novo parâmetro sort como string
+              Parameter sortParam =
+                  new Parameter()
+                      .name("sort")
+                      .in("query")
+                      .description(
+                          "Sorting criteria in the format: property(,asc|desc). "
+                              + "Default sort direction is ascending. "
+                              + "Use multiple sort parameters if needed. Example: sort=createdAt,desc")
+                      .required(false)
+                      .schema(new StringSchema().example("createdAt,desc"));
+              operation.addParametersItem(sortParam);
+            } else if (param.getSchema() != null) {
+              // Se já for string, apenas garantir que tem exemplo válido
+              param.setDescription(
+                  "Sorting criteria in the format: property(,asc|desc). "
+                      + "Default sort direction is ascending. "
+                      + "Use multiple sort parameters if needed. Example: sort=createdAt,desc");
+              if (param.getExample() == null) {
+                param.setExample("createdAt,desc");
+              }
+            }
+          }
+        }
+      }
+
       return operation;
     };
   }
