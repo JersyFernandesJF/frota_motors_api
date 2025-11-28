@@ -14,8 +14,8 @@ public class PaymentMapper {
   public static PaymentResponseDTO toResponse(Payment payment) {
     return new PaymentResponseDTO(
         payment.getId(),
-        payment.getPurchase(),
-        payment.getPayer(),
+        payment.getPurchase() != null ? PurchaseMapper.toResponse(payment.getPurchase()) : null,
+        payment.getPayer() != null ? UserMapper.toResponse(payment.getPayer()) : null,
         payment.getMethod(),
         payment.getStatus(),
         payment.getAmount(),

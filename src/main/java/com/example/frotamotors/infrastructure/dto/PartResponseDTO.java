@@ -2,8 +2,6 @@ package com.example.frotamotors.infrastructure.dto;
 
 import com.example.frotamotors.domain.enums.PartCategory;
 import com.example.frotamotors.domain.enums.PartStatus;
-import com.example.frotamotors.domain.model.Agency;
-import com.example.frotamotors.domain.model.User;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,8 +9,8 @@ import java.util.UUID;
 
 public record PartResponseDTO(
     UUID id,
-    User seller,
-    Agency agency,
+    UserResponseDTO seller,
+    AgencyResponseDTO agency,
     PartCategory category,
     PartStatus status,
     String name,

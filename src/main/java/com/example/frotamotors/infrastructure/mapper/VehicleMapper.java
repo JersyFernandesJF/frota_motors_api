@@ -34,8 +34,8 @@ public class VehicleMapper {
 
     return new VehicleResponseDTO(
         vehicle.getId(),
-        vehicle.getOwner(),
-        vehicle.getAgency(),
+        vehicle.getOwner() != null ? UserMapper.toResponse(vehicle.getOwner()) : null,
+        vehicle.getAgency() != null ? AgencyMapper.toResponse(vehicle.getAgency()) : null,
         vehicle.getType(),
         vehicle.getStatus(),
         vehicle.getBrand(),

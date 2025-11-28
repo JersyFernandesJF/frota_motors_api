@@ -10,6 +10,7 @@ import com.example.frotamotors.infrastructure.dto.MessageResponseDTO;
 import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
 import com.example.frotamotors.infrastructure.dto.UserBlockRequestDTO;
 import com.example.frotamotors.infrastructure.mapper.MessageMapper;
+import com.example.frotamotors.infrastructure.mapper.UserMapper;
 import com.example.frotamotors.infrastructure.util.SecurityUtils;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -41,8 +42,8 @@ public class MessageController {
     ConversationResponseDTO response =
         new ConversationResponseDTO(
             conversation.getId(),
-            conversation.getUser1(),
-            conversation.getUser2(),
+            conversation.getUser1() != null ? UserMapper.toResponse(conversation.getUser1()) : null,
+            conversation.getUser2() != null ? UserMapper.toResponse(conversation.getUser2()) : null,
             conversation.getLastMessageAt(),
             conversation.getCreatedAt());
     return ResponseEntity.ok(response);
@@ -83,8 +84,8 @@ public class MessageController {
                 c ->
                     new ConversationResponseDTO(
                         c.getId(),
-                        c.getUser1(),
-                        c.getUser2(),
+                        c.getUser1() != null ? UserMapper.toResponse(c.getUser1()) : null,
+                        c.getUser2() != null ? UserMapper.toResponse(c.getUser2()) : null,
                         c.getLastMessageAt(),
                         c.getCreatedAt()))
             .collect(Collectors.toList());
@@ -154,8 +155,8 @@ public class MessageController {
                 c ->
                     new ConversationResponseDTO(
                         c.getId(),
-                        c.getUser1(),
-                        c.getUser2(),
+                        c.getUser1() != null ? UserMapper.toResponse(c.getUser1()) : null,
+                        c.getUser2() != null ? UserMapper.toResponse(c.getUser2()) : null,
                         c.getLastMessageAt(),
                         c.getCreatedAt()))
             .collect(Collectors.toList());

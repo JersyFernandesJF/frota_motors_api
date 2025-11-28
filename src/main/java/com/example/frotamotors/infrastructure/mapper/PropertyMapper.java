@@ -32,8 +32,8 @@ public class PropertyMapper {
 
     return new PropertyResponseDTO(
         property.getId(),
-        property.getOwner(),
-        property.getAgency(),
+        property.getOwner() != null ? UserMapper.toResponse(property.getOwner()) : null,
+        property.getAgency() != null ? AgencyMapper.toResponse(property.getAgency()) : null,
         property.getTitle(),
         property.getDescription(),
         property.getType(),

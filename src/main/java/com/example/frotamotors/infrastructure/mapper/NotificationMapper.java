@@ -12,7 +12,7 @@ public class NotificationMapper {
   public static NotificationResponseDTO toResponse(Alerts notification) {
     return new NotificationResponseDTO(
         notification.getId(),
-        notification.getUser(),
+        notification.getUser() != null ? UserMapper.toResponse(notification.getUser()) : null,
         notification.getType(),
         notification.getTitle(),
         notification.getMessage(),

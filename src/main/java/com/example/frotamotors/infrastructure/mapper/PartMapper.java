@@ -32,8 +32,8 @@ public class PartMapper {
 
     return new PartResponseDTO(
         part.getId(),
-        part.getSeller(),
-        part.getAgency(),
+        part.getSeller() != null ? UserMapper.toResponse(part.getSeller()) : null,
+        part.getAgency() != null ? AgencyMapper.toResponse(part.getAgency()) : null,
         part.getCategory(),
         part.getStatus(),
         part.getName(),
