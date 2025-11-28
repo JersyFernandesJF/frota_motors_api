@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,17 +30,15 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+    http.cors(c -> c.configurationSource(corsConfigurationSource()))
+        .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(
             headers -> headers
-                .httpStrictTransportSecurity(
-                    hstsConfig -> hstsConfig.maxAgeInSeconds(31536000).includeSubDomains(true))
                 .contentTypeOptions(contentTypeOptions -> {
                 })
-                .frameOptions(frameOptions -> frameOptions.deny()))
+                .frameOptions(frameOptions -> frameOptions.disable()))
         .authorizeHttpRequests(
             auth -> auth
                 // Swagger e documentação
@@ -76,13 +75,23 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowCredentials(true);
-
-    // Allow all origins using pattern to support credentials
+    // Allow all origins using pattern (works with credentials)
     configuration.addAllowedOriginPattern("*");
-
+    // Allow all methods explicitly
+    configuration.addAllowedMethod(HttpMethod.GET);
+    configuration.addAllowedMethod(HttpMethod.POST);
+    configuration.addAllowedMethod(HttpMethod.PUT);
+    configuration.addAllowedMethod(HttpMethod.DELETE);
+    configuration.addAllowedMethod(HttpMethod.PATCH);
+    configuration.addAllowedMethod(HttpMethod.OPTIONS);
+    configuration.addAllowedMethod(HttpMethod.HEAD);
+    // Allow all headers
     configuration.addAllowedHeader("*");
-    configuration.addAllowedMethod("*");
+    // Allow credentials
+    configuration.setAllowCredentials(true);
+    // Allow preflight caching
+    configuration.setMaxAge(3600L);
+    // Expose Authorization header
     configuration.addExposedHeader("Authorization");
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
