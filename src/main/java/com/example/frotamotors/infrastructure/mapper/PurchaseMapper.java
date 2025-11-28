@@ -16,11 +16,11 @@ public class PurchaseMapper {
   public static PurchaseResponseDTO toResponse(Purchase purchase) {
     return new PurchaseResponseDTO(
         purchase.getId(),
-        purchase.getBuyer(),
+        purchase.getBuyer() != null ? UserMapper.toResponse(purchase.getBuyer()) : null,
         purchase.getType(),
         purchase.getStatus(),
-        purchase.getVehicle(),
-        purchase.getPart(),
+        purchase.getVehicle() != null ? VehicleMapper.toResponse(purchase.getVehicle()) : null,
+        purchase.getPart() != null ? PartMapper.toResponse(purchase.getPart()) : null,
         purchase.getPrice(),
         purchase.getCurrency(),
         purchase.getQuantity(),

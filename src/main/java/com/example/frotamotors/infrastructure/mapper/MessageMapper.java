@@ -14,7 +14,7 @@ public class MessageMapper {
     return new MessageResponseDTO(
         message.getId(),
         message.getConversation().getId(),
-        message.getSender(),
+        message.getSender() != null ? UserMapper.toResponse(message.getSender()) : null,
         message.getContent(),
         message.getIsRead(),
         message.getCreatedAt());

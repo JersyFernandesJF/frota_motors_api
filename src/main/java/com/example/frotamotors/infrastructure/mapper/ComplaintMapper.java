@@ -17,16 +17,16 @@ public class ComplaintMapper {
   public static ComplaintResponseDTO toResponse(Complaint complaint) {
     return new ComplaintResponseDTO(
         complaint.getId(),
-        complaint.getReporter(),
+        complaint.getReporter() != null ? UserMapper.toResponse(complaint.getReporter()) : null,
         complaint.getType(),
         complaint.getStatus(),
         complaint.getDescription(),
-        complaint.getReportedUser(),
-        complaint.getReportedVehicle(),
-        complaint.getReportedPart(),
-        complaint.getReportedProperty(),
-        complaint.getReportedAgency(),
-        complaint.getReviewedBy(),
+        complaint.getReportedUser() != null ? UserMapper.toResponse(complaint.getReportedUser()) : null,
+        complaint.getReportedVehicle() != null ? VehicleMapper.toResponse(complaint.getReportedVehicle()) : null,
+        complaint.getReportedPart() != null ? PartMapper.toResponse(complaint.getReportedPart()) : null,
+        complaint.getReportedProperty() != null ? PropertyMapper.toResponse(complaint.getReportedProperty()) : null,
+        complaint.getReportedAgency() != null ? AgencyMapper.toResponse(complaint.getReportedAgency()) : null,
+        complaint.getReviewedBy() != null ? UserMapper.toResponse(complaint.getReviewedBy()) : null,
         complaint.getAdminNotes(),
         complaint.getCreatedAt(),
         complaint.getUpdatedAt());

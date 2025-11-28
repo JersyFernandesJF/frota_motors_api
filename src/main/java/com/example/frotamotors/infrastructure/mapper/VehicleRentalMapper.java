@@ -17,9 +17,9 @@ public class VehicleRentalMapper {
   public static VehicleRentalResponseDTO toResponse(VehicleRental rental) {
     return new VehicleRentalResponseDTO(
         rental.getId(),
-        rental.getVehicle(),
-        rental.getRenter(),
-        rental.getAgency(),
+        rental.getVehicle() != null ? VehicleMapper.toResponse(rental.getVehicle()) : null,
+        rental.getRenter() != null ? UserMapper.toResponse(rental.getRenter()) : null,
+        rental.getAgency() != null ? AgencyMapper.toResponse(rental.getAgency()) : null,
         rental.getStatus(),
         rental.getStartDate(),
         rental.getEndDate(),
