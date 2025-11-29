@@ -28,7 +28,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   List<Vehicle> findByTypeAndStatus(VehicleType type, VehicleStatus status);
 
   @Query(
-      "SELECT v FROM Vehicle v WHERE "
+      "SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media WHERE "
           + "(:type IS NULL OR v.type = :type) AND "
           + "(:status IS NULL OR v.status = :status) AND "
           + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
@@ -50,16 +50,28 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
       @Param("fuelType") String fuelType);
 
   @Query(
-      "SELECT v FROM Vehicle v WHERE "
-          + "(:type IS NULL OR v.type = :type) AND "
-          + "(:status IS NULL OR v.status = :status) AND "
-          + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
-          + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
-          + "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
-          + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
-          + "(:minYear IS NULL OR v.year >= :minYear) AND "
-          + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-          + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))")
+      value =
+          "SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media WHERE "
+              + "(:type IS NULL OR v.type = :type) AND "
+              + "(:status IS NULL OR v.status = :status) AND "
+              + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
+              + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
+              + "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
+              + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
+              + "(:minYear IS NULL OR v.year >= :minYear) AND "
+              + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
+              + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))",
+      countQuery =
+          "SELECT COUNT(DISTINCT v) FROM Vehicle v WHERE "
+              + "(:type IS NULL OR v.type = :type) AND "
+              + "(:status IS NULL OR v.status = :status) AND "
+              + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
+              + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
+              + "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
+              + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
+              + "(:minYear IS NULL OR v.year >= :minYear) AND "
+              + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
+              + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))")
   Page<Vehicle> searchPageable(
       @Param("type") VehicleType type,
       @Param("status") VehicleStatus status,

@@ -56,6 +56,11 @@ public class VehicleMapper {
         vehicle.getNumberOfSeats(),
         vehicle.getPreviousOwners(),
         vehicle.getAccidentHistory(),
+        vehicle.getModerationStatus(),
+        vehicle.getPublishedAt(),
+        vehicle.getViews(),
+        vehicle.getFavoritesCount(),
+        vehicle.getMessagesCount(),
         mediaList,
         vehicle.getCreatedAt(),
         vehicle.getUpdatedAt());
