@@ -35,6 +35,7 @@ import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
 import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
 
 import jakarta.validation.Valid;
@@ -52,7 +53,7 @@ public class VehicleController {
 
   @GetMapping("/search")
   @Transactional(readOnly = true)
-  public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> search(
+  public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> search(
       @RequestParam(required = false) VehicleType type,
       @RequestParam(required = false) VehicleStatus status,
       @RequestParam(required = false) BigDecimal minPrice,
@@ -72,10 +73,10 @@ public class VehicleController {
         vehicleService.search(
             type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType, pageable);
 
-    List<VehicleResponseDTO> content =
-        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
+    List<VehicleSummaryDTO> content =
+        page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<VehicleResponseDTO> response =
+    PageResponseDTO<VehicleSummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
@@ -83,7 +84,7 @@ public class VehicleController {
 
   @GetMapping
   @Transactional(readOnly = true)
-  public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getAll(
+  public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> getAll(
       @PageableDefault(
               size = 20,
               sort = "createdAt",
@@ -91,10 +92,10 @@ public class VehicleController {
           Pageable pageable) {
     Page<Vehicle> page = vehicleService.getAll(pageable);
 
-    List<VehicleResponseDTO> content =
-        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
+    List<VehicleSummaryDTO> content =
+        page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<VehicleResponseDTO> response =
+    PageResponseDTO<VehicleSummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
@@ -102,7 +103,7 @@ public class VehicleController {
 
   @GetMapping("/owner/{ownerId}")
   @Transactional(readOnly = true)
-  public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByOwner(
+  public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> getByOwner(
       @PathVariable UUID ownerId,
       @PageableDefault(
               size = 20,
@@ -111,10 +112,10 @@ public class VehicleController {
           Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByOwner(ownerId, pageable);
 
-    List<VehicleResponseDTO> content =
-        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
+    List<VehicleSummaryDTO> content =
+        page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<VehicleResponseDTO> response =
+    PageResponseDTO<VehicleSummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
@@ -122,7 +123,7 @@ public class VehicleController {
 
   @GetMapping("/agency/{agencyId}")
   @Transactional(readOnly = true)
-  public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByAgency(
+  public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> getByAgency(
       @PathVariable UUID agencyId,
       @PageableDefault(
               size = 20,
@@ -131,10 +132,10 @@ public class VehicleController {
           Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByAgency(agencyId, pageable);
 
-    List<VehicleResponseDTO> content =
-        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
+    List<VehicleSummaryDTO> content =
+        page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<VehicleResponseDTO> response =
+    PageResponseDTO<VehicleSummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
@@ -142,7 +143,7 @@ public class VehicleController {
 
   @GetMapping("/type/{type}")
   @Transactional(readOnly = true)
-  public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByType(
+  public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> getByType(
       @PathVariable VehicleType type,
       @PageableDefault(
               size = 20,
@@ -151,10 +152,10 @@ public class VehicleController {
           Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByType(type, pageable);
 
-    List<VehicleResponseDTO> content =
-        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
+    List<VehicleSummaryDTO> content =
+        page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<VehicleResponseDTO> response =
+    PageResponseDTO<VehicleSummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
@@ -162,7 +163,7 @@ public class VehicleController {
 
   @GetMapping("/status/{status}")
   @Transactional(readOnly = true)
-  public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByStatus(
+  public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> getByStatus(
       @PathVariable VehicleStatus status,
       @PageableDefault(
               size = 20,
@@ -171,10 +172,10 @@ public class VehicleController {
           Pageable pageable) {
     Page<Vehicle> page = vehicleService.getByStatus(status, pageable);
 
-    List<VehicleResponseDTO> content =
-        page.getContent().stream().map(VehicleMapper::toResponse).collect(Collectors.toList());
+    List<VehicleSummaryDTO> content =
+        page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<VehicleResponseDTO> response =
+    PageResponseDTO<VehicleSummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);

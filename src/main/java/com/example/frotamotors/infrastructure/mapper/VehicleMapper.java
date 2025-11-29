@@ -7,6 +7,7 @@ import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.MediaResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,35 @@ public class VehicleMapper {
 
     return new MediaResponseDTO(
         media.getId(), media.getMediaType(), media.getUrl(), media.getUploadedAt());
+  }
+
+  public static VehicleSummaryDTO toSummary(Vehicle vehicle) {
+    // Extract first image URL as thumbnail
+    String thumbnailUrl = null;
+    if (vehicle.getMedia() != null && !vehicle.getMedia().isEmpty()) {
+      Media firstMedia = vehicle.getMedia().get(0);
+      if (firstMedia != null && firstMedia.getUrl() != null) {
+        thumbnailUrl = firstMedia.getUrl();
+      }
+    }
+
+    return new VehicleSummaryDTO(
+        vehicle.getId(),
+        vehicle.getType(),
+        vehicle.getStatus(),
+        vehicle.getBrand(),
+        vehicle.getModel(),
+        vehicle.getYear(),
+        vehicle.getColor(),
+        vehicle.getMileageKm(),
+        vehicle.getPrice(),
+        vehicle.getCurrency(),
+        vehicle.getFuelType(),
+        vehicle.getTransmissionType(),
+        vehicle.getEngineSize(),
+        vehicle.getHorsePower(),
+        thumbnailUrl,
+        vehicle.getCreatedAt());
   }
 
   public static VehicleResponseDTO toResponse(Vehicle vehicle) {
