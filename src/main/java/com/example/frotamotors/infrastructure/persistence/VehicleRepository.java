@@ -1,19 +1,22 @@
 package com.example.frotamotors.infrastructure.persistence;
 
-import com.example.frotamotors.domain.enums.ListingModerationStatus;
-import com.example.frotamotors.domain.enums.VehicleStatus;
-import com.example.frotamotors.domain.enums.VehicleType;
-import com.example.frotamotors.domain.model.Vehicle;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.example.frotamotors.domain.enums.ListingModerationStatus;
+import com.example.frotamotors.domain.enums.VehicleStatus;
+import com.example.frotamotors.domain.enums.VehicleType;
+import com.example.frotamotors.domain.model.Vehicle;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
@@ -115,4 +118,12 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   Long countTotalByOwnerId(@Param("ownerId") UUID ownerId);
 
   Long countByModerationStatus(ListingModerationStatus moderationStatus);
+
+  @Query("SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media LEFT JOIN FETCH v.owner LEFT JOIN FETCH v.agency WHERE v.id = :id")
+  Optional<Vehicle> findByIdWithMedia(@Param("id") UUID id);
+
+  @Query(
+      value = "SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media LEFT JOIN FETCH v.owner LEFT JOIN FETCH v.agency",
+      countQuery = "SELECT COUNT(DISTINCT v) FROM Vehicle v")
+  Page<Vehicle> findAllWithMedia(Pageable pageable);
 }
