@@ -1,5 +1,28 @@
 package com.example.frotamotors.infrastructure.web;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.frotamotors.domain.enums.VehicleStatus;
 import com.example.frotamotors.domain.enums.VehicleType;
 import com.example.frotamotors.domain.model.Vehicle;
@@ -13,20 +36,10 @@ import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
 import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
+
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -38,6 +51,7 @@ public class VehicleController {
   @Autowired private VehicleService vehicleService;
 
   @GetMapping("/search")
+  @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> search(
       @RequestParam(required = false) VehicleType type,
       @RequestParam(required = false) VehicleStatus status,
@@ -68,6 +82,7 @@ public class VehicleController {
   }
 
   @GetMapping
+  @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getAll(
       @PageableDefault(
               size = 20,
@@ -86,6 +101,7 @@ public class VehicleController {
   }
 
   @GetMapping("/owner/{ownerId}")
+  @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByOwner(
       @PathVariable UUID ownerId,
       @PageableDefault(
@@ -105,6 +121,7 @@ public class VehicleController {
   }
 
   @GetMapping("/agency/{agencyId}")
+  @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByAgency(
       @PathVariable UUID agencyId,
       @PageableDefault(
@@ -124,6 +141,7 @@ public class VehicleController {
   }
 
   @GetMapping("/type/{type}")
+  @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByType(
       @PathVariable VehicleType type,
       @PageableDefault(
@@ -143,6 +161,7 @@ public class VehicleController {
   }
 
   @GetMapping("/status/{status}")
+  @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleResponseDTO>> getByStatus(
       @PathVariable VehicleStatus status,
       @PageableDefault(
@@ -162,6 +181,7 @@ public class VehicleController {
   }
 
   @GetMapping("{id}")
+  @Transactional(readOnly = true)
   public ResponseEntity<VehicleResponseDTO> getById(@PathVariable UUID id) {
     Vehicle vehicle = vehicleService.getById(id);
     return ResponseEntity.ok(VehicleMapper.toResponse(vehicle));
