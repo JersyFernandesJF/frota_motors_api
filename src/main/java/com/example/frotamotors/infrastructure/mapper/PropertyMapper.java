@@ -1,14 +1,15 @@
 package com.example.frotamotors.infrastructure.mapper;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.example.frotamotors.domain.model.Media;
 import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.infrastructure.dto.MediaResponseDTO;
 import com.example.frotamotors.infrastructure.dto.PropertyCreateDTO;
 import com.example.frotamotors.infrastructure.dto.PropertyResponseDTO;
 import com.example.frotamotors.infrastructure.dto.PropertySummaryDTO;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class PropertyMapper {
 
