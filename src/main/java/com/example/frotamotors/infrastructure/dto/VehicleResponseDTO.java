@@ -1,5 +1,6 @@
 package com.example.frotamotors.infrastructure.dto;
 
+import com.example.frotamotors.domain.enums.ListingModerationStatus;
 import com.example.frotamotors.domain.enums.VehicleStatus;
 import com.example.frotamotors.domain.enums.VehicleType;
 import java.math.BigDecimal;
@@ -31,6 +32,11 @@ public record VehicleResponseDTO(
     Integer numberOfSeats,
     Integer previousOwners,
     Boolean accidentHistory,
+    ListingModerationStatus moderationStatus,
+    LocalDateTime publishedAt,
+    Long views,
+    Long favoritesCount,
+    Long messagesCount,
     List<MediaResponseDTO> media,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}

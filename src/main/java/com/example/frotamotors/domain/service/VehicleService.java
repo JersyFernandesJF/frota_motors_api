@@ -70,6 +70,9 @@ public class VehicleService {
       if (vehicle.getAgency() != null) {
         vehicle.getAgency().getId(); // Trigger lazy load
       }
+      if (vehicle.getMedia() != null) {
+        vehicle.getMedia().size(); // Trigger lazy load for media collection
+      }
     });
     return page;
   }
@@ -176,6 +179,9 @@ public class VehicleService {
       if (vehicle.getAgency() != null) {
         vehicle.getAgency().getId(); // Trigger lazy load
       }
+      if (vehicle.getMedia() != null) {
+        vehicle.getMedia().size(); // Trigger lazy load for media collection
+      }
     });
     return page;
   }
@@ -194,6 +200,9 @@ public class VehicleService {
       }
       if (vehicle.getAgency() != null) {
         vehicle.getAgency().getId(); // Trigger lazy load
+      }
+      if (vehicle.getMedia() != null) {
+        vehicle.getMedia().size(); // Trigger lazy load for media collection
       }
     });
     return page;
@@ -214,6 +223,9 @@ public class VehicleService {
       if (vehicle.getAgency() != null) {
         vehicle.getAgency().getId(); // Trigger lazy load
       }
+      if (vehicle.getMedia() != null) {
+        vehicle.getMedia().size(); // Trigger lazy load for media collection
+      }
     });
     return page;
   }
@@ -233,6 +245,9 @@ public class VehicleService {
       if (vehicle.getAgency() != null) {
         vehicle.getAgency().getId(); // Trigger lazy load
       }
+      if (vehicle.getMedia() != null) {
+        vehicle.getMedia().size(); // Trigger lazy load for media collection
+      }
     });
     return page;
   }
@@ -251,6 +266,9 @@ public class VehicleService {
       }
       if (vehicle.getAgency() != null) {
         vehicle.getAgency().getId(); // Trigger lazy load
+      }
+      if (vehicle.getMedia() != null) {
+        vehicle.getMedia().size(); // Trigger lazy load for media collection
       }
     });
     return page;
