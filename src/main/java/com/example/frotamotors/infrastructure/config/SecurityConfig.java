@@ -75,8 +75,14 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    // Allow all origins using pattern (works with credentials)
-    configuration.addAllowedOriginPattern("*");
+    
+    // Allow specific origins (required when allowCredentials is true)
+    configuration.addAllowedOrigin("https://www.frotamotors.com");
+    configuration.addAllowedOrigin("https://frotamotors.com");
+    configuration.addAllowedOrigin("http://localhost:5173");
+    configuration.addAllowedOrigin("http://localhost:3000");
+    configuration.addAllowedOrigin("http://localhost:8080");
+    
     // Allow all methods explicitly
     configuration.addAllowedMethod(HttpMethod.GET);
     configuration.addAllowedMethod(HttpMethod.POST);
@@ -85,12 +91,16 @@ public class SecurityConfig {
     configuration.addAllowedMethod(HttpMethod.PATCH);
     configuration.addAllowedMethod(HttpMethod.OPTIONS);
     configuration.addAllowedMethod(HttpMethod.HEAD);
+    
     // Allow all headers
     configuration.addAllowedHeader("*");
+    
     // Allow credentials
     configuration.setAllowCredentials(true);
+    
     // Allow preflight caching
     configuration.setMaxAge(3600L);
+    
     // Expose Authorization header
     configuration.addExposedHeader("Authorization");
 
