@@ -1,14 +1,18 @@
 package com.example.frotamotors.domain.service;
 
-import com.example.frotamotors.domain.model.Property;
-import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.frotamotors.domain.model.Property;
+import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PropertyService {
@@ -23,14 +27,42 @@ public class PropertyService {
     return propertyRepository.findAll();
   }
 
+  @Transactional(readOnly = true)
   public Page<Property> getAll(Pageable pageable) {
-    return propertyRepository.findAll(pageable);
+    Page<Property> page = propertyRepository.findAllWithMedia(pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(property -> {
+      if (property.getOwner() != null) {
+        property.getOwner().getId(); // Trigger lazy load
+      }
+      if (property.getAgency() != null) {
+        property.getAgency().getId(); // Trigger lazy load
+      }
+      if (property.getMedia() != null) {
+        property.getMedia().size(); // Trigger lazy load for media collection
+      }
+    });
+    return page;
   }
 
+  @Transactional(readOnly = true)
   public Property getById(UUID id) {
-    return propertyRepository
-        .findById(id)
+    Property property = propertyRepository
+        .findByIdWithMedia(id)
         .orElseThrow(() -> new EntityNotFoundException("Property not found"));
+    
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    if (property.getOwner() != null) {
+      property.getOwner().getId(); // Trigger lazy load
+    }
+    if (property.getAgency() != null) {
+      property.getAgency().getId(); // Trigger lazy load
+    }
+    if (property.getMedia() != null) {
+      property.getMedia().size(); // Trigger lazy load for media collection
+    }
+    
+    return property;
   }
 
   public Property update(UUID id, Property property) {
@@ -63,6 +95,7 @@ public class PropertyService {
     propertyRepository.deleteById(id);
   }
 
+  @Transactional(readOnly = true)
   public List<Property> search(
       Double minArea,
       Double maxArea,
@@ -81,11 +114,26 @@ public class PropertyService {
     int minFloors = (floors != null) ? floors : 0;
     int minYear = (year != null) ? year : 0;
 
-    return propertyRepository
-        .findByAreaM2BetweenAndTypeInAndBathroomsGreaterThanEqualAndRoomsGreaterThanEqualAndTotalFloorsGreaterThanEqualAndYearBuiltGreaterThanEqual(
-            min, max, propertyTypes, minBathrooms, minRooms, minFloors, minYear);
+    List<Property> properties = propertyRepository.searchWithMedia(
+        min, max, propertyTypes, minBathrooms, minRooms, minFloors, minYear);
+    
+    // Force initialization of lazy relationships
+    properties.forEach(property -> {
+      if (property.getOwner() != null) {
+        property.getOwner().getId();
+      }
+      if (property.getAgency() != null) {
+        property.getAgency().getId();
+      }
+      if (property.getMedia() != null) {
+        property.getMedia().size();
+      }
+    });
+    
+    return properties;
   }
 
+  @Transactional(readOnly = true)
   public Page<Property> search(
       Double minArea,
       Double maxArea,
@@ -103,7 +151,22 @@ public class PropertyService {
     List<String> propertyTypes =
         (types != null && !types.isEmpty()) ? types : List.of("FOR_RENT", "FOR_SALE");
 
-    return propertyRepository.searchPageable(
+    Page<Property> page = propertyRepository.searchPageableWithMedia(
         minArea, maxArea, propertyTypes, bathrooms, rooms, floors, year, pageable);
+    
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(property -> {
+      if (property.getOwner() != null) {
+        property.getOwner().getId(); // Trigger lazy load
+      }
+      if (property.getAgency() != null) {
+        property.getAgency().getId(); // Trigger lazy load
+      }
+      if (property.getMedia() != null) {
+        property.getMedia().size(); // Trigger lazy load for media collection
+      }
+    });
+    
+    return page;
   }
 }

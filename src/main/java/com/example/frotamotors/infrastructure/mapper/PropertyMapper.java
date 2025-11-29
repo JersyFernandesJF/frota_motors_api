@@ -5,6 +5,7 @@ import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.infrastructure.dto.MediaResponseDTO;
 import com.example.frotamotors.infrastructure.dto.PropertyCreateDTO;
 import com.example.frotamotors.infrastructure.dto.PropertyResponseDTO;
+import com.example.frotamotors.infrastructure.dto.PropertySummaryDTO;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,31 @@ public class PropertyMapper {
 
     return new MediaResponseDTO(
         media.getId(), media.getMediaType(), media.getUrl(), media.getUploadedAt());
+  }
+
+  public static PropertySummaryDTO toSummary(Property property) {
+    // Extract first image URL as thumbnail
+    String thumbnailUrl = null;
+    if (property.getMedia() != null && !property.getMedia().isEmpty()) {
+      Media firstMedia = property.getMedia().get(0);
+      if (firstMedia != null && firstMedia.getUrl() != null) {
+        thumbnailUrl = firstMedia.getUrl();
+      }
+    }
+
+    return new PropertySummaryDTO(
+        property.getId(),
+        property.getTitle(),
+        property.getType(),
+        property.getStatus(),
+        property.getPrice(),
+        property.getCurrency(),
+        property.getAreaM2(),
+        property.getRooms(),
+        property.getBathrooms(),
+        property.getYearBuilt(),
+        thumbnailUrl,
+        property.getCreatedAt());
   }
 
   public static PropertyResponseDTO toResponse(Property property) {

@@ -1,21 +1,34 @@
 package com.example.frotamotors.infrastructure.web;
 
-import com.example.frotamotors.domain.model.Property;
-import com.example.frotamotors.domain.service.PropertyService;
-import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
-import com.example.frotamotors.infrastructure.dto.PropertyResponseDTO;
-import com.example.frotamotors.infrastructure.mapper.PropertyMapper;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.frotamotors.domain.model.Property;
+import com.example.frotamotors.domain.service.PropertyService;
+import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
+import com.example.frotamotors.infrastructure.dto.PropertyResponseDTO;
+import com.example.frotamotors.infrastructure.dto.PropertySummaryDTO;
+import com.example.frotamotors.infrastructure.mapper.PropertyMapper;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -27,7 +40,7 @@ public class PropertyController {
   @Autowired private PropertyService propertyService;
 
   @GetMapping("/search")
-  public ResponseEntity<PageResponseDTO<PropertyResponseDTO>> search(
+  public ResponseEntity<PageResponseDTO<PropertySummaryDTO>> search(
       @RequestParam(required = false) Double minArea,
       @RequestParam(required = false) Double maxArea,
       @RequestParam(required = false) List<String> types,
@@ -44,17 +57,17 @@ public class PropertyController {
     Page<Property> page =
         propertyService.search(minArea, maxArea, types, bathrooms, rooms, floors, year, pageable);
 
-    List<PropertyResponseDTO> content =
-        page.getContent().stream().map(PropertyMapper::toResponse).collect(Collectors.toList());
+    List<PropertySummaryDTO> content =
+        page.getContent().stream().map(PropertyMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<PropertyResponseDTO> response =
+    PageResponseDTO<PropertySummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<PageResponseDTO<PropertyResponseDTO>> getAll(
+  public ResponseEntity<PageResponseDTO<PropertySummaryDTO>> getAll(
       @PageableDefault(
               size = 20,
               sort = "createdAt",
@@ -62,10 +75,10 @@ public class PropertyController {
           Pageable pageable) {
     Page<Property> page = propertyService.getAll(pageable);
 
-    List<PropertyResponseDTO> content =
-        page.getContent().stream().map(PropertyMapper::toResponse).collect(Collectors.toList());
+    List<PropertySummaryDTO> content =
+        page.getContent().stream().map(PropertyMapper::toSummary).collect(Collectors.toList());
 
-    PageResponseDTO<PropertyResponseDTO> response =
+    PageResponseDTO<PropertySummaryDTO> response =
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
