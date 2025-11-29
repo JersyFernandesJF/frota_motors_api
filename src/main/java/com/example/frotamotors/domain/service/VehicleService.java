@@ -59,8 +59,19 @@ public class VehicleService {
     return vehicleRepository.findAll();
   }
 
+  @Transactional(readOnly = true)
   public Page<Vehicle> getAll(Pageable pageable) {
-    return vehicleRepository.findAll(pageable);
+    Page<Vehicle> page = vehicleRepository.findAll(pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(vehicle -> {
+      if (vehicle.getOwner() != null) {
+        vehicle.getOwner().getId(); // Trigger lazy load
+      }
+      if (vehicle.getAgency() != null) {
+        vehicle.getAgency().getId(); // Trigger lazy load
+      }
+    });
+    return page;
   }
 
   public Vehicle getById(UUID id) {
@@ -135,6 +146,7 @@ public class VehicleService {
         type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType);
   }
 
+  @Transactional(readOnly = true)
   public Page<Vehicle> search(
       VehicleType type,
       VehicleStatus status,
@@ -154,40 +166,94 @@ public class VehicleService {
     if (minYear != null && maxYear != null && minYear > maxYear) {
       throw new IllegalArgumentException("minYear cannot be greater than maxYear");
     }
-    return vehicleRepository.searchPageable(
+    Page<Vehicle> page = vehicleRepository.searchPageable(
         type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType, pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(vehicle -> {
+      if (vehicle.getOwner() != null) {
+        vehicle.getOwner().getId(); // Trigger lazy load
+      }
+      if (vehicle.getAgency() != null) {
+        vehicle.getAgency().getId(); // Trigger lazy load
+      }
+    });
+    return page;
   }
 
   public List<Vehicle> getByOwner(UUID ownerId) {
     return vehicleRepository.findByOwnerId(ownerId);
   }
 
+  @Transactional(readOnly = true)
   public Page<Vehicle> getByOwner(UUID ownerId, Pageable pageable) {
-    return vehicleRepository.findByOwnerId(ownerId, pageable);
+    Page<Vehicle> page = vehicleRepository.findByOwnerId(ownerId, pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(vehicle -> {
+      if (vehicle.getOwner() != null) {
+        vehicle.getOwner().getId(); // Trigger lazy load
+      }
+      if (vehicle.getAgency() != null) {
+        vehicle.getAgency().getId(); // Trigger lazy load
+      }
+    });
+    return page;
   }
 
   public List<Vehicle> getByAgency(UUID agencyId) {
     return vehicleRepository.findByAgencyId(agencyId);
   }
 
+  @Transactional(readOnly = true)
   public Page<Vehicle> getByAgency(UUID agencyId, Pageable pageable) {
-    return vehicleRepository.findByAgencyId(agencyId, pageable);
+    Page<Vehicle> page = vehicleRepository.findByAgencyId(agencyId, pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(vehicle -> {
+      if (vehicle.getOwner() != null) {
+        vehicle.getOwner().getId(); // Trigger lazy load
+      }
+      if (vehicle.getAgency() != null) {
+        vehicle.getAgency().getId(); // Trigger lazy load
+      }
+    });
+    return page;
   }
 
   public List<Vehicle> getByType(VehicleType type) {
     return vehicleRepository.findByType(type);
   }
 
+  @Transactional(readOnly = true)
   public Page<Vehicle> getByType(VehicleType type, Pageable pageable) {
-    return vehicleRepository.findByType(type, pageable);
+    Page<Vehicle> page = vehicleRepository.findByType(type, pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(vehicle -> {
+      if (vehicle.getOwner() != null) {
+        vehicle.getOwner().getId(); // Trigger lazy load
+      }
+      if (vehicle.getAgency() != null) {
+        vehicle.getAgency().getId(); // Trigger lazy load
+      }
+    });
+    return page;
   }
 
   public List<Vehicle> getByStatus(VehicleStatus status) {
     return vehicleRepository.findByStatus(status);
   }
 
+  @Transactional(readOnly = true)
   public Page<Vehicle> getByStatus(VehicleStatus status, Pageable pageable) {
-    return vehicleRepository.findByStatus(status, pageable);
+    Page<Vehicle> page = vehicleRepository.findByStatus(status, pageable);
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent().forEach(vehicle -> {
+      if (vehicle.getOwner() != null) {
+        vehicle.getOwner().getId(); // Trigger lazy load
+      }
+      if (vehicle.getAgency() != null) {
+        vehicle.getAgency().getId(); // Trigger lazy load
+      }
+    });
+    return page;
   }
 
   @Transactional
