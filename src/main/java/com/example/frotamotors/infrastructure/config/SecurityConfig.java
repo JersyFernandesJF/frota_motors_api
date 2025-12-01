@@ -61,6 +61,9 @@ public class SecurityConfig {
                     "/api/v1/search/**",
                     "/api/v1/locations/**")
                 .permitAll()
+                // Permitir acesso público ao GET de um usuário específico (para perfis de vendedores)
+                .requestMatchers(HttpMethod.GET, "/api/v1/users/*")
+                .permitAll()
                 // Endpoints específicos com roles
                 .requestMatchers("/api/v1/users/**", "/api/v1/complaints/**")
                 .hasAnyRole("ADMIN", "BUYER", "OWNER", "AGENT")
