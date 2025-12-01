@@ -165,7 +165,15 @@ public class VehicleService {
       Integer maxYear,
       String fuelType) {
     return vehicleRepository.search(
-        type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType);
+        type != null ? type.name() : null,
+        status != null ? status.name() : null,
+        minPrice,
+        maxPrice,
+        brand,
+        model,
+        minYear,
+        maxYear,
+        fuelType);
   }
 
   @Transactional(readOnly = true)
@@ -228,8 +236,8 @@ public class VehicleService {
 
     Page<Vehicle> page =
         vehicleRepository.searchPageable(
-            type,
-            status,
+            type != null ? type.name() : null,
+            status != null ? status.name() : null,
             minPrice,
             maxPrice,
             brand,

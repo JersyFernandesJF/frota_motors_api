@@ -28,8 +28,8 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
   @Query(
       value =
           "SELECT p.* FROM parts p WHERE "
-              + "(:category IS NULL OR p.category = CAST(:category AS VARCHAR)) AND "
-              + "(:status IS NULL OR p.status = CAST(:status AS VARCHAR)) AND "
+              + "(:category IS NULL OR p.category = :category) AND "
+              + "(:status IS NULL OR p.status = :status) AND "
               + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
               + "(:brand IS NULL OR LOWER(p.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
@@ -38,8 +38,8 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
               + "(:oemNumber IS NULL OR LOWER(p.oem_number::text) LIKE LOWER('%' || :oemNumber || '%'))",
       nativeQuery = true)
   List<Part> search(
-      @Param("category") PartCategory category,
-      @Param("status") PartStatus status,
+      @Param("category") String category,
+      @Param("status") String status,
       @Param("minPrice") BigDecimal minPrice,
       @Param("maxPrice") BigDecimal maxPrice,
       @Param("brand") String brand,
@@ -50,8 +50,8 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
   @Query(
       value =
           "SELECT p.* FROM parts p WHERE "
-              + "(:category IS NULL OR p.category = CAST(:category AS VARCHAR)) AND "
-              + "(:status IS NULL OR p.status = CAST(:status AS VARCHAR)) AND "
+              + "(:category IS NULL OR p.category = :category) AND "
+              + "(:status IS NULL OR p.status = :status) AND "
               + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
               + "(:brand IS NULL OR LOWER(p.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
@@ -60,8 +60,8 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
               + "(:oemNumber IS NULL OR LOWER(p.oem_number::text) LIKE LOWER('%' || :oemNumber || '%'))",
       countQuery =
           "SELECT COUNT(*) FROM parts p WHERE "
-              + "(:category IS NULL OR p.category = CAST(:category AS VARCHAR)) AND "
-              + "(:status IS NULL OR p.status = CAST(:status AS VARCHAR)) AND "
+              + "(:category IS NULL OR p.category = :category) AND "
+              + "(:status IS NULL OR p.status = :status) AND "
               + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
               + "(:brand IS NULL OR LOWER(p.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
@@ -70,8 +70,8 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
               + "(:oemNumber IS NULL OR LOWER(p.oem_number::text) LIKE LOWER('%' || :oemNumber || '%'))",
       nativeQuery = true)
   Page<Part> searchPageable(
-      @Param("category") PartCategory category,
-      @Param("status") PartStatus status,
+      @Param("category") String category,
+      @Param("status") String status,
       @Param("minPrice") BigDecimal minPrice,
       @Param("maxPrice") BigDecimal maxPrice,
       @Param("brand") String brand,

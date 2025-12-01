@@ -115,7 +115,14 @@ public class PartService {
       String partNumber,
       String oemNumber) {
     return partRepository.search(
-        category, status, minPrice, maxPrice, brand, name, partNumber, oemNumber);
+        category != null ? category.name() : null,
+        status != null ? status.name() : null,
+        minPrice,
+        maxPrice,
+        brand,
+        name,
+        partNumber,
+        oemNumber);
   }
 
   public Page<Part> search(
@@ -133,7 +140,15 @@ public class PartService {
       throw new IllegalArgumentException("minPrice cannot be greater than maxPrice");
     }
     return partRepository.searchPageable(
-        category, status, minPrice, maxPrice, brand, name, partNumber, oemNumber, pageable);
+        category != null ? category.name() : null,
+        status != null ? status.name() : null,
+        minPrice,
+        maxPrice,
+        brand,
+        name,
+        partNumber,
+        oemNumber,
+        pageable);
   }
 
   public List<Part> getBySeller(UUID sellerId) {
