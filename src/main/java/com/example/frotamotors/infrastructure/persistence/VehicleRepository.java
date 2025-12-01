@@ -54,41 +54,43 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
 
   @Query(
       value =
-          "SELECT v FROM Vehicle v WHERE "
-              + "(:type IS NULL OR v.type = :type) AND "
-              + "(:status IS NULL OR v.status = :status) AND "
+          "SELECT v.* FROM vehicles v WHERE "
+              + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
+              + "(:status IS NULL OR v.status = CAST(:status AS VARCHAR)) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
-              + "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
-              + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
+              + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
+              + "(:model IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || :model || '%')) AND "
               + "(:minYear IS NULL OR v.year >= :minYear) AND "
               + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-              + "(:fuelType IS NULL OR v.fuelType = :fuelType) AND "
-              + "(:transmission IS NULL OR v.transmissionType = :transmission) AND "
-              + "(:minMileage IS NULL OR v.mileageKm >= :minMileage) AND "
-              + "(:maxMileage IS NULL OR v.mileageKm <= :maxMileage) AND "
+              + "(:fuelType IS NULL OR v.fuel_type::text = :fuelType) AND "
+              + "(:transmission IS NULL OR v.transmission_type::text = :transmission) AND "
+              + "(:minMileage IS NULL OR v.mileage_km >= :minMileage) AND "
+              + "(:maxMileage IS NULL OR v.mileage_km <= :maxMileage) AND "
               + "(:search IS NULL OR "
-              + "LOWER(v.brand) LIKE LOWER(CONCAT('%', :search, '%')) OR "
-              + "LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%')) OR "
-              + "LOWER(v.description) LIKE LOWER(CONCAT('%', :search, '%')))",
+              + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
+              + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
+              + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%')) "
+              + "ORDER BY v.created_at DESC",
       countQuery =
-          "SELECT COUNT(v) FROM Vehicle v WHERE "
-              + "(:type IS NULL OR v.type = :type) AND "
-              + "(:status IS NULL OR v.status = :status) AND "
+          "SELECT COUNT(*) FROM vehicles v WHERE "
+              + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
+              + "(:status IS NULL OR v.status = CAST(:status AS VARCHAR)) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
-              + "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
-              + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
+              + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
+              + "(:model IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || :model || '%')) AND "
               + "(:minYear IS NULL OR v.year >= :minYear) AND "
               + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-              + "(:fuelType IS NULL OR v.fuelType = :fuelType) AND "
-              + "(:transmission IS NULL OR v.transmissionType = :transmission) AND "
-              + "(:minMileage IS NULL OR v.mileageKm >= :minMileage) AND "
-              + "(:maxMileage IS NULL OR v.mileageKm <= :maxMileage) AND "
+              + "(:fuelType IS NULL OR v.fuel_type::text = :fuelType) AND "
+              + "(:transmission IS NULL OR v.transmission_type::text = :transmission) AND "
+              + "(:minMileage IS NULL OR v.mileage_km >= :minMileage) AND "
+              + "(:maxMileage IS NULL OR v.mileage_km <= :maxMileage) AND "
               + "(:search IS NULL OR "
-              + "LOWER(v.brand) LIKE LOWER(CONCAT('%', :search, '%')) OR "
-              + "LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%')) OR "
-              + "LOWER(v.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+              + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
+              + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
+              + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%'))",
+      nativeQuery = true)
   Page<Vehicle> searchPageable(
       @Param("type") VehicleType type,
       @Param("status") VehicleStatus status,
@@ -124,16 +126,20 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   List<Object[]> countByType();
 
   @Query(
-      "SELECT LOWER(v.brand) as brand, COUNT(v) as count FROM Vehicle v "
-          + "WHERE (:search IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :search, '%'))) "
-          + "GROUP BY LOWER(v.brand) ORDER BY COUNT(v) DESC")
+      value =
+          "SELECT LOWER(v.brand::text) as brand, COUNT(*) as count FROM vehicles v "
+              + "WHERE (:search IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :search || '%')) "
+              + "GROUP BY LOWER(v.brand::text) ORDER BY COUNT(*) DESC",
+      nativeQuery = true)
   List<Object[]> findBrandsWithCount(@Param("search") String search);
 
   @Query(
-      "SELECT LOWER(v.model) as model, COUNT(v) as count FROM Vehicle v "
-          + "WHERE (:brand IS NULL OR LOWER(v.brand) = LOWER(:brand)) "
-          + "AND (:search IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%'))) "
-          + "GROUP BY LOWER(v.model) ORDER BY COUNT(v) DESC")
+      value =
+          "SELECT LOWER(v.model::text) as model, COUNT(*) as count FROM vehicles v "
+              + "WHERE (:brand IS NULL OR LOWER(v.brand::text) = LOWER(:brand)) "
+              + "AND (:search IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || :search || '%')) "
+              + "GROUP BY LOWER(v.model::text) ORDER BY COUNT(*) DESC",
+      nativeQuery = true)
   List<Object[]> findModelsWithCount(
       @Param("brand") String brand, @Param("search") String search);
 

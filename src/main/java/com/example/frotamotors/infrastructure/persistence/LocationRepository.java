@@ -12,8 +12,10 @@ import org.springframework.stereotype.Repository;
 public interface LocationRepository extends JpaRepository<Location, UUID> {
 
   @Query(
-      "SELECT DISTINCT l.city FROM Location l "
-          + "WHERE (:search IS NULL OR LOWER(l.city) LIKE LOWER(CONCAT('%', :search, '%'))) "
-          + "ORDER BY l.city ASC")
+      value =
+          "SELECT DISTINCT l.city::text FROM locations l "
+              + "WHERE (:search IS NULL OR LOWER(l.city::text) LIKE LOWER('%' || :search || '%')) "
+              + "ORDER BY l.city::text ASC",
+      nativeQuery = true)
   List<String> findCitySuggestions(@Param("search") String search);
 }
