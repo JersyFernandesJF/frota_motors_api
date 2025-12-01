@@ -28,29 +28,31 @@ public interface ComplaintRepository
 
   List<Complaint> findByReportedPartId(UUID reportedPartId);
 
-  List<Complaint> findByReportedPropertyId(UUID reportedPropertyId);
-
   List<Complaint> findByReportedAgencyId(UUID reportedAgencyId);
 
   @Query(
       "SELECT c FROM Complaint c WHERE "
           + "(:status IS NULL OR c.status = :status) AND "
           + "(:type IS NULL OR c.type = :type) AND "
-          + "(:reporterId IS NULL OR c.reporter.id = :reporterId)")
+          + "(:reporterId IS NULL OR c.reporter.id = :reporterId) AND "
+          + "(:reportedVehicleId IS NULL OR c.reportedVehicle.id = :reportedVehicleId)")
   List<Complaint> search(
       @Param("status") ComplaintStatus status,
       @Param("type") ComplaintType type,
-      @Param("reporterId") UUID reporterId);
+      @Param("reporterId") UUID reporterId,
+      @Param("reportedVehicleId") UUID reportedVehicleId);
 
   @Query(
       "SELECT c FROM Complaint c WHERE "
           + "(:status IS NULL OR c.status = :status) AND "
           + "(:type IS NULL OR c.type = :type) AND "
-          + "(:reporterId IS NULL OR c.reporter.id = :reporterId)")
+          + "(:reporterId IS NULL OR c.reporter.id = :reporterId) AND "
+          + "(:reportedVehicleId IS NULL OR c.reportedVehicle.id = :reportedVehicleId)")
   Page<Complaint> searchPageable(
       @Param("status") ComplaintStatus status,
       @Param("type") ComplaintType type,
       @Param("reporterId") UUID reporterId,
+      @Param("reportedVehicleId") UUID reportedVehicleId,
       Pageable pageable);
 
   Page<Complaint> findByReporterId(UUID reporterId, Pageable pageable);
@@ -64,8 +66,6 @@ public interface ComplaintRepository
   Page<Complaint> findByReportedVehicleId(UUID reportedVehicleId, Pageable pageable);
 
   Page<Complaint> findByReportedPartId(UUID reportedPartId, Pageable pageable);
-
-  Page<Complaint> findByReportedPropertyId(UUID reportedPropertyId, Pageable pageable);
 
   Page<Complaint> findByReportedAgencyId(UUID reportedAgencyId, Pageable pageable);
 

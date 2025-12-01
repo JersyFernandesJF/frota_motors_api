@@ -7,7 +7,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -177,6 +179,12 @@ public class VehicleService {
       Integer minYear,
       Integer maxYear,
       String fuelType,
+      String transmission,
+      Integer minMileage,
+      Integer maxMileage,
+      String location,
+      String search,
+      String sort,
       Pageable pageable) {
     // Validate price range
     if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
@@ -186,8 +194,53 @@ public class VehicleService {
     if (minYear != null && maxYear != null && minYear > maxYear) {
       throw new IllegalArgumentException("minYear cannot be greater than maxYear");
     }
-    Page<Vehicle> page = vehicleRepository.searchPageable(
-        type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType, pageable);
+    // Validate mileage range
+    if (minMileage != null && maxMileage != null && minMileage > maxMileage) {
+      throw new IllegalArgumentException("minMileage cannot be greater than maxMileage");
+    }
+
+    // Apply dynamic sorting based on 'sort' parameter
+    Pageable effectivePageable = pageable;
+    if (sort != null && !sort.isBlank()) {
+      Sort sortSpec;
+      switch (sort) {
+        case "price-asc":
+          sortSpec = Sort.by(Sort.Direction.ASC, "price");
+          break;
+        case "price-desc":
+          sortSpec = Sort.by(Sort.Direction.DESC, "price");
+          break;
+        case "year-desc":
+          sortSpec = Sort.by(Sort.Direction.DESC, "year");
+          break;
+        case "mileage-asc":
+          sortSpec = Sort.by(Sort.Direction.ASC, "mileageKm");
+          break;
+        case "recent":
+        default:
+          sortSpec = Sort.by(Sort.Direction.DESC, "createdAt");
+          break;
+      }
+      effectivePageable =
+          PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortSpec);
+    }
+
+    Page<Vehicle> page =
+        vehicleRepository.searchPageable(
+            type,
+            status,
+            minPrice,
+            maxPrice,
+            brand,
+            model,
+            minYear,
+            maxYear,
+            fuelType,
+            transmission,
+            minMileage,
+            maxMileage,
+            search,
+            effectivePageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
     page.getContent().forEach(vehicle -> {
       if (vehicle.getOwner() != null) {
@@ -201,6 +254,16 @@ public class VehicleService {
       }
     });
     return page;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Object[]> getBrandSuggestions(String search) {
+    return vehicleRepository.findBrandsWithCount(search);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Object[]> getModelSuggestions(String brand, String search) {
+    return vehicleRepository.findModelsWithCount(brand, search);
   }
 
   public List<Vehicle> getByOwner(UUID ownerId) {

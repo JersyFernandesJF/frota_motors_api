@@ -5,7 +5,6 @@ import com.example.frotamotors.infrastructure.dto.FavoriteCreateDTO;
 import com.example.frotamotors.infrastructure.mapper.FavoriteMapper;
 import com.example.frotamotors.infrastructure.persistence.FavoriteRepository;
 import com.example.frotamotors.infrastructure.persistence.PartRepository;
-import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
 import com.example.frotamotors.infrastructure.persistence.UserRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,8 +22,6 @@ public class FavoriteService {
 
   @Autowired private UserRepository userRepository;
 
-  @Autowired private PropertyRepository propertyRepository;
-
   @Autowired private VehicleRepository vehicleRepository;
 
   @Autowired private PartRepository partRepository;
@@ -37,14 +34,6 @@ public class FavoriteService {
 
     // Validate that exactly one entity is provided
     int entityCount = 0;
-    var property =
-        dto.propertyId() != null
-            ? propertyRepository
-                .findById(dto.propertyId())
-                .orElseThrow(() -> new EntityNotFoundException("Property not found"))
-            : null;
-    if (property != null) entityCount++;
-
     var vehicle =
         dto.vehicleId() != null
             ? vehicleRepository
@@ -63,10 +52,10 @@ public class FavoriteService {
 
     if (entityCount != 1) {
       throw new IllegalArgumentException(
-          "Exactly one entity (property, vehicle, or part) must be provided");
+          "Exactly one entity (vehicle or part) must be provided");
     }
 
-    Favorite favorite = FavoriteMapper.toEntity(dto, user, property, vehicle, part);
+    Favorite favorite = FavoriteMapper.toEntity(dto, user, vehicle, part);
     return favoriteRepository.save(favorite);
   }
 

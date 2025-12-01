@@ -1,12 +1,10 @@
 package com.example.frotamotors.domain.service;
 
-import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.domain.model.SharedList;
 import com.example.frotamotors.domain.model.SharedListItem;
 import com.example.frotamotors.infrastructure.dto.SharedListItemCreateDTO;
 import com.example.frotamotors.infrastructure.dto.SharedListItemResponseDTO;
 import com.example.frotamotors.infrastructure.mapper.SharedListItemMapper;
-import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
 import com.example.frotamotors.infrastructure.persistence.SharedListItemRepository;
 import com.example.frotamotors.infrastructure.persistence.SharedListRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,25 +21,8 @@ public class SharedListItemService {
 
   @Autowired private SharedListRepository sharedListRepository;
 
-  @Autowired private PropertyRepository propertyRepository;
-
   public SharedListItemResponseDTO create(SharedListItemCreateDTO dto) {
-    SharedList list =
-        sharedListRepository
-            .findById(dto.listId())
-            .orElseThrow(() -> new EntityNotFoundException("SharedList not found"));
-
-    Property property =
-        propertyRepository
-            .findById(dto.propertyId())
-            .orElseThrow(() -> new EntityNotFoundException("Property not found"));
-
-    SharedListItem item = new SharedListItem();
-    item.setList(list);
-    item.setProperty(property);
-
-    SharedListItem saved = sharedListItemRepository.save(item);
-    return SharedListItemMapper.toResponse(saved);
+    throw new UnsupportedOperationException("Shared lists for properties are no longer supported");
   }
 
   public List<SharedListItemResponseDTO> getAll() {

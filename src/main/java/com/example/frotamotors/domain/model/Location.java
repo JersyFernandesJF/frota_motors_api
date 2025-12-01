@@ -24,10 +24,6 @@ public class Location {
   @Column(updatable = false)
   private UUID id;
 
-  @OneToOne
-  @JoinColumn(name = "property_id", nullable = false)
-  private Property property;
-
   private String address;
   private String city;
   private String district;

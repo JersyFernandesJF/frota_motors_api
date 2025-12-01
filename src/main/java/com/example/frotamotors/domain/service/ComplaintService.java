@@ -6,7 +6,6 @@ import com.example.frotamotors.domain.enums.ComplaintType;
 import com.example.frotamotors.domain.model.Agency;
 import com.example.frotamotors.domain.model.Complaint;
 import com.example.frotamotors.domain.model.Part;
-import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.ComplaintCreateDTO;
@@ -17,7 +16,6 @@ import com.example.frotamotors.infrastructure.mapper.ComplaintMapper;
 import com.example.frotamotors.infrastructure.persistence.AgencyRepository;
 import com.example.frotamotors.infrastructure.persistence.ComplaintRepository;
 import com.example.frotamotors.infrastructure.persistence.PartRepository;
-import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
 import com.example.frotamotors.infrastructure.persistence.UserRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import com.example.frotamotors.infrastructure.util.SecurityUtils;
@@ -44,8 +42,6 @@ public class ComplaintService {
 
   @Autowired private PartRepository partRepository;
 
-  @Autowired private PropertyRepository propertyRepository;
-
   @Autowired private AgencyRepository agencyRepository;
 
   public Complaint create(ComplaintCreateDTO dto) {
@@ -59,7 +55,6 @@ public class ComplaintService {
     User reportedUser = null;
     Vehicle reportedVehicle = null;
     Part reportedPart = null;
-    Property reportedProperty = null;
     Agency reportedAgency = null;
 
     if (dto.reportedUserId() != null) {
@@ -83,13 +78,6 @@ public class ComplaintService {
               .orElseThrow(() -> new EntityNotFoundException("Reported part not found"));
       reportedCount++;
     }
-    if (dto.reportedPropertyId() != null) {
-      reportedProperty =
-          propertyRepository
-              .findById(dto.reportedPropertyId())
-              .orElseThrow(() -> new EntityNotFoundException("Reported property not found"));
-      reportedCount++;
-    }
     if (dto.reportedAgencyId() != null) {
       reportedAgency =
           agencyRepository
@@ -106,11 +94,7 @@ public class ComplaintService {
         ComplaintMapper.toEntity(
             dto,
             reporter,
-            reportedUser,
-            reportedVehicle,
-            reportedPart,
-            reportedProperty,
-            reportedAgency);
+            reportedUser, reportedVehicle, reportedPart, reportedAgency);
     return complaintRepository.save(complaint);
   }
 
@@ -151,13 +135,19 @@ public class ComplaintService {
     return complaintRepository.save(complaint);
   }
 
-  public List<Complaint> search(ComplaintStatus status, ComplaintType type, UUID reporterId) {
-    return complaintRepository.search(status, type, reporterId);
+  public List<Complaint> search(
+      ComplaintStatus status, ComplaintType type, UUID reporterId, UUID reportedVehicleId) {
+    return complaintRepository.search(status, type, reporterId, reportedVehicleId);
   }
 
   public Page<Complaint> search(
-      ComplaintStatus status, ComplaintType type, UUID reporterId, Pageable pageable) {
-    return complaintRepository.searchPageable(status, type, reporterId, pageable);
+      ComplaintStatus status,
+      ComplaintType type,
+      UUID reporterId,
+      UUID reportedVehicleId,
+      Pageable pageable) {
+    return complaintRepository.searchPageable(
+        status, type, reporterId, reportedVehicleId, pageable);
   }
 
   public List<Complaint> getByReporter(UUID reporterId) {
@@ -206,14 +196,6 @@ public class ComplaintService {
 
   public Page<Complaint> getByReportedPart(UUID reportedPartId, Pageable pageable) {
     return complaintRepository.findByReportedPartId(reportedPartId, pageable);
-  }
-
-  public List<Complaint> getByReportedProperty(UUID reportedPropertyId) {
-    return complaintRepository.findByReportedPropertyId(reportedPropertyId);
-  }
-
-  public Page<Complaint> getByReportedProperty(UUID reportedPropertyId, Pageable pageable) {
-    return complaintRepository.findByReportedPropertyId(reportedPropertyId, pageable);
   }
 
   public List<Complaint> getByReportedAgency(UUID reportedAgencyId) {

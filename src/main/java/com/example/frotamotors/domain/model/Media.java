@@ -19,10 +19,6 @@ public class Media {
   private UUID id;
 
   @ManyToOne
-  @JoinColumn(name = "property_id")
-  private Property property;
-
-  @ManyToOne
   @JoinColumn(name = "vehicle_id")
   private Vehicle vehicle;
 

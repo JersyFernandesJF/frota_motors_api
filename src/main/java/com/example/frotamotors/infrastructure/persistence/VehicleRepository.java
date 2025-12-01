@@ -63,7 +63,14 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
               + "(:minYear IS NULL OR v.year >= :minYear) AND "
               + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-              + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))",
+              + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%'))) AND "
+              + "(:transmission IS NULL OR LOWER(v.transmissionType) LIKE LOWER(CONCAT('%', :transmission, '%'))) AND "
+              + "(:minMileage IS NULL OR v.mileageKm >= :minMileage) AND "
+              + "(:maxMileage IS NULL OR v.mileageKm <= :maxMileage) AND "
+              + "(:search IS NULL OR "
+              + "LOWER(v.brand) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+              + "LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+              + "LOWER(v.description) LIKE LOWER(CONCAT('%', :search, '%')))",
       countQuery =
           "SELECT COUNT(DISTINCT v) FROM Vehicle v WHERE "
               + "(:type IS NULL OR v.type = :type) AND "
@@ -74,7 +81,14 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
               + "(:minYear IS NULL OR v.year >= :minYear) AND "
               + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-              + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))")
+              + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%'))) AND "
+              + "(:transmission IS NULL OR LOWER(v.transmissionType) LIKE LOWER(CONCAT('%', :transmission, '%'))) AND "
+              + "(:minMileage IS NULL OR v.mileageKm >= :minMileage) AND "
+              + "(:maxMileage IS NULL OR v.mileageKm <= :maxMileage) AND "
+              + "(:search IS NULL OR "
+              + "LOWER(v.brand) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+              + "LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+              + "LOWER(v.description) LIKE LOWER(CONCAT('%', :search, '%')))")
   Page<Vehicle> searchPageable(
       @Param("type") VehicleType type,
       @Param("status") VehicleStatus status,
@@ -85,6 +99,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
       @Param("minYear") Integer minYear,
       @Param("maxYear") Integer maxYear,
       @Param("fuelType") String fuelType,
+      @Param("transmission") String transmission,
+      @Param("minMileage") Integer minMileage,
+      @Param("maxMileage") Integer maxMileage,
+      @Param("search") String search,
       Pageable pageable);
 
   Page<Vehicle> findByOwnerId(UUID ownerId, Pageable pageable);
@@ -104,6 +122,20 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
 
   @Query("SELECT v.type, COUNT(v) FROM Vehicle v GROUP BY v.type")
   List<Object[]> countByType();
+
+  @Query(
+      "SELECT LOWER(v.brand) as brand, COUNT(v) as count FROM Vehicle v "
+          + "WHERE (:search IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :search, '%'))) "
+          + "GROUP BY LOWER(v.brand) ORDER BY COUNT(v) DESC")
+  List<Object[]> findBrandsWithCount(@Param("search") String search);
+
+  @Query(
+      "SELECT LOWER(v.model) as model, COUNT(v) as count FROM Vehicle v "
+          + "WHERE (:brand IS NULL OR LOWER(v.brand) = LOWER(:brand)) "
+          + "AND (:search IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%'))) "
+          + "GROUP BY LOWER(v.model) ORDER BY COUNT(v) DESC")
+  List<Object[]> findModelsWithCount(
+      @Param("brand") String brand, @Param("search") String search);
 
   @Query(
       value =

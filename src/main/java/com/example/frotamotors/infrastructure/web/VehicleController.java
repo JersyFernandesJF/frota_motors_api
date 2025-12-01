@@ -63,6 +63,12 @@ public class VehicleController {
       @RequestParam(required = false) Integer minYear,
       @RequestParam(required = false) Integer maxYear,
       @RequestParam(required = false) String fuelType,
+      @RequestParam(required = false) String transmission,
+      @RequestParam(required = false) Integer minMileage,
+      @RequestParam(required = false) Integer maxMileage,
+      @RequestParam(required = false) String location,
+      @RequestParam(required = false) String search,
+      @RequestParam(required = false) String sort,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
@@ -71,7 +77,22 @@ public class VehicleController {
 
     Page<Vehicle> page =
         vehicleService.search(
-            type, status, minPrice, maxPrice, brand, model, minYear, maxYear, fuelType, pageable);
+            type,
+            status,
+            minPrice,
+            maxPrice,
+            brand,
+            model,
+            minYear,
+            maxYear,
+            fuelType,
+            transmission,
+            minMileage,
+            maxMileage,
+            location,
+            search,
+            sort,
+            pageable);
 
     List<VehicleSummaryDTO> content =
         page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
@@ -80,6 +101,49 @@ public class VehicleController {
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/brands")
+  @Transactional(readOnly = true)
+  public ResponseEntity<java.util.List<java.util.Map<String, Object>>> getBrands(
+      @RequestParam(required = false) String search) {
+    java.util.List<Object[]> rows = vehicleService.getBrandSuggestions(search);
+    java.util.List<java.util.Map<String, Object>> result =
+        rows.stream()
+            .map(
+                row -> {
+                  String brand = (String) row[0];
+                  Number count = (Number) row[1];
+                  java.util.Map<String, Object> map = new java.util.HashMap<>();
+                  map.put("value", brand);
+                  map.put("label", brand);
+                  map.put("count", count != null ? count.intValue() : 0);
+                  return map;
+                })
+            .toList();
+    return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/models")
+  @Transactional(readOnly = true)
+  public ResponseEntity<java.util.List<java.util.Map<String, Object>>> getModels(
+      @RequestParam(required = false) String brand,
+      @RequestParam(required = false) String search) {
+    java.util.List<Object[]> rows = vehicleService.getModelSuggestions(brand, search);
+    java.util.List<java.util.Map<String, Object>> result =
+        rows.stream()
+            .map(
+                row -> {
+                  String model = (String) row[0];
+                  Number count = (Number) row[1];
+                  java.util.Map<String, Object> map = new java.util.HashMap<>();
+                  map.put("value", model);
+                  map.put("label", model);
+                  map.put("count", count != null ? count.intValue() : 0);
+                  return map;
+                })
+            .toList();
+    return ResponseEntity.ok(result);
   }
 
   @GetMapping
