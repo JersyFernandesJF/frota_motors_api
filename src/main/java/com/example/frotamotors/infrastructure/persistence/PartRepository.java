@@ -26,15 +26,17 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
   List<Part> findByCategoryAndStatus(PartCategory category, PartStatus status);
 
   @Query(
-      "SELECT p FROM Part p WHERE "
-          + "(:category IS NULL OR p.category = :category) AND "
-          + "(:status IS NULL OR p.status = :status) AND "
-          + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
-          + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
-          + "(:brand IS NULL OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
-          + "(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND "
-          + "(:partNumber IS NULL OR LOWER(p.partNumber) LIKE LOWER(CONCAT('%', :partNumber, '%'))) AND "
-          + "(:oemNumber IS NULL OR LOWER(p.oemNumber) LIKE LOWER(CONCAT('%', :oemNumber, '%')))")
+      value =
+          "SELECT p.* FROM parts p WHERE "
+              + "(:category IS NULL OR p.category = CAST(:category AS VARCHAR)) AND "
+              + "(:status IS NULL OR p.status = CAST(:status AS VARCHAR)) AND "
+              + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
+              + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
+              + "(:brand IS NULL OR LOWER(p.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
+              + "(:name IS NULL OR LOWER(p.name::text) LIKE LOWER('%' || :name || '%')) AND "
+              + "(:partNumber IS NULL OR LOWER(p.part_number::text) LIKE LOWER('%' || :partNumber || '%')) AND "
+              + "(:oemNumber IS NULL OR LOWER(p.oem_number::text) LIKE LOWER('%' || :oemNumber || '%'))",
+      nativeQuery = true)
   List<Part> search(
       @Param("category") PartCategory category,
       @Param("status") PartStatus status,
@@ -46,15 +48,27 @@ public interface PartRepository extends JpaRepository<Part, UUID> {
       @Param("oemNumber") String oemNumber);
 
   @Query(
-      "SELECT p FROM Part p WHERE "
-          + "(:category IS NULL OR p.category = :category) AND "
-          + "(:status IS NULL OR p.status = :status) AND "
-          + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
-          + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
-          + "(:brand IS NULL OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
-          + "(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND "
-          + "(:partNumber IS NULL OR LOWER(p.partNumber) LIKE LOWER(CONCAT('%', :partNumber, '%'))) AND "
-          + "(:oemNumber IS NULL OR LOWER(p.oemNumber) LIKE LOWER(CONCAT('%', :oemNumber, '%')))")
+      value =
+          "SELECT p.* FROM parts p WHERE "
+              + "(:category IS NULL OR p.category = CAST(:category AS VARCHAR)) AND "
+              + "(:status IS NULL OR p.status = CAST(:status AS VARCHAR)) AND "
+              + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
+              + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
+              + "(:brand IS NULL OR LOWER(p.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
+              + "(:name IS NULL OR LOWER(p.name::text) LIKE LOWER('%' || :name || '%')) AND "
+              + "(:partNumber IS NULL OR LOWER(p.part_number::text) LIKE LOWER('%' || :partNumber || '%')) AND "
+              + "(:oemNumber IS NULL OR LOWER(p.oem_number::text) LIKE LOWER('%' || :oemNumber || '%'))",
+      countQuery =
+          "SELECT COUNT(*) FROM parts p WHERE "
+              + "(:category IS NULL OR p.category = CAST(:category AS VARCHAR)) AND "
+              + "(:status IS NULL OR p.status = CAST(:status AS VARCHAR)) AND "
+              + "(:minPrice IS NULL OR p.price >= :minPrice) AND "
+              + "(:maxPrice IS NULL OR p.price <= :maxPrice) AND "
+              + "(:brand IS NULL OR LOWER(p.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
+              + "(:name IS NULL OR LOWER(p.name::text) LIKE LOWER('%' || :name || '%')) AND "
+              + "(:partNumber IS NULL OR LOWER(p.part_number::text) LIKE LOWER('%' || :partNumber || '%')) AND "
+              + "(:oemNumber IS NULL OR LOWER(p.oem_number::text) LIKE LOWER('%' || :oemNumber || '%'))",
+      nativeQuery = true)
   Page<Part> searchPageable(
       @Param("category") PartCategory category,
       @Param("status") PartStatus status,

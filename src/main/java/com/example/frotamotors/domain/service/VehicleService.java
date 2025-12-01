@@ -200,6 +200,7 @@ public class VehicleService {
     }
 
     // Apply dynamic sorting based on 'sort' parameter
+    // Note: For native queries, we need to use SQL column names, not Java property names
     Pageable effectivePageable = pageable;
     if (sort != null && !sort.isBlank()) {
       Sort sortSpec;
@@ -214,11 +215,11 @@ public class VehicleService {
           sortSpec = Sort.by(Sort.Direction.DESC, "year");
           break;
         case "mileage-asc":
-          sortSpec = Sort.by(Sort.Direction.ASC, "mileageKm");
+          sortSpec = Sort.by(Sort.Direction.ASC, "mileage_km");
           break;
         case "recent":
         default:
-          sortSpec = Sort.by(Sort.Direction.DESC, "createdAt");
+          sortSpec = Sort.by(Sort.Direction.DESC, "created_at");
           break;
       }
       effectivePageable =
