@@ -15,15 +15,15 @@ public class RateLimitingConfig {
   @Bean(name = "authRateLimiter")
   public Bucket authRateLimiter() {
     return Bucket.builder()
-        .addLimit(Bandwidth.simple(5, Duration.ofMinutes(1)))
+        .addLimit(Bandwidth.simple(15, Duration.ofMinutes(1)))
         .build();
   }
 
-  // Rate limit: 20 requests per minute for general API endpoints
+  // Rate limit: 100 requests per minute for general API endpoints (per instance)
   @Bean(name = "apiRateLimiter")
   public Bucket apiRateLimiter() {
     return Bucket.builder()
-        .addLimit(Bandwidth.simple(20, Duration.ofMinutes(1)))
+        .addLimit(Bandwidth.simple(100, Duration.ofMinutes(1)))
         .build();
   }
 
@@ -35,7 +35,8 @@ public class RateLimitingConfig {
         ip,
         key ->
             Bucket.builder()
-                .addLimit(Bandwidth.simple(10, Duration.ofMinutes(1)))
+                // Per-IP: 60 requests por minuto, suficiente para navegação normal
+                .addLimit(Bandwidth.simple(60, Duration.ofMinutes(1)))
                 .build());
   }
 }
