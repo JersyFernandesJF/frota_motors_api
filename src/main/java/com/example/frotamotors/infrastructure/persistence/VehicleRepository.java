@@ -31,16 +31,18 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   List<Vehicle> findByTypeAndStatus(VehicleType type, VehicleStatus status);
 
   @Query(
-      "SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media WHERE "
-          + "(:type IS NULL OR v.type = :type) AND "
-          + "(:status IS NULL OR v.status = :status) AND "
-          + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
-          + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
-          + "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND "
-          + "(:model IS NULL OR LOWER(v.model) LIKE LOWER(CONCAT('%', :model, '%'))) AND "
-          + "(:minYear IS NULL OR v.year >= :minYear) AND "
-          + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-          + "(:fuelType IS NULL OR LOWER(v.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))")
+      value =
+          "SELECT DISTINCT v.* FROM vehicles v WHERE "
+              + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
+              + "(:status IS NULL OR v.status = CAST(:status AS VARCHAR)) AND "
+              + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
+              + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
+              + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
+              + "(:model IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || :model || '%')) AND "
+              + "(:minYear IS NULL OR v.year >= :minYear) AND "
+              + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
+              + "(:fuelType IS NULL OR LOWER(v.fuel_type::text) LIKE LOWER('%' || :fuelType || '%'))",
+      nativeQuery = true)
   List<Vehicle> search(
       @Param("type") VehicleType type,
       @Param("status") VehicleStatus status,
@@ -70,8 +72,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "(:search IS NULL OR "
               + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
               + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
-              + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%')) "
-              + "ORDER BY v.created_at DESC",
+              + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%'))",
       countQuery =
           "SELECT COUNT(*) FROM vehicles v WHERE "
               + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
