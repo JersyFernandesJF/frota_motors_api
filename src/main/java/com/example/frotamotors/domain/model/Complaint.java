@@ -54,10 +54,6 @@ public class Complaint {
   private Part reportedPart;
 
   @ManyToOne
-  @JoinColumn(name = "reported_property_id")
-  private Property reportedProperty;
-
-  @ManyToOne
   @JoinColumn(name = "reported_agency_id")
   private Agency reportedAgency;
 

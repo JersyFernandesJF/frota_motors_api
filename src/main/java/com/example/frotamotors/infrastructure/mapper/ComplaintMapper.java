@@ -4,7 +4,6 @@ import com.example.frotamotors.domain.enums.ComplaintStatus;
 import com.example.frotamotors.domain.model.Agency;
 import com.example.frotamotors.domain.model.Complaint;
 import com.example.frotamotors.domain.model.Part;
-import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.ComplaintCreateDTO;
@@ -21,12 +20,21 @@ public class ComplaintMapper {
         complaint.getType(),
         complaint.getStatus(),
         complaint.getDescription(),
-        complaint.getReportedUser() != null ? UserMapper.toResponse(complaint.getReportedUser()) : null,
-        complaint.getReportedVehicle() != null ? VehicleMapper.toResponse(complaint.getReportedVehicle()) : null,
-        complaint.getReportedPart() != null ? PartMapper.toResponse(complaint.getReportedPart()) : null,
-        complaint.getReportedProperty() != null ? PropertyMapper.toResponse(complaint.getReportedProperty()) : null,
-        complaint.getReportedAgency() != null ? AgencyMapper.toResponse(complaint.getReportedAgency()) : null,
-        complaint.getReviewedBy() != null ? UserMapper.toResponse(complaint.getReviewedBy()) : null,
+        complaint.getReportedUser() != null
+            ? UserMapper.toResponse(complaint.getReportedUser())
+            : null,
+        complaint.getReportedVehicle() != null
+            ? VehicleMapper.toResponse(complaint.getReportedVehicle())
+            : null,
+        complaint.getReportedPart() != null
+            ? PartMapper.toResponse(complaint.getReportedPart())
+            : null,
+        complaint.getReportedAgency() != null
+            ? AgencyMapper.toResponse(complaint.getReportedAgency())
+            : null,
+        complaint.getReviewedBy() != null
+            ? UserMapper.toResponse(complaint.getReviewedBy())
+            : null,
         complaint.getAdminNotes(),
         complaint.getCreatedAt(),
         complaint.getUpdatedAt());
@@ -38,7 +46,6 @@ public class ComplaintMapper {
       User reportedUser,
       Vehicle reportedVehicle,
       Part reportedPart,
-      Property reportedProperty,
       Agency reportedAgency) {
     Complaint complaint = new Complaint();
     complaint.setReporter(reporter);
@@ -48,7 +55,6 @@ public class ComplaintMapper {
     complaint.setReportedUser(reportedUser);
     complaint.setReportedVehicle(reportedVehicle);
     complaint.setReportedPart(reportedPart);
-    complaint.setReportedProperty(reportedProperty);
     complaint.setReportedAgency(reportedAgency);
     return complaint;
   }

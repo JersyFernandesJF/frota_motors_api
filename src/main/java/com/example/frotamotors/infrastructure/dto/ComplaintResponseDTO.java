@@ -14,7 +14,6 @@ public record ComplaintResponseDTO(
     UserResponseDTO reportedUser,
     VehicleResponseDTO reportedVehicle,
     PartResponseDTO reportedPart,
-    PropertyResponseDTO reportedProperty,
     AgencyResponseDTO reportedAgency,
     UserResponseDTO reviewedBy,
     String adminNotes,

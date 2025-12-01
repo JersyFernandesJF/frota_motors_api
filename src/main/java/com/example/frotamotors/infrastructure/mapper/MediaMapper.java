@@ -2,7 +2,6 @@ package com.example.frotamotors.infrastructure.mapper;
 
 import com.example.frotamotors.domain.model.Media;
 import com.example.frotamotors.domain.model.Part;
-import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.MediaCreateDTO;
 import com.example.frotamotors.infrastructure.dto.MediaResponseDTO;
@@ -23,9 +22,8 @@ public class MediaMapper {
     return media;
   }
 
-  public static Media toEntity(MediaCreateDTO dto, Property property, Vehicle vehicle, Part part) {
+  public static Media toEntity(MediaCreateDTO dto, Vehicle vehicle, Part part) {
     Media media = new Media();
-    media.setProperty(property);
     media.setVehicle(vehicle);
     media.setPart(part);
     media.setMediaType(dto.mediaType());

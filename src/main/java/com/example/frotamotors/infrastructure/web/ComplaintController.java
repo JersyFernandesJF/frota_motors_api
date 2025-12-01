@@ -49,13 +49,15 @@ public class ComplaintController {
       @RequestParam(required = false) ComplaintStatus status,
       @RequestParam(required = false) ComplaintType type,
       @RequestParam(required = false) UUID reporterId,
+      @RequestParam(required = false) UUID reportedVehicleId,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
               direction = org.springframework.data.domain.Sort.Direction.DESC)
           Pageable pageable) {
 
-    Page<Complaint> page = complaintService.search(status, type, reporterId, pageable);
+    Page<Complaint> page =
+        complaintService.search(status, type, reporterId, reportedVehicleId, pageable);
 
     List<ComplaintResponseDTO> content =
         page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
@@ -188,25 +190,6 @@ public class ComplaintController {
               direction = org.springframework.data.domain.Sort.Direction.DESC)
           Pageable pageable) {
     Page<Complaint> page = complaintService.getByReportedPart(reportedPartId, pageable);
-
-    List<ComplaintResponseDTO> content =
-        page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());
-
-    PageResponseDTO<ComplaintResponseDTO> response =
-        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
-
-    return ResponseEntity.ok(response);
-  }
-
-  @GetMapping("/reported-property/{reportedPropertyId}")
-  public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> getByReportedProperty(
-      @PathVariable UUID reportedPropertyId,
-      @PageableDefault(
-              size = 20,
-              sort = "createdAt",
-              direction = org.springframework.data.domain.Sort.Direction.DESC)
-          Pageable pageable) {
-    Page<Complaint> page = complaintService.getByReportedProperty(reportedPropertyId, pageable);
 
     List<ComplaintResponseDTO> content =
         page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());

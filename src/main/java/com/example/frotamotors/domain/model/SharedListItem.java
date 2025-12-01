@@ -8,9 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(
-    name = "shared_list_items",
-    uniqueConstraints = {@UniqueConstraint(columnNames = {"list_id", "property_id"})})
+@Table(name = "shared_list_items")
 public class SharedListItem {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -20,8 +18,4 @@ public class SharedListItem {
   @ManyToOne
   @JoinColumn(name = "list_id", nullable = false)
   private SharedList list;
-
-  @ManyToOne
-  @JoinColumn(name = "property_id", nullable = false)
-  private Property property;
 }

@@ -55,4 +55,15 @@ public class LocationController {
     locationService.delete(id);
     return ResponseEntity.noContent().build();
   }
+
+  @GetMapping("/suggestions")
+  public ResponseEntity<List<java.util.Map<String, String>>> getSuggestions(
+      @RequestParam(required = false) String search) {
+    List<String> cities = locationService.getCitySuggestions(search);
+    List<java.util.Map<String, String>> result =
+        cities.stream()
+            .map(city -> java.util.Map.of("value", city, "label", city))
+            .toList();
+    return ResponseEntity.ok(result);
+  }
 }

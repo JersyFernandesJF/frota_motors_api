@@ -2,13 +2,11 @@ package com.example.frotamotors.domain.service;
 
 import com.example.frotamotors.domain.model.Media;
 import com.example.frotamotors.domain.model.Part;
-import com.example.frotamotors.domain.model.Property;
 import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.MediaCreateDTO;
 import com.example.frotamotors.infrastructure.mapper.MediaMapper;
 import com.example.frotamotors.infrastructure.persistence.MediaRepository;
 import com.example.frotamotors.infrastructure.persistence.PartRepository;
-import com.example.frotamotors.infrastructure.persistence.PropertyRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.io.IOException;
@@ -27,23 +25,14 @@ public class MediaService {
 
   @Autowired private FileStorageService fileStorageService;
 
-  @Autowired private PropertyRepository propertyRepository;
-
   @Autowired private VehicleRepository vehicleRepository;
 
   @Autowired private PartRepository partRepository;
 
   public Media create(MediaCreateDTO dto) {
-    Property property = null;
     Vehicle vehicle = null;
     Part part = null;
 
-    if (dto.propertyId() != null) {
-      property =
-          propertyRepository
-              .findById(dto.propertyId())
-              .orElseThrow(() -> new EntityNotFoundException("Property not found"));
-    }
     if (dto.vehicleId() != null) {
       vehicle =
           vehicleRepository
@@ -57,26 +46,18 @@ public class MediaService {
               .orElseThrow(() -> new EntityNotFoundException("Part not found"));
     }
 
-    Media media = MediaMapper.toEntity(dto, property, vehicle, part);
+    Media media = MediaMapper.toEntity(dto, vehicle, part);
     return mediaRepository.save(media);
   }
 
   public Media createWithFile(MultipartFile file, MediaCreateDTO dto) throws IOException {
     String fileUrl = fileStorageService.storeFile(file);
     MediaCreateDTO dtoWithUrl =
-        new MediaCreateDTO(
-            dto.propertyId(), dto.vehicleId(), dto.partId(), dto.mediaType(), fileUrl);
+        new MediaCreateDTO(null, dto.vehicleId(), dto.partId(), dto.mediaType(), fileUrl);
 
-    Property property = null;
     Vehicle vehicle = null;
     Part part = null;
 
-    if (dto.propertyId() != null) {
-      property =
-          propertyRepository
-              .findById(dto.propertyId())
-              .orElseThrow(() -> new EntityNotFoundException("Property not found"));
-    }
     if (dto.vehicleId() != null) {
       vehicle =
           vehicleRepository
@@ -90,7 +71,7 @@ public class MediaService {
               .orElseThrow(() -> new EntityNotFoundException("Part not found"));
     }
 
-    Media media = MediaMapper.toEntity(dtoWithUrl, property, vehicle, part);
+    Media media = MediaMapper.toEntity(dtoWithUrl, vehicle, part);
     return mediaRepository.save(media);
   }
 

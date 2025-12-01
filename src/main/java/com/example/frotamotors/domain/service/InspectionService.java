@@ -93,6 +93,15 @@ public class InspectionService {
               .orElseThrow(() -> new EntityNotFoundException("Inspector not found"));
       inspection.setInspector(inspector);
     }
+    if (dto.status() != null) {
+      // If status is explicitly set to CANCELLED, reuse cancel logic
+      if (dto.status() == InspectionStatus.CANCELLED) {
+        InspectionCancelRequestDTO request =
+            new InspectionCancelRequestDTO(dto.notes() != null ? dto.notes() : "Cancelled");
+        return cancel(id, request);
+      }
+      inspection.setStatus(dto.status());
+    }
 
     return inspectionRepository.save(inspection);
   }

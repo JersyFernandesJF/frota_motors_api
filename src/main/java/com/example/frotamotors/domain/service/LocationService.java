@@ -46,4 +46,8 @@ public class LocationService {
     }
     locationRepository.deleteById(id);
   }
+
+  public List<String> getCitySuggestions(String search) {
+    return locationRepository.findCitySuggestions(search);
+  }
 }
