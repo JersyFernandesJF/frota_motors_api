@@ -54,7 +54,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
 
   @Query(
       value =
-          "SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media WHERE "
+          "SELECT v FROM Vehicle v WHERE "
               + "(:type IS NULL OR v.type = :type) AND "
               + "(:status IS NULL OR v.status = :status) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
@@ -72,7 +72,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "LOWER(v.model) LIKE LOWER(CONCAT('%', :search, '%')) OR "
               + "LOWER(v.description) LIKE LOWER(CONCAT('%', :search, '%')))",
       countQuery =
-          "SELECT COUNT(DISTINCT v) FROM Vehicle v WHERE "
+          "SELECT COUNT(v) FROM Vehicle v WHERE "
               + "(:type IS NULL OR v.type = :type) AND "
               + "(:status IS NULL OR v.status = :status) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
