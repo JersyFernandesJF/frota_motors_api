@@ -33,8 +33,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   @Query(
       value =
           "SELECT DISTINCT v.* FROM vehicles v WHERE "
-              + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
-              + "(:status IS NULL OR v.status = CAST(:status AS VARCHAR)) AND "
+              + "(:type IS NULL OR v.type = :type) AND "
+              + "(:status IS NULL OR v.status = :status) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
               + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
@@ -44,8 +44,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "(:fuelType IS NULL OR LOWER(v.fuel_type::text) LIKE LOWER('%' || :fuelType || '%'))",
       nativeQuery = true)
   List<Vehicle> search(
-      @Param("type") VehicleType type,
-      @Param("status") VehicleStatus status,
+      @Param("type") String type,
+      @Param("status") String status,
       @Param("minPrice") BigDecimal minPrice,
       @Param("maxPrice") BigDecimal maxPrice,
       @Param("brand") String brand,
@@ -57,8 +57,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   @Query(
       value =
           "SELECT v.* FROM vehicles v WHERE "
-              + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
-              + "(:status IS NULL OR v.status = CAST(:status AS VARCHAR)) AND "
+              + "(:type IS NULL OR v.type = :type) AND "
+              + "(:status IS NULL OR v.status = :status) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
               + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
@@ -75,8 +75,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%'))",
       countQuery =
           "SELECT COUNT(*) FROM vehicles v WHERE "
-              + "(:type IS NULL OR v.type = CAST(:type AS VARCHAR)) AND "
-              + "(:status IS NULL OR v.status = CAST(:status AS VARCHAR)) AND "
+              + "(:type IS NULL OR v.type = :type) AND "
+              + "(:status IS NULL OR v.status = :status) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
               + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
@@ -93,8 +93,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%'))",
       nativeQuery = true)
   Page<Vehicle> searchPageable(
-      @Param("type") VehicleType type,
-      @Param("status") VehicleStatus status,
+      @Param("type") String type,
+      @Param("status") String status,
       @Param("minPrice") BigDecimal minPrice,
       @Param("maxPrice") BigDecimal maxPrice,
       @Param("brand") String brand,
