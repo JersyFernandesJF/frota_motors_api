@@ -14,17 +14,13 @@ public class RateLimitingConfig {
   // Rate limit: 5 requests per minute for authentication endpoints
   @Bean(name = "authRateLimiter")
   public Bucket authRateLimiter() {
-    return Bucket.builder()
-        .addLimit(Bandwidth.simple(15, Duration.ofMinutes(1)))
-        .build();
+    return Bucket.builder().addLimit(Bandwidth.simple(15, Duration.ofMinutes(1))).build();
   }
 
   // Rate limit: 100 requests per minute for general API endpoints (per instance)
   @Bean(name = "apiRateLimiter")
   public Bucket apiRateLimiter() {
-    return Bucket.builder()
-        .addLimit(Bandwidth.simple(100, Duration.ofMinutes(1)))
-        .build();
+    return Bucket.builder().addLimit(Bandwidth.simple(100, Duration.ofMinutes(1))).build();
   }
 
   // Per-IP rate limiting storage

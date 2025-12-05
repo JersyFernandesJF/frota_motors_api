@@ -1,14 +1,5 @@
 package com.example.frotamotors.infrastructure.security;
 
-import java.net.URL;
-import java.text.ParseException;
-import java.time.Instant;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -21,8 +12,14 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-
+import java.net.URL;
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -95,9 +92,7 @@ public class AppleTokenVerifier {
     cacheLock.lock();
     try {
       // Check if cache is valid
-      if (cachedJwkSet != null
-          && cacheExpiry != null
-          && Instant.now().isBefore(cacheExpiry)) {
+      if (cachedJwkSet != null && cacheExpiry != null && Instant.now().isBefore(cacheExpiry)) {
         log.debug("Using cached Apple JWKS");
         return cachedJwkSet;
       }

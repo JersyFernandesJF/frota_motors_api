@@ -51,8 +51,7 @@ public class FavoriteService {
     if (part != null) entityCount++;
 
     if (entityCount != 1) {
-      throw new IllegalArgumentException(
-          "Exactly one entity (vehicle or part) must be provided");
+      throw new IllegalArgumentException("Exactly one entity (vehicle or part) must be provided");
     }
 
     Favorite favorite = FavoriteMapper.toEntity(dto, user, vehicle, part);

@@ -50,8 +50,8 @@ public class SearchService {
     // Search vehicles
     List<Vehicle> vehicles =
         vehicleRepository.search(
-            vehicleType,
-            vehicleStatus,
+            vehicleType != null ? vehicleType.name() : null,
+            vehicleStatus != null ? vehicleStatus.name() : null,
             vehicleMinPrice,
             vehicleMaxPrice,
             vehicleBrand,
@@ -65,8 +65,8 @@ public class SearchService {
     // Search parts
     List<Part> parts =
         partRepository.search(
-            partCategory,
-            partStatus,
+            partCategory != null ? partCategory.name() : null,
+            partStatus != null ? partStatus.name() : null,
             partMinPrice,
             partMaxPrice,
             partBrand,
@@ -77,9 +77,6 @@ public class SearchService {
         parts.stream().map(PartMapper::toResponse).collect(Collectors.toList());
 
     return new SearchResultDTO(
-        vehicleDTOs,
-        partDTOs,
-        (long) vehicleDTOs.size(),
-        (long) partDTOs.size());
+        vehicleDTOs, partDTOs, (long) vehicleDTOs.size(), (long) partDTOs.size());
   }
 }

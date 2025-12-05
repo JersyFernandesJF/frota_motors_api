@@ -1,25 +1,23 @@
 package com.example.frotamotors.infrastructure.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.servers.Server;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-
-import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.servers.Server;
-
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Frota Motors API", version = "1.0", description = "API documentation"))
+@OpenAPIDefinition(
+    info = @Info(title = "Frota Motors API", version = "1.0", description = "API documentation"))
 public class OpenApiConfig {
 
   @Value("${server.port:9090}")
@@ -27,20 +25,21 @@ public class OpenApiConfig {
 
   @Bean
   public OpenAPI frotaMotorsOpenAPI() {
-    OpenAPI openAPI = new OpenAPI()
-        .info(
-            new io.swagger.v3.oas.models.info.Info()
-                .title("Frota Motors API")
-                .description("Documentação da API Frota Motors B2C")
-                .version("v1.0")
-                .license(
-                    new io.swagger.v3.oas.models.info.License()
-                        .name("Apache 2.0")
-                        .url("http://springdoc.org")))
-        .externalDocs(
-            new io.swagger.v3.oas.models.ExternalDocumentation()
-                .description("Repositório do projeto")
-                .url("https://github.com/JersyFernandesJF/frota-motors-api"));
+    OpenAPI openAPI =
+        new OpenAPI()
+            .info(
+                new io.swagger.v3.oas.models.info.Info()
+                    .title("Frota Motors API")
+                    .description("Documentação da API Frota Motors B2C")
+                    .version("v1.0")
+                    .license(
+                        new io.swagger.v3.oas.models.info.License()
+                            .name("Apache 2.0")
+                            .url("http://springdoc.org")))
+            .externalDocs(
+                new io.swagger.v3.oas.models.ExternalDocumentation()
+                    .description("Repositório do projeto")
+                    .url("https://github.com/JersyFernandesJF/frota-motors-api"));
 
     // Configurar servidores: desenvolvimento e produção
     List<Server> servers = new ArrayList<>();
@@ -100,15 +99,16 @@ public class OpenApiConfig {
         }
 
         // Add our custom sort parameter as a string
-        Parameter sortParam = new Parameter()
-            .name("sort")
-            .in("query")
-            .description(
-                "Sorting criteria in the format: property(,asc|desc). "
-                    + "Default sort direction is ascending. "
-                    + "Use multiple sort parameters if needed. Example: sort=createdAt,desc")
-            .required(false)
-            .schema(new StringSchema().example("createdAt,desc"));
+        Parameter sortParam =
+            new Parameter()
+                .name("sort")
+                .in("query")
+                .description(
+                    "Sorting criteria in the format: property(,asc|desc). "
+                        + "Default sort direction is ascending. "
+                        + "Use multiple sort parameters if needed. Example: sort=createdAt,desc")
+                .required(false)
+                .schema(new StringSchema().example("createdAt,desc"));
         operation.addParametersItem(sortParam);
       }
 

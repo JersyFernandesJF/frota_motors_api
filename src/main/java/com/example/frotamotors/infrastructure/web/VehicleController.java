@@ -1,10 +1,26 @@
 package com.example.frotamotors.infrastructure.web;
 
+import com.example.frotamotors.domain.enums.VehicleStatus;
+import com.example.frotamotors.domain.enums.VehicleType;
+import com.example.frotamotors.domain.model.Vehicle;
+import com.example.frotamotors.domain.model.VehicleHistory;
+import com.example.frotamotors.domain.service.VehicleService;
+import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
+import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleApproveRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
+import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,25 +38,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.frotamotors.domain.enums.VehicleStatus;
-import com.example.frotamotors.domain.enums.VehicleType;
-import com.example.frotamotors.domain.model.Vehicle;
-import com.example.frotamotors.domain.model.VehicleHistory;
-import com.example.frotamotors.domain.service.VehicleService;
-import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
-import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleApproveRequestDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
-import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -127,8 +124,7 @@ public class VehicleController {
   @GetMapping("/models")
   @Transactional(readOnly = true)
   public ResponseEntity<java.util.List<java.util.Map<String, Object>>> getModels(
-      @RequestParam(required = false) String brand,
-      @RequestParam(required = false) String search) {
+      @RequestParam(required = false) String brand, @RequestParam(required = false) String search) {
     java.util.List<Object[]> rows = vehicleService.getModelSuggestions(brand, search);
     java.util.List<java.util.Map<String, Object>> result =
         rows.stream()

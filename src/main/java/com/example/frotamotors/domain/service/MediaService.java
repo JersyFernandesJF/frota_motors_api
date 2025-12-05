@@ -53,12 +53,7 @@ public class MediaService {
   public Media createWithFile(MultipartFile file, MediaCreateDTO dto) throws IOException {
     String fileUrl = fileStorageService.storeFile(file);
     MediaCreateDTO dtoWithUrl =
-<<<<<<< Updated upstream
-        new MediaCreateDTO(null, dto.vehicleId(), dto.partId(), dto.mediaType(), fileUrl);
-=======
-        new MediaCreateDTO(
-            dto.vehicleId(), dto.partId(), dto.mediaType(), fileUrl);
->>>>>>> Stashed changes
+        new MediaCreateDTO(dto.vehicleId(), dto.partId(), dto.mediaType(), fileUrl);
 
     Vehicle vehicle = null;
     Part part = null;
