@@ -27,10 +27,8 @@ CREATE TABLE vehicles (
     CONSTRAINT fk_vehicle_owner FOREIGN KEY (owner_id) REFERENCES users(id),
     CONSTRAINT fk_vehicle_agency FOREIGN KEY (agency_id) REFERENCES agencies(id)
 );
-
 CREATE INDEX idx_vehicles_owner ON vehicles(owner_id);
 CREATE INDEX idx_vehicles_agency ON vehicles(agency_id);
 CREATE INDEX idx_vehicles_type ON vehicles(type);
 CREATE INDEX idx_vehicles_status ON vehicles(status);
 CREATE INDEX idx_vehicles_brand ON vehicles(brand);
-

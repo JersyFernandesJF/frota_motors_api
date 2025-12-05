@@ -20,11 +20,9 @@ CREATE TABLE parts (
     CONSTRAINT fk_part_seller FOREIGN KEY (seller_id) REFERENCES users(id),
     CONSTRAINT fk_part_agency FOREIGN KEY (agency_id) REFERENCES agencies(id)
 );
-
 CREATE INDEX idx_parts_seller ON parts(seller_id);
 CREATE INDEX idx_parts_agency ON parts(agency_id);
 CREATE INDEX idx_parts_category ON parts(category);
 CREATE INDEX idx_parts_status ON parts(status);
 CREATE INDEX idx_parts_brand ON parts(brand);
 CREATE INDEX idx_parts_part_number ON parts(part_number);
-

@@ -16,10 +16,8 @@ CREATE TABLE payments (
     CONSTRAINT fk_payment_purchase FOREIGN KEY (purchase_id) REFERENCES purchases(id),
     CONSTRAINT fk_payment_payer FOREIGN KEY (payer_id) REFERENCES users(id)
 );
-
 CREATE INDEX idx_payments_purchase ON payments(purchase_id);
 CREATE INDEX idx_payments_payer ON payments(payer_id);
 CREATE INDEX idx_payments_status ON payments(status);
 CREATE INDEX idx_payments_method ON payments(method);
 CREATE INDEX idx_payments_transaction_id ON payments(transaction_id);
-

@@ -1,4 +1,3 @@
--- Create financings table
 CREATE TABLE financings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     vehicle_id UUID NOT NULL,
@@ -26,12 +25,9 @@ CREATE TABLE financings (
     CONSTRAINT fk_financing_approved_by FOREIGN KEY (approved_by_id) REFERENCES users(id),
     CONSTRAINT fk_financing_rejected_by FOREIGN KEY (rejected_by_id) REFERENCES users(id)
 );
-
--- Create indexes
 CREATE INDEX idx_financings_vehicle ON financings(vehicle_id);
 CREATE INDEX idx_financings_buyer ON financings(buyer_id);
 CREATE INDEX idx_financings_seller ON financings(seller_id);
 CREATE INDEX idx_financings_status ON financings(status);
 CREATE INDEX idx_financings_approved_by ON financings(approved_by_id);
 CREATE INDEX idx_financings_rejected_by ON financings(rejected_by_id);
-

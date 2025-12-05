@@ -1,4 +1,3 @@
--- Create inspections table
 CREATE TABLE inspections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     vehicle_id UUID NOT NULL,
@@ -21,12 +20,9 @@ CREATE TABLE inspections (
     CONSTRAINT fk_inspection_seller FOREIGN KEY (seller_id) REFERENCES users(id),
     CONSTRAINT fk_inspection_inspector FOREIGN KEY (inspector_id) REFERENCES users(id)
 );
-
--- Create indexes
 CREATE INDEX idx_inspections_vehicle ON inspections(vehicle_id);
 CREATE INDEX idx_inspections_buyer ON inspections(buyer_id);
 CREATE INDEX idx_inspections_seller ON inspections(seller_id);
 CREATE INDEX idx_inspections_inspector ON inspections(inspector_id);
 CREATE INDEX idx_inspections_status ON inspections(status);
 CREATE INDEX idx_inspections_scheduled_at ON inspections(scheduled_at);
-

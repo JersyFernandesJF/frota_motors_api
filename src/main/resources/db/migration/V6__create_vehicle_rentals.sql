@@ -23,10 +23,8 @@ CREATE TABLE vehicle_rentals (
     CONSTRAINT fk_rental_renter FOREIGN KEY (renter_id) REFERENCES users(id),
     CONSTRAINT fk_rental_agency FOREIGN KEY (agency_id) REFERENCES agencies(id)
 );
-
 CREATE INDEX idx_rentals_vehicle ON vehicle_rentals(vehicle_id);
 CREATE INDEX idx_rentals_renter ON vehicle_rentals(renter_id);
 CREATE INDEX idx_rentals_agency ON vehicle_rentals(agency_id);
 CREATE INDEX idx_rentals_status ON vehicle_rentals(status);
 CREATE INDEX idx_rentals_dates ON vehicle_rentals(start_date, end_date);
-

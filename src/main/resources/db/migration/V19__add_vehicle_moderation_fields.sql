@@ -1,4 +1,3 @@
--- Add moderation fields to vehicles table
 ALTER TABLE vehicles ADD COLUMN moderation_status VARCHAR(20) DEFAULT 'PENDING';
 ALTER TABLE vehicles ADD COLUMN approved_by_id UUID;
 ALTER TABLE vehicles ADD COLUMN approved_at TIMESTAMP;
@@ -9,14 +8,9 @@ ALTER TABLE vehicles ADD COLUMN published_at TIMESTAMP;
 ALTER TABLE vehicles ADD COLUMN views BIGINT DEFAULT 0;
 ALTER TABLE vehicles ADD COLUMN favorites_count BIGINT DEFAULT 0;
 ALTER TABLE vehicles ADD COLUMN messages_count BIGINT DEFAULT 0;
-
--- Add foreign keys
 ALTER TABLE vehicles ADD CONSTRAINT fk_vehicle_approved_by FOREIGN KEY (approved_by_id) REFERENCES users(id);
 ALTER TABLE vehicles ADD CONSTRAINT fk_vehicle_rejected_by FOREIGN KEY (rejected_by_id) REFERENCES users(id);
-
--- Create indexes
 CREATE INDEX idx_vehicles_moderation_status ON vehicles(moderation_status);
 CREATE INDEX idx_vehicles_approved_by ON vehicles(approved_by_id);
 CREATE INDEX idx_vehicles_rejected_by ON vehicles(rejected_by_id);
 CREATE INDEX idx_vehicles_published_at ON vehicles(published_at);
-

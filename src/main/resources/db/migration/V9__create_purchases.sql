@@ -19,10 +19,8 @@ CREATE TABLE purchases (
     CONSTRAINT fk_purchase_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id),
     CONSTRAINT fk_purchase_part FOREIGN KEY (part_id) REFERENCES parts(id)
 );
-
 CREATE INDEX idx_purchases_buyer ON purchases(buyer_id);
 CREATE INDEX idx_purchases_status ON purchases(status);
 CREATE INDEX idx_purchases_type ON purchases(type);
 CREATE INDEX idx_purchases_vehicle ON purchases(vehicle_id);
 CREATE INDEX idx_purchases_part ON purchases(part_id);
-
