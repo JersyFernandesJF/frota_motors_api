@@ -5,6 +5,7 @@ import com.example.frotamotors.domain.service.AuthService;
 import com.example.frotamotors.domain.service.UserService;
 import com.example.frotamotors.infrastructure.dto.AppleAuthRequestDTO;
 import com.example.frotamotors.infrastructure.dto.AuthResponseDTO;
+import com.example.frotamotors.infrastructure.dto.ErrorResponseDTO;
 import com.example.frotamotors.infrastructure.dto.ForgotPasswordRequestDTO;
 import com.example.frotamotors.infrastructure.dto.GoogleAuthRequestDTO;
 import com.example.frotamotors.infrastructure.dto.LoginRequestDTO;
@@ -39,6 +40,7 @@ public class AuthController {
 	@Autowired
 	private UserService userService;
 
+<<<<<<< Updated upstream
 	// Google OAuth2 - fluxo espelhado do projeto target (recebe payload completo,
 	// usa idToken)
 	@PostMapping("/google")
@@ -55,6 +57,82 @@ public class AuthController {
 	// authService.authenticateOrCreateAppleUser(request.idToken());
 	// return ResponseEntity.ok(response);
 	// }
+=======
+  @PostMapping("/google")
+  @io.swagger.v3.oas.annotations.Operation(
+      summary = "Authenticate with Google",
+      description =
+          "Authenticate or register a user using Google Sign-In. Requires a valid Google ID token.")
+  @io.swagger.v3.oas.annotations.responses.ApiResponses(
+      value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Successfully authenticated with Google"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "400",
+            description = "Invalid Google token or authentication failed"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "503",
+            description = "Google authentication is not configured")
+      })
+  public ResponseEntity<?> authenticateWithGoogle(
+      @Valid @RequestBody GoogleAuthRequestDTO request) {
+    try {
+      AuthResponseDTO response = authService.authenticateOrCreateGoogleUser(request.idToken());
+      log.info("Google authentication successful");
+      return ResponseEntity.ok(response);
+    } catch (IllegalStateException e) {
+      log.warn("Google authentication not configured: {}", e.getMessage());
+      return ResponseEntity.status(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE)
+          .body(new ErrorResponseDTO("Google authentication is not configured", "GOOGLE_NOT_CONFIGURED"));
+    } catch (org.springframework.security.authentication.BadCredentialsException e) {
+      log.warn("Google authentication failed: {}", e.getMessage());
+      return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
+          .body(new ErrorResponseDTO("Invalid Google token", "INVALID_GOOGLE_TOKEN"));
+    } catch (Exception e) {
+      log.error("Unexpected error during Google authentication", e);
+      return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new ErrorResponseDTO("Authentication failed. Please try again later.", "GOOGLE_AUTH_ERROR"));
+    }
+  }
+
+  @PostMapping("/apple")
+  @io.swagger.v3.oas.annotations.Operation(
+      summary = "Authenticate with Apple",
+      description =
+          "Authenticate or register a user using Sign in with Apple. Requires a valid Apple ID token.")
+  @io.swagger.v3.oas.annotations.responses.ApiResponses(
+      value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Successfully authenticated with Apple"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "400",
+            description = "Invalid Apple token or authentication failed"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "503",
+            description = "Apple authentication is not configured")
+      })
+  public ResponseEntity<?> authenticateWithApple(@Valid @RequestBody AppleAuthRequestDTO request) {
+    try {
+      AuthResponseDTO response = authService.authenticateOrCreateAppleUser(request.idToken());
+      log.info("Apple authentication successful");
+      return ResponseEntity.ok(response);
+    } catch (IllegalStateException e) {
+      log.warn("Apple authentication not configured: {}", e.getMessage());
+      return ResponseEntity.status(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE)
+          .body(new ErrorResponseDTO("Apple authentication is not configured", "APPLE_NOT_CONFIGURED"));
+    } catch (org.springframework.security.authentication.BadCredentialsException e) {
+      log.warn("Apple authentication failed: {}", e.getMessage());
+      return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
+          .body(new ErrorResponseDTO("Invalid Apple token", "INVALID_APPLE_TOKEN"));
+    } catch (Exception e) {
+      log.error("Unexpected error during Apple authentication", e);
+      return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new ErrorResponseDTO("Authentication failed. Please try again later.", "APPLE_AUTH_ERROR"));
+    }
+  }
+>>>>>>> Stashed changes
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {

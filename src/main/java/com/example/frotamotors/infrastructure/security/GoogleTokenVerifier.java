@@ -5,39 +5,56 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import java.util.Collections;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
-// import org.springframework.stereotype.Component;
-
-// @Component - Commented out to prevent auto-instantiation when OAuth2 is not configured
+@Slf4j
+@Component
+@ConditionalOnProperty(name = "oauth.google.enabled", havingValue = "true", matchIfMissing = false)
 public class GoogleTokenVerifier {
 
-  @Value("${spring.security.oauth2.client.registration.google.client-id:}")
+  private static final String GOOGLE_ISSUER_1 = "https://accounts.google.com";
+  private static final String GOOGLE_ISSUER_2 = "accounts.google.com";
+
+  @Value("${oauth.google.client-id:}")
   private String clientId;
 
   public GoogleIdToken.Payload verifyToken(String idTokenString) throws Exception {
     if (clientId == null || clientId.isEmpty()) {
+      log.error("Google Client ID not configured");
       throw new IllegalStateException("Google Client ID not configured");
     }
 
-    GoogleIdTokenVerifier verifier =
-        new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-            .setAudience(Collections.singletonList(clientId))
-            .build();
+    try {
+      GoogleIdTokenVerifier verifier =
+          new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+              .setAudience(Collections.singletonList(clientId))
+              .build();
 
-    GoogleIdToken idToken = verifier.verify(idTokenString);
-    if (idToken == null) {
-      throw new SecurityException("Invalid Google ID token");
+      GoogleIdToken idToken = verifier.verify(idTokenString);
+      if (idToken == null) {
+        log.warn("Google ID token verification failed: token is null");
+        throw new SecurityException("Invalid Google ID token");
+      }
+
+      GoogleIdToken.Payload payload = idToken.getPayload();
+
+      // Verify issuer
+      String issuer = payload.getIssuer();
+      if (!issuer.equals(GOOGLE_ISSUER_1) && !issuer.equals(GOOGLE_ISSUER_2)) {
+        log.warn("Invalid Google token issuer: {}", issuer);
+        throw new SecurityException("Invalid token issuer: " + issuer);
+      }
+
+      log.debug("Google token verified successfully for subject: {}", payload.getSubject());
+      return payload;
+    } catch (SecurityException e) {
+      throw e;
+    } catch (Exception e) {
+      log.error("Error verifying Google token", e);
+      throw new SecurityException("Failed to verify Google token: " + e.getMessage(), e);
     }
-
-    GoogleIdToken.Payload payload = idToken.getPayload();
-
-    // Verify issuer
-    String issuer = payload.getIssuer();
-    if (!issuer.equals("https://accounts.google.com") && !issuer.equals("accounts.google.com")) {
-      throw new SecurityException("Invalid token issuer: " + issuer);
-    }
-
-    return payload;
   }
 }

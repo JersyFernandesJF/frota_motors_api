@@ -1,22 +1,29 @@
 package com.example.frotamotors.infrastructure.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record ErrorResponseDTO(
-    LocalDateTime timestamp,
-    int status,
-    String error,
+    Integer status,
+    String title,
     String message,
     String path,
-    List<String> details) {
+    String error,
+    String code,
+    List<String> errors) {
 
-  public static ErrorResponseDTO of(int status, String error, String message, String path) {
-    return new ErrorResponseDTO(LocalDateTime.now(), status, error, message, path, null);
+  // Simple constructor for OAuth errors (error, code)
+  public ErrorResponseDTO(String error, String code) {
+    this(null, null, null, null, error, code, null);
   }
 
+  // Factory method for GlobalExceptionHandler (status, title, message, path)
+  public static ErrorResponseDTO of(int status, String title, String message, String path) {
+    return new ErrorResponseDTO(status, title, message, path, null, null, null);
+  }
+
+  // Factory method for validation errors (status, title, message, path, errors)
   public static ErrorResponseDTO of(
-      int status, String error, String message, String path, List<String> details) {
-    return new ErrorResponseDTO(LocalDateTime.now(), status, error, message, path, details);
+      int status, String title, String message, String path, List<String> errors) {
+    return new ErrorResponseDTO(status, title, message, path, null, null, errors);
   }
 }

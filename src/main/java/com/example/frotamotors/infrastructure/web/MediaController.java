@@ -61,12 +61,11 @@ public class MediaController {
   @PostMapping("/upload")
   public ResponseEntity<MediaResponseDTO> uploadFile(
       @RequestParam("file") MultipartFile file,
-      @RequestParam(required = false) UUID propertyId,
       @RequestParam(required = false) UUID vehicleId,
       @RequestParam(required = false) UUID partId,
       @RequestParam com.example.frotamotors.domain.enums.MediaType mediaType)
       throws IOException {
-    MediaCreateDTO dto = new MediaCreateDTO(propertyId, vehicleId, partId, mediaType, null);
+    MediaCreateDTO dto = new MediaCreateDTO(vehicleId, partId, mediaType, null);
     Media media = mediaService.createWithFile(file, dto);
     return ResponseEntity.ok(MediaMapper.toResponse(media));
   }
