@@ -94,7 +94,14 @@ public class ComplaintService {
         ComplaintMapper.toEntity(
             dto,
             reporter,
+<<<<<<< Updated upstream
             reportedUser, reportedVehicle, reportedPart, reportedAgency);
+=======
+            reportedUser,
+            reportedVehicle,
+            reportedPart,
+            reportedAgency);
+>>>>>>> Stashed changes
     return complaintRepository.save(complaint);
   }
 

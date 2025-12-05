@@ -20,6 +20,7 @@ public class ComplaintMapper {
         complaint.getType(),
         complaint.getStatus(),
         complaint.getDescription(),
+<<<<<<< Updated upstream
         complaint.getReportedUser() != null
             ? UserMapper.toResponse(complaint.getReportedUser())
             : null,
@@ -35,6 +36,13 @@ public class ComplaintMapper {
         complaint.getReviewedBy() != null
             ? UserMapper.toResponse(complaint.getReviewedBy())
             : null,
+=======
+        complaint.getReportedUser() != null ? UserMapper.toResponse(complaint.getReportedUser()) : null,
+        complaint.getReportedVehicle() != null ? VehicleMapper.toResponse(complaint.getReportedVehicle()) : null,
+        complaint.getReportedPart() != null ? PartMapper.toResponse(complaint.getReportedPart()) : null,
+        complaint.getReportedAgency() != null ? AgencyMapper.toResponse(complaint.getReportedAgency()) : null,
+        complaint.getReviewedBy() != null ? UserMapper.toResponse(complaint.getReviewedBy()) : null,
+>>>>>>> Stashed changes
         complaint.getAdminNotes(),
         complaint.getCreatedAt(),
         complaint.getUpdatedAt());

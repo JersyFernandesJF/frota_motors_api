@@ -60,6 +60,7 @@ public class AuthService {
 	@Value("${jwt.reset-token-expiration:3600000}") // 1 hour default
 	private long resetTokenExpiration;
 
+<<<<<<< Updated upstream
 	@Transactional
 	public AuthResponseDTO authenticateOrCreateGoogleUser(String idToken) {
 		if (googleTokenVerifier == null) {
@@ -68,12 +69,28 @@ public class AuthService {
 		try {
 			// Verify Google ID token
 			GoogleIdToken.Payload payload = googleTokenVerifier.verifyToken(idToken);
+=======
+  @Transactional
+  public AuthResponseDTO authenticateOrCreateGoogleUser(String idToken) {
+    if (googleTokenVerifier == null) {
+      throw new IllegalStateException("Google authentication is not configured");
+    }
+    if (idToken == null || idToken.isBlank()) {
+      log.warn("Google authentication attempted with empty token");
+      throw new BadCredentialsException("Google ID token is required");
+    }
+
+    try {
+      // Verify Google ID token - this is the only trusted source of user data
+      GoogleIdToken.Payload payload = googleTokenVerifier.verifyToken(idToken);
+>>>>>>> Stashed changes
 
 			String googleId = payload.getSubject();
 			String email = payload.getEmail();
 			String name = (String) payload.get("name");
 			String imageUrl = (String) payload.get("picture");
 
+<<<<<<< Updated upstream
 			log.info("Google authentication successful for user: {}", email);
 
 			Optional<User> existingUser = userRepository.findByGoogleId(googleId);
@@ -109,6 +126,77 @@ public class AuthService {
 					user.setImageUrl(imageUrl);
 				}
 			}
+=======
+      if (email == null || email.isBlank()) {
+        log.warn("Google token missing email claim");
+        throw new BadCredentialsException("Google token does not contain email");
+      }
+
+      log.info("Google authentication successful for user: {} (Google ID: {})", email, googleId);
+
+      // First, check if user exists with this Google ID
+      Optional<User> existingUser = userRepository.findByGoogleId(googleId);
+
+      User user;
+      if (existingUser.isPresent()) {
+        // User already linked with this Google account
+        user = existingUser.get();
+        log.debug("Found existing user with Google ID: {}", googleId);
+
+        // Update user info if needed (name, image can change)
+        boolean updated = false;
+        if (name != null && !name.equals(user.getName())) {
+          user.setName(name);
+          updated = true;
+        }
+        if (imageUrl != null && !imageUrl.equals(user.getImageUrl())) {
+          user.setImageUrl(imageUrl);
+          updated = true;
+        }
+        if (updated) {
+          log.debug("Updated user info for Google account: {}", email);
+        }
+      } else {
+        // Check if user exists with this email (account linking)
+        Optional<User> userByEmail = userRepository.findByEmail(email);
+        if (userByEmail.isPresent()) {
+          user = userByEmail.get();
+          log.info("Linking existing user {} with Google account", email);
+
+          // Check if email is already linked to another provider
+          if (user.getGoogleId() != null && !user.getGoogleId().equals(googleId)) {
+            log.warn(
+                "Email {} already linked to different Google account. Updating link.",
+                email);
+          }
+          if (user.getAppleId() != null) {
+            log.info("User {} has both Google and Apple accounts linked", email);
+          }
+
+          // Link Google account
+          user.setGoogleId(googleId);
+          if (user.getProvider() == null || user.getProvider().isBlank()) {
+            user.setProvider("GOOGLE");
+          } else if (!user.getProvider().contains("GOOGLE")) {
+            // User has multiple providers
+            user.setProvider(user.getProvider() + ",GOOGLE");
+          }
+          if (imageUrl != null && (user.getImageUrl() == null || user.getImageUrl().isBlank())) {
+            user.setImageUrl(imageUrl);
+          }
+        } else {
+          // Create new user
+          log.info("Creating new user with Google account: {}", email);
+          user = new User();
+          user.setName(name != null && !name.isBlank() ? name : email);
+          user.setEmail(email);
+          user.setGoogleId(googleId);
+          user.setProvider("GOOGLE");
+          user.setRole(Role.BUYER);
+          user.setImageUrl(imageUrl);
+        }
+      }
+>>>>>>> Stashed changes
 
 			// Update last login
 			user.setLastLogin(LocalDateTime.now());
@@ -123,6 +211,7 @@ public class AuthService {
 			String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
 			String refreshToken = createRefreshToken(user);
 
+<<<<<<< Updated upstream
 			return new AuthResponseDTO(
 					token,
 					refreshToken,
@@ -145,11 +234,48 @@ public class AuthService {
 		try {
 			// Verify Apple ID token
 			JWTClaimsSet claimsSet = appleTokenVerifier.verifyToken(idToken);
+=======
+      log.info("Google authentication completed successfully for user: {}", user.getEmail());
+      return new AuthResponseDTO(
+          token,
+          refreshToken,
+          user.getId(),
+          user.getEmail(),
+          user.getName(),
+          user.getRole(),
+          user.getPermissions());
+    } catch (IllegalStateException | SecurityException e) {
+      // Re-throw configuration and security exceptions as-is
+      throw e;
+    } catch (BadCredentialsException e) {
+      // Re-throw authentication exceptions as-is
+      throw e;
+    } catch (Exception e) {
+      log.error("Google authentication failed: {}", e.getMessage(), e);
+      throw new BadCredentialsException("Invalid Google token: " + e.getMessage());
+    }
+  }
+
+  @Transactional
+  public AuthResponseDTO authenticateOrCreateAppleUser(String idToken) {
+    if (appleTokenVerifier == null) {
+      throw new IllegalStateException("Apple authentication is not configured");
+    }
+    if (idToken == null || idToken.isBlank()) {
+      log.warn("Apple authentication attempted with empty token");
+      throw new BadCredentialsException("Apple ID token is required");
+    }
+
+    try {
+      // Verify Apple ID token - this is the only trusted source of user data
+      JWTClaimsSet claimsSet = appleTokenVerifier.verifyToken(idToken);
+>>>>>>> Stashed changes
 
 			String appleId = claimsSet.getSubject();
 			String email = (String) claimsSet.getClaim("email");
 			String name = (String) claimsSet.getClaim("name");
 
+<<<<<<< Updated upstream
 			log.info("Apple authentication successful for user: {}", email);
 
 			Optional<User> existingUser = userRepository.findByAppleId(appleId);
@@ -177,6 +303,83 @@ public class AuthService {
 					user.setRole(Role.BUYER);
 				}
 			}
+=======
+      // Note: Apple may not always provide email in the token (privacy feature)
+      // If email is not in token, we need to handle it differently
+      if (appleId == null || appleId.isBlank()) {
+        log.warn("Apple token missing subject claim");
+        throw new BadCredentialsException("Apple token does not contain user ID");
+      }
+
+      log.info(
+          "Apple authentication successful for user: {} (Apple ID: {})",
+          email != null ? email : "email not provided",
+          appleId);
+
+      // First, check if user exists with this Apple ID
+      Optional<User> existingUser = userRepository.findByAppleId(appleId);
+
+      User user;
+      if (existingUser.isPresent()) {
+        // User already linked with this Apple account
+        user = existingUser.get();
+        log.debug("Found existing user with Apple ID: {}", appleId);
+
+        // Update user info if needed (name can change)
+        if (name != null && !name.equals(user.getName())) {
+          user.setName(name);
+        }
+        // Update email if it was not provided before but is now available
+        if (email != null && !email.isBlank() && (user.getEmail() == null || user.getEmail().isBlank())) {
+          log.info("Updating email for Apple user: {}", appleId);
+          user.setEmail(email);
+        }
+      } else {
+        // Check if user exists with this email (account linking)
+        if (email != null && !email.isBlank()) {
+          Optional<User> userByEmail = userRepository.findByEmail(email);
+          if (userByEmail.isPresent()) {
+            user = userByEmail.get();
+            log.info("Linking existing user {} with Apple account", email);
+
+            // Check if email is already linked to another provider
+            if (user.getAppleId() != null && !user.getAppleId().equals(appleId)) {
+              log.warn(
+                  "Email {} already linked to different Apple account. Updating link.",
+                  email);
+            }
+            if (user.getGoogleId() != null) {
+              log.info("User {} has both Google and Apple accounts linked", email);
+            }
+
+            // Link Apple account
+            user.setAppleId(appleId);
+            if (user.getProvider() == null || user.getProvider().isBlank()) {
+              user.setProvider("APPLE");
+            } else if (!user.getProvider().contains("APPLE")) {
+              // User has multiple providers
+              user.setProvider(user.getProvider() + ",APPLE");
+            }
+          } else {
+            // Create new user with email
+            log.info("Creating new user with Apple account: {}", email);
+            user = new User();
+            user.setName(name != null && !name.isBlank() ? name : email);
+            user.setEmail(email);
+            user.setAppleId(appleId);
+            user.setProvider("APPLE");
+            user.setRole(Role.BUYER);
+          }
+        } else {
+          // Apple privacy: email not provided, create user with Apple ID only
+          // Note: This is a limitation - we need email for the system
+          // In production, you might want to prompt user for email after first login
+          log.warn("Apple token does not contain email. Creating user with Apple ID only.");
+          throw new BadCredentialsException(
+              "Apple token does not contain email. Email is required for account creation.");
+        }
+      }
+>>>>>>> Stashed changes
 
 			// Update last login
 			user.setLastLogin(LocalDateTime.now());
@@ -191,6 +394,7 @@ public class AuthService {
 			String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
 			String refreshToken = createRefreshToken(user);
 
+<<<<<<< Updated upstream
 			return new AuthResponseDTO(
 					token,
 					refreshToken,
@@ -204,6 +408,28 @@ public class AuthService {
 			throw new BadCredentialsException("Invalid Apple token: " + e.getMessage());
 		}
 	}
+=======
+      log.info("Apple authentication completed successfully for user: {}", user.getEmail());
+      return new AuthResponseDTO(
+          token,
+          refreshToken,
+          user.getId(),
+          user.getEmail(),
+          user.getName(),
+          user.getRole(),
+          user.getPermissions());
+    } catch (IllegalStateException | SecurityException e) {
+      // Re-throw configuration and security exceptions as-is
+      throw e;
+    } catch (BadCredentialsException e) {
+      // Re-throw authentication exceptions as-is
+      throw e;
+    } catch (Exception e) {
+      log.error("Apple authentication failed: {}", e.getMessage(), e);
+      throw new BadCredentialsException("Invalid Apple token: " + e.getMessage());
+    }
+  }
+>>>>>>> Stashed changes
 
 	@Transactional
 	public AuthResponseDTO authenticateLocalUser(LoginRequestDTO request) {

@@ -14,7 +14,10 @@ public class FavoriteMapper {
     return new FavoriteResponseDTO(
         favorite.getId(),
         favorite.getUser().getId(),
+<<<<<<< Updated upstream
         null,
+=======
+>>>>>>> Stashed changes
         favorite.getVehicle() != null ? favorite.getVehicle().getId() : null,
         favorite.getPart() != null ? favorite.getPart().getId() : null,
         favorite.getCreatedAt());
