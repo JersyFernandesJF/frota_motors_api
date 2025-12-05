@@ -9,7 +9,6 @@ CREATE TABLE conversations (
     CONSTRAINT fk_conversation_user2 FOREIGN KEY (user2_id) REFERENCES users(id),
     CONSTRAINT unique_conversation_users UNIQUE (user1_id, user2_id)
 );
-
 CREATE TABLE messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     conversation_id UUID NOT NULL,
@@ -20,7 +19,6 @@ CREATE TABLE messages (
     CONSTRAINT fk_message_conversation FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     CONSTRAINT fk_message_sender FOREIGN KEY (sender_id) REFERENCES users(id)
 );
-
 CREATE INDEX idx_conversations_user1 ON conversations(user1_id);
 CREATE INDEX idx_conversations_user2 ON conversations(user2_id);
 CREATE INDEX idx_conversations_last_message ON conversations(last_message_at);
@@ -28,4 +26,3 @@ CREATE INDEX idx_messages_conversation ON messages(conversation_id);
 CREATE INDEX idx_messages_sender ON messages(sender_id);
 CREATE INDEX idx_messages_created_at ON messages(created_at);
 CREATE INDEX idx_messages_is_read ON messages(is_read);
-

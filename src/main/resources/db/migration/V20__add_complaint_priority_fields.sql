@@ -1,17 +1,11 @@
--- Add priority and resolution fields to complaints table
 ALTER TABLE complaints ADD COLUMN priority VARCHAR(20) DEFAULT 'MEDIUM';
 ALTER TABLE complaints ADD COLUMN resolved_by_id UUID;
 ALTER TABLE complaints ADD COLUMN resolved_at TIMESTAMP;
 ALTER TABLE complaints ADD COLUMN dismissed_by_id UUID;
 ALTER TABLE complaints ADD COLUMN dismissed_at TIMESTAMP;
 ALTER TABLE complaints ADD COLUMN resolution TEXT;
-
--- Add foreign keys
 ALTER TABLE complaints ADD CONSTRAINT fk_complaint_resolved_by FOREIGN KEY (resolved_by_id) REFERENCES users(id);
 ALTER TABLE complaints ADD CONSTRAINT fk_complaint_dismissed_by FOREIGN KEY (dismissed_by_id) REFERENCES users(id);
-
--- Create indexes
 CREATE INDEX idx_complaints_priority ON complaints(priority);
 CREATE INDEX idx_complaints_resolved_by ON complaints(resolved_by_id);
 CREATE INDEX idx_complaints_dismissed_by ON complaints(dismissed_by_id);
-

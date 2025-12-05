@@ -1,4 +1,3 @@
--- Create user_blocks table
 CREATE TABLE user_blocks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     blocker_id UUID NOT NULL,
@@ -9,8 +8,5 @@ CREATE TABLE user_blocks (
     CONSTRAINT fk_user_block_blocked FOREIGN KEY (blocked_id) REFERENCES users(id),
     CONSTRAINT uk_user_block UNIQUE (blocker_id, blocked_id)
 );
-
--- Create indexes
 CREATE INDEX idx_user_blocks_blocker ON user_blocks(blocker_id);
 CREATE INDEX idx_user_blocks_blocked ON user_blocks(blocked_id);
-

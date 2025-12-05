@@ -1,4 +1,3 @@
--- Create vehicle_history table
 CREATE TABLE vehicle_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     vehicle_id UUID NOT NULL,
@@ -10,9 +9,6 @@ CREATE TABLE vehicle_history (
     CONSTRAINT fk_vehicle_history_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id),
     CONSTRAINT fk_vehicle_history_changed_by FOREIGN KEY (changed_by_id) REFERENCES users(id)
 );
-
--- Create indexes
 CREATE INDEX idx_vehicle_history_vehicle ON vehicle_history(vehicle_id);
 CREATE INDEX idx_vehicle_history_changed_at ON vehicle_history(changed_at);
 CREATE INDEX idx_vehicle_history_action ON vehicle_history(action);
-
