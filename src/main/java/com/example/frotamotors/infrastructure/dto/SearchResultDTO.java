@@ -7,3 +7,4 @@ public record SearchResultDTO(
     List<PartResponseDTO> parts,
     Long totalVehicles,
     Long totalParts) {}
+
