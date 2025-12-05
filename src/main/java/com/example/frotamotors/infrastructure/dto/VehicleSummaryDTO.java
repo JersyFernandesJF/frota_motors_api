@@ -1,11 +1,10 @@
 package com.example.frotamotors.infrastructure.dto;
 
+import com.example.frotamotors.domain.enums.VehicleStatus;
+import com.example.frotamotors.domain.enums.VehicleType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.example.frotamotors.domain.enums.VehicleStatus;
-import com.example.frotamotors.domain.enums.VehicleType;
 
 public record VehicleSummaryDTO(
     UUID id,
@@ -24,4 +23,3 @@ public record VehicleSummaryDTO(
     Integer horsePower,
     String thumbnailUrl,
     LocalDateTime createdAt) {}
-

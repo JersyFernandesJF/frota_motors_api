@@ -1,18 +1,5 @@
 package com.example.frotamotors.domain.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.frotamotors.domain.enums.ListingModerationStatus;
 import com.example.frotamotors.domain.enums.VehicleStatus;
 import com.example.frotamotors.domain.enums.VehicleType;
@@ -28,8 +15,18 @@ import com.example.frotamotors.infrastructure.persistence.UserRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleHistoryRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import com.example.frotamotors.infrastructure.util.SecurityUtils;
-
 import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class VehicleService {
@@ -68,26 +65,29 @@ public class VehicleService {
   public Page<Vehicle> getAll(Pageable pageable) {
     Page<Vehicle> page = vehicleRepository.findAllWithMedia(pageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
-    page.getContent().forEach(vehicle -> {
-      if (vehicle.getOwner() != null) {
-        vehicle.getOwner().getId(); // Trigger lazy load
-      }
-      if (vehicle.getAgency() != null) {
-        vehicle.getAgency().getId(); // Trigger lazy load
-      }
-      if (vehicle.getMedia() != null) {
-        vehicle.getMedia().size(); // Trigger lazy load for media collection
-      }
-    });
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
     return page;
   }
 
   @Transactional(readOnly = true)
   public Vehicle getById(UUID id) {
-    Vehicle vehicle = vehicleRepository
-        .findByIdWithMedia(id)
-        .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
-    
+    Vehicle vehicle =
+        vehicleRepository
+            .findByIdWithMedia(id)
+            .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
+
     // Force initialization of lazy relationships to avoid LazyInitializationException
     if (vehicle.getOwner() != null) {
       vehicle.getOwner().getId(); // Trigger lazy load
@@ -98,7 +98,7 @@ public class VehicleService {
     if (vehicle.getMedia() != null) {
       vehicle.getMedia().size(); // Trigger lazy load for media collection
     }
-    
+
     return vehicle;
   }
 
@@ -251,17 +251,19 @@ public class VehicleService {
             search,
             effectivePageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
-    page.getContent().forEach(vehicle -> {
-      if (vehicle.getOwner() != null) {
-        vehicle.getOwner().getId(); // Trigger lazy load
-      }
-      if (vehicle.getAgency() != null) {
-        vehicle.getAgency().getId(); // Trigger lazy load
-      }
-      if (vehicle.getMedia() != null) {
-        vehicle.getMedia().size(); // Trigger lazy load for media collection
-      }
-    });
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
     return page;
   }
 
@@ -283,17 +285,19 @@ public class VehicleService {
   public Page<Vehicle> getByOwner(UUID ownerId, Pageable pageable) {
     Page<Vehicle> page = vehicleRepository.findByOwnerId(ownerId, pageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
-    page.getContent().forEach(vehicle -> {
-      if (vehicle.getOwner() != null) {
-        vehicle.getOwner().getId(); // Trigger lazy load
-      }
-      if (vehicle.getAgency() != null) {
-        vehicle.getAgency().getId(); // Trigger lazy load
-      }
-      if (vehicle.getMedia() != null) {
-        vehicle.getMedia().size(); // Trigger lazy load for media collection
-      }
-    });
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
     return page;
   }
 
@@ -305,17 +309,19 @@ public class VehicleService {
   public Page<Vehicle> getByAgency(UUID agencyId, Pageable pageable) {
     Page<Vehicle> page = vehicleRepository.findByAgencyId(agencyId, pageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
-    page.getContent().forEach(vehicle -> {
-      if (vehicle.getOwner() != null) {
-        vehicle.getOwner().getId(); // Trigger lazy load
-      }
-      if (vehicle.getAgency() != null) {
-        vehicle.getAgency().getId(); // Trigger lazy load
-      }
-      if (vehicle.getMedia() != null) {
-        vehicle.getMedia().size(); // Trigger lazy load for media collection
-      }
-    });
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
     return page;
   }
 
@@ -327,17 +333,19 @@ public class VehicleService {
   public Page<Vehicle> getByType(VehicleType type, Pageable pageable) {
     Page<Vehicle> page = vehicleRepository.findByType(type, pageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
-    page.getContent().forEach(vehicle -> {
-      if (vehicle.getOwner() != null) {
-        vehicle.getOwner().getId(); // Trigger lazy load
-      }
-      if (vehicle.getAgency() != null) {
-        vehicle.getAgency().getId(); // Trigger lazy load
-      }
-      if (vehicle.getMedia() != null) {
-        vehicle.getMedia().size(); // Trigger lazy load for media collection
-      }
-    });
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
     return page;
   }
 
@@ -349,17 +357,19 @@ public class VehicleService {
   public Page<Vehicle> getByStatus(VehicleStatus status, Pageable pageable) {
     Page<Vehicle> page = vehicleRepository.findByStatus(status, pageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
-    page.getContent().forEach(vehicle -> {
-      if (vehicle.getOwner() != null) {
-        vehicle.getOwner().getId(); // Trigger lazy load
-      }
-      if (vehicle.getAgency() != null) {
-        vehicle.getAgency().getId(); // Trigger lazy load
-      }
-      if (vehicle.getMedia() != null) {
-        vehicle.getMedia().size(); // Trigger lazy load for media collection
-      }
-    });
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
     return page;
   }
 

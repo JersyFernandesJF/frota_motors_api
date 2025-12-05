@@ -34,30 +34,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
 
-	@Autowired
-	private AuthService authService;
+  @Autowired private AuthService authService;
 
-	@Autowired
-	private UserService userService;
+  @Autowired private UserService userService;
 
-<<<<<<< Updated upstream
-	// Google OAuth2 - fluxo espelhado do projeto target (recebe payload completo,
-	// usa idToken)
-	@PostMapping("/google")
-	public ResponseEntity<AuthResponseDTO> authenticateWithGoogle(
-			@Valid @RequestBody GoogleAuthRequestDTO request) {
-		AuthResponseDTO response = authService.authenticateOrCreateGoogleUser(request.idToken());
-		return ResponseEntity.ok(response);
-	}
-
-	// @PostMapping("/apple")
-	// public ResponseEntity<AuthResponseDTO> authenticateWithApple(
-	// @Valid @RequestBody AppleAuthRequestDTO request) {
-	// AuthResponseDTO response =
-	// authService.authenticateOrCreateAppleUser(request.idToken());
-	// return ResponseEntity.ok(response);
-	// }
-=======
   @PostMapping("/google")
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Authenticate with Google",
@@ -84,7 +64,9 @@ public class AuthController {
     } catch (IllegalStateException e) {
       log.warn("Google authentication not configured: {}", e.getMessage());
       return ResponseEntity.status(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE)
-          .body(new ErrorResponseDTO("Google authentication is not configured", "GOOGLE_NOT_CONFIGURED"));
+          .body(
+              new ErrorResponseDTO(
+                  "Google authentication is not configured", "GOOGLE_NOT_CONFIGURED"));
     } catch (org.springframework.security.authentication.BadCredentialsException e) {
       log.warn("Google authentication failed: {}", e.getMessage());
       return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
@@ -92,7 +74,9 @@ public class AuthController {
     } catch (Exception e) {
       log.error("Unexpected error during Google authentication", e);
       return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new ErrorResponseDTO("Authentication failed. Please try again later.", "GOOGLE_AUTH_ERROR"));
+          .body(
+              new ErrorResponseDTO(
+                  "Authentication failed. Please try again later.", "GOOGLE_AUTH_ERROR"));
     }
   }
 
@@ -121,7 +105,9 @@ public class AuthController {
     } catch (IllegalStateException e) {
       log.warn("Apple authentication not configured: {}", e.getMessage());
       return ResponseEntity.status(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE)
-          .body(new ErrorResponseDTO("Apple authentication is not configured", "APPLE_NOT_CONFIGURED"));
+          .body(
+              new ErrorResponseDTO(
+                  "Apple authentication is not configured", "APPLE_NOT_CONFIGURED"));
     } catch (org.springframework.security.authentication.BadCredentialsException e) {
       log.warn("Apple authentication failed: {}", e.getMessage());
       return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
@@ -129,73 +115,75 @@ public class AuthController {
     } catch (Exception e) {
       log.error("Unexpected error during Apple authentication", e);
       return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new ErrorResponseDTO("Authentication failed. Please try again later.", "APPLE_AUTH_ERROR"));
+          .body(
+              new ErrorResponseDTO(
+                  "Authentication failed. Please try again later.", "APPLE_AUTH_ERROR"));
     }
   }
->>>>>>> Stashed changes
 
-	@PostMapping("/login")
-	public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
-		AuthResponseDTO response = authService.authenticateLocalUser(request);
-		return ResponseEntity.ok(response);
-	}
+  @PostMapping("/login")
+  public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+    AuthResponseDTO response = authService.authenticateLocalUser(request);
+    return ResponseEntity.ok(response);
+  }
 
-	@PostMapping("/refresh")
-	public ResponseEntity<AuthResponseDTO> refresh(
-			@Valid @RequestBody RefreshTokenRequestDTO request) {
-		AuthResponseDTO response = authService.refreshToken(request.refreshToken());
-		return ResponseEntity.ok(response);
-	}
+  @PostMapping("/refresh")
+  public ResponseEntity<AuthResponseDTO> refresh(
+      @Valid @RequestBody RefreshTokenRequestDTO request) {
+    AuthResponseDTO response = authService.refreshToken(request.refreshToken());
+    return ResponseEntity.ok(response);
+  }
 
-	@PostMapping("/logout")
-	public ResponseEntity<Void> logout() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-			authService.logout(userDetails.getUserId());
-		}
-		return ResponseEntity.ok().build();
-	}
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+      CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+      authService.logout(userDetails.getUserId());
+    }
+    return ResponseEntity.ok().build();
+  }
 
-	@PostMapping("/forgot-password")
-	public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO request) {
-		authService.requestPasswordReset(request);
-		return ResponseEntity.ok().build();
-	}
+  @PostMapping("/forgot-password")
+  public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO request) {
+    authService.requestPasswordReset(request);
+    return ResponseEntity.ok().build();
+  }
 
-	@PostMapping("/reset-password")
-	public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO request) {
-		authService.resetPassword(request);
-		return ResponseEntity.ok().build();
-	}
+  @PostMapping("/reset-password")
+  public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO request) {
+    authService.resetPassword(request);
+    return ResponseEntity.ok().build();
+  }
 
-	@GetMapping("/me")
-	public ResponseEntity<UserMeResponseDTO> getCurrentUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-			User user = userService.getUserById(userDetails.getUserId());
-			if (user == null) {
-				return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
-			}
+  @GetMapping("/me")
+  public ResponseEntity<UserMeResponseDTO> getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+      CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+      User user = userService.getUserById(userDetails.getUserId());
+      if (user == null) {
+        return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+      }
 
-			// Ensure permissions are set
-			if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
-				// This should not happen, but handle it gracefully
-				user.setPermissions(authService.getDefaultPermissions(user.getRole()));
-				user = userService.updateUser(user);
-			}
+      // Ensure permissions are set
+      if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
+        // This should not happen, but handle it gracefully
+        user.setPermissions(authService.getDefaultPermissions(user.getRole()));
+        user = userService.updateUser(user);
+      }
 
-			UserMeResponseDTO response = new UserMeResponseDTO(
-					user.getId(),
-					user.getName(),
-					user.getEmail(),
-					user.getRole(),
-					user.getPermissions(),
-					user.getImageUrl(),
-					user.getLastLogin());
-			return ResponseEntity.ok(response);
-		}
-		return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
-	}
+      UserMeResponseDTO response =
+          new UserMeResponseDTO(
+              user.getId(),
+              user.getName(),
+              user.getEmail(),
+              user.getRole(),
+              user.getPermissions(),
+              user.getImageUrl(),
+              user.getLastLogin());
+      return ResponseEntity.ok(response);
+    }
+    return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+  }
 }

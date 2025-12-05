@@ -1,9 +1,5 @@
 package com.example.frotamotors.infrastructure.mapper;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.example.frotamotors.domain.model.Agency;
 import com.example.frotamotors.domain.model.Media;
 import com.example.frotamotors.domain.model.User;
@@ -12,6 +8,9 @@ import com.example.frotamotors.infrastructure.dto.MediaResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class VehicleMapper {
 

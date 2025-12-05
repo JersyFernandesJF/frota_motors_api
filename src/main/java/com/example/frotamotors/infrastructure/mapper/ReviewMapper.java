@@ -19,10 +19,16 @@ public class ReviewMapper {
         review.getReviewer() != null ? UserMapper.toResponse(review.getReviewer()) : null,
         review.getType(),
         review.getReviewedUser() != null ? UserMapper.toResponse(review.getReviewedUser()) : null,
-        review.getReviewedVehicle() != null ? VehicleMapper.toResponse(review.getReviewedVehicle()) : null,
+        review.getReviewedVehicle() != null
+            ? VehicleMapper.toResponse(review.getReviewedVehicle())
+            : null,
         review.getReviewedPart() != null ? PartMapper.toResponse(review.getReviewedPart()) : null,
-        review.getReviewedAgency() != null ? AgencyMapper.toResponse(review.getReviewedAgency()) : null,
-        review.getReviewedRental() != null ? VehicleRentalMapper.toResponse(review.getReviewedRental()) : null,
+        review.getReviewedAgency() != null
+            ? AgencyMapper.toResponse(review.getReviewedAgency())
+            : null,
+        review.getReviewedRental() != null
+            ? VehicleRentalMapper.toResponse(review.getReviewedRental())
+            : null,
         review.getRating(),
         review.getComment(),
         review.getCreatedAt(),
