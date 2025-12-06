@@ -1,6 +1,6 @@
 package com.example.frotamotors.infrastructure.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.example.frotamotors.domain.enums.Currency;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -12,7 +12,7 @@ public record VehicleRentalCreateDTO(
     @NotNull LocalDate startDate,
     @NotNull LocalDate endDate,
     @NotNull Double dailyRate,
-    @NotBlank String currency,
+    @NotNull Currency currency,
     Double depositAmount,
     String notes,
     String pickupLocation,

@@ -110,7 +110,7 @@ public class VehicleMapper {
     vehicle.setVin(dto.vin());
     vehicle.setMileageKm(dto.mileageKm());
     vehicle.setPrice(BigDecimal.valueOf(dto.price()));
-    vehicle.setCurrency(dto.currency());
+    vehicle.setCurrency(dto.currency().name());
     vehicle.setDescription(dto.description());
     vehicle.setFuelType(dto.fuelType());
     vehicle.setTransmissionType(dto.transmissionType());

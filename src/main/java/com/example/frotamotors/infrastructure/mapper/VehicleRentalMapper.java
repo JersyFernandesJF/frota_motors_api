@@ -48,7 +48,7 @@ public class VehicleRentalMapper {
     rental.setStartDate(dto.startDate());
     rental.setEndDate(dto.endDate());
     rental.setDailyRate(BigDecimal.valueOf(dto.dailyRate()));
-    rental.setCurrency(dto.currency());
+    rental.setCurrency(dto.currency().name());
     rental.setDepositAmount(
         dto.depositAmount() != null ? BigDecimal.valueOf(dto.depositAmount()) : null);
     rental.setDepositReturned(false);

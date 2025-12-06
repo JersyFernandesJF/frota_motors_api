@@ -18,6 +18,12 @@ public class AgencyMapper {
         agency.getLogoUrl(),
         agency.getDescription(),
         agency.getWebsite(),
+        agency.getSubscription() != null ? agency.getSubscription().getId() : null,
+        agency.getIsActive(),
+        agency.getCurrentVehicleCount(),
+        agency.getPhone(),
+        agency.getAddress(),
+        agency.getTaxId(),
         agency.getCreatedAt(),
         agency.getUpdatedAt());
   }
@@ -30,6 +36,9 @@ public class AgencyMapper {
     agency.setLogoUrl(dto.logoUrl());
     agency.setDescription(dto.description());
     agency.setWebsite(dto.website());
+    agency.setPhone(dto.phone());
+    agency.setAddress(dto.address());
+    agency.setTaxId(dto.taxId());
     return agency;
   }
 }

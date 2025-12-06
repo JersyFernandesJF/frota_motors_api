@@ -61,7 +61,7 @@ public class PartMapper {
     part.setName(dto.name());
     part.setDescription(dto.description());
     part.setPrice(BigDecimal.valueOf(dto.price()));
-    part.setCurrency(dto.currency());
+    part.setCurrency(dto.currency().name());
     part.setPartNumber(dto.partNumber());
     part.setOemNumber(dto.oemNumber());
     part.setBrand(dto.brand());

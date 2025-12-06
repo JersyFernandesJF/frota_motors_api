@@ -115,7 +115,7 @@ public class VehicleRentalService {
     existing.setStartDate(dto.startDate());
     existing.setEndDate(dto.endDate());
     existing.setDailyRate(java.math.BigDecimal.valueOf(dto.dailyRate()));
-    existing.setCurrency(dto.currency());
+    existing.setCurrency(dto.currency().name());
     existing.setDepositAmount(
         dto.depositAmount() != null ? java.math.BigDecimal.valueOf(dto.depositAmount()) : null);
     existing.setNotes(dto.notes());

@@ -10,4 +10,7 @@ public record AgencyCreateDTO(
     String licenseNumber,
     String logoUrl,
     String description,
-    String website) {}
+    String website,
+    String phone,
+    String address,
+    String taxId) {}

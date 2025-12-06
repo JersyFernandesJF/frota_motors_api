@@ -86,7 +86,7 @@ public class PartService {
     existing.setName(dto.name());
     existing.setDescription(dto.description());
     existing.setPrice(BigDecimal.valueOf(dto.price()));
-    existing.setCurrency(dto.currency());
+    existing.setCurrency(dto.currency().name());
     existing.setPartNumber(dto.partNumber());
     existing.setOemNumber(dto.oemNumber());
     existing.setBrand(dto.brand());
