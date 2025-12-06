@@ -29,7 +29,9 @@ public class AwsS3Config {
 
   @Bean
   public S3Client s3Client() {
-    var builder = S3Client.builder().region(Region.of(region));
+    // Ensure region is not null or empty
+    String regionValue = (region == null || region.trim().isEmpty()) ? "us-east-1" : region;
+    var builder = S3Client.builder().region(Region.of(regionValue));
 
     // Use explicit credentials only if both are provided and non-empty
     // Otherwise, AWS SDK will use default credential provider chain (IAM roles, env vars, etc.)
