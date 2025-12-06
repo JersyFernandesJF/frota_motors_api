@@ -1,8 +1,9 @@
 package com.example.frotamotors.infrastructure.util;
 
-import io.github.perplexhub.rsql.RSQLJPASupport;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+
+import io.github.perplexhub.rsql.RSQLJPASupport;
 
 /**
  * Utility class to build JPA Specifications from RSQL filter strings.
@@ -39,7 +40,8 @@ public class RsqlSpecificationBuilder {
    */
   public <T> Specification<T> build(String rsqlFilter, Class<T> entityClass) {
     if (rsqlFilter == null || rsqlFilter.trim().isEmpty()) {
-      return null;
+      // Return a specification that matches all (no filtering)
+      return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
     }
 
     try {
@@ -63,7 +65,8 @@ public class RsqlSpecificationBuilder {
   public <T> Specification<T> build(
       String rsqlFilter, Class<T> entityClass, java.util.function.Function<String, String> fieldMapper) {
     if (rsqlFilter == null || rsqlFilter.trim().isEmpty()) {
-      return null;
+      // Return a specification that matches all (no filtering)
+      return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
     }
 
     // Apply field mapping to the RSQL string
