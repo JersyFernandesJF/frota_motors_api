@@ -18,6 +18,10 @@ BEGIN
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_subscription_agency FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE
         );
+        
+        CREATE INDEX IF NOT EXISTS idx_subscriptions_agency ON subscriptions(agency_id);
+        CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+        CREATE INDEX IF NOT EXISTS idx_subscriptions_next_billing ON subscriptions(next_billing_date);
     END IF;
 END $$;
 
@@ -38,14 +42,10 @@ BEGIN
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_payment_subscription FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE
         );
+        
+        CREATE INDEX IF NOT EXISTS idx_subscription_payments_subscription ON subscription_payments(subscription_id);
+        CREATE INDEX IF NOT EXISTS idx_subscription_payments_status ON subscription_payments(payment_status);
+        CREATE INDEX IF NOT EXISTS idx_subscription_payments_due_date ON subscription_payments(due_date);
     END IF;
 END $$;
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_subscriptions_agency ON subscriptions(agency_id);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_next_billing ON subscriptions(next_billing_date);
-CREATE INDEX IF NOT EXISTS idx_subscription_payments_subscription ON subscription_payments(subscription_id);
-CREATE INDEX IF NOT EXISTS idx_subscription_payments_status ON subscription_payments(payment_status);
-CREATE INDEX IF NOT EXISTS idx_subscription_payments_due_date ON subscription_payments(due_date);
 

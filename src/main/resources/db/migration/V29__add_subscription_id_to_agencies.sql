@@ -14,3 +14,6 @@ BEGIN
     END IF;
 END $$;
 
+-- Create index for subscription_id
+CREATE INDEX IF NOT EXISTS idx_agencies_subscription ON agencies(subscription_id);
+
