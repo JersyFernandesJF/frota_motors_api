@@ -72,6 +72,11 @@ public class SecurityConfig {
                     // Endpoints específicos com roles
                     .requestMatchers("/api/v1/users/**", "/api/v1/complaints/**")
                     .hasAnyRole("ADMIN", "BUYER", "OWNER", "AGENT")
+                    // S3 Storage endpoints
+                    .requestMatchers(HttpMethod.POST, "/api/v1/s3/upload")
+                    .hasAnyRole("ADMIN", "AGENT", "OWNER")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/s3/**")
+                    .hasAnyRole("ADMIN", "AGENT", "OWNER")
                     // Demais endpoints requerem autenticação
                     .anyRequest()
                     .authenticated())

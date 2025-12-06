@@ -115,6 +115,38 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
+  @ExceptionHandler(java.io.IOException.class)
+  public ResponseEntity<ErrorResponseDTO> handleIOException(
+      java.io.IOException ex, WebRequest request) {
+    log.error("IO error: {}", ex.getMessage(), ex);
+    
+    // Check for S3/AWS errors
+    String exceptionMessage = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
+    String exceptionClass = ex.getClass().getSimpleName().toLowerCase();
+    
+    String message = ex.getMessage();
+    if (exceptionMessage.contains("s3") || exceptionMessage.contains("aws") 
+        || exceptionMessage.contains("bucket") || exceptionClass.contains("s3")) {
+      if (exceptionMessage.contains("upload") || exceptionMessage.contains("putobject")) {
+        message = "Erro ao fazer upload da imagem. Por favor, tente novamente.";
+      } else if (exceptionMessage.contains("not authorized") || exceptionMessage.contains("403")) {
+        message = "Erro de permissão ao acessar o armazenamento de imagens.";
+      } else if (exceptionMessage.contains("not found") || exceptionMessage.contains("404")) {
+        message = "Recurso de armazenamento não encontrado.";
+      } else {
+        message = "Erro ao acessar o serviço de armazenamento. Tente novamente mais tarde.";
+      }
+    }
+    
+    ErrorResponseDTO error =
+        ErrorResponseDTO.of(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "IO Error",
+            message,
+            request.getDescription(false).replace("uri=", ""));
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex, WebRequest request) {
     log.error("Unexpected error: ", ex);
