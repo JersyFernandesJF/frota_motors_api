@@ -1,23 +1,27 @@
 package com.example.frotamotors.infrastructure.persistence;
 
-import com.example.frotamotors.domain.enums.ListingModerationStatus;
-import com.example.frotamotors.domain.enums.VehicleStatus;
-import com.example.frotamotors.domain.enums.VehicleType;
-import com.example.frotamotors.domain.model.Vehicle;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.frotamotors.domain.enums.ListingModerationStatus;
+import com.example.frotamotors.domain.enums.VehicleStatus;
+import com.example.frotamotors.domain.enums.VehicleType;
+import com.example.frotamotors.domain.model.Vehicle;
+
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
+public interface VehicleRepository
+    extends JpaRepository<Vehicle, UUID>, JpaSpecificationExecutor<Vehicle> {
   List<Vehicle> findByOwnerId(UUID ownerId);
 
   List<Vehicle> findByAgencyId(UUID agencyId);
@@ -55,44 +59,44 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
   @Query(
       value =
           "SELECT v.* FROM vehicles v WHERE "
-              + "(:type IS NULL OR v.type = :type) AND "
-              + "(:status IS NULL OR v.status = :status) AND "
+              + "(CAST(:type AS TEXT) IS NULL OR v.type = CAST(:type AS TEXT)) AND "
+              + "(CAST(:status AS TEXT) IS NULL OR v.status = CAST(:status AS TEXT)) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
-              + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
-              + "(:model IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || :model || '%')) AND "
+              + "(CAST(:brand AS TEXT) IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || CAST(:brand AS TEXT) || '%')) AND "
+              + "(CAST(:model AS TEXT) IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || CAST(:model AS TEXT) || '%')) AND "
               + "(:minYear IS NULL OR v.year >= :minYear) AND "
               + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-              + "(:fuelType IS NULL OR v.fuel_type::text = :fuelType) AND "
-              + "(:transmission IS NULL OR v.transmission_type::text = :transmission) AND "
+              + "(CAST(:fuelType AS TEXT) IS NULL OR v.fuel_type::text = CAST(:fuelType AS TEXT)) AND "
+              + "(CAST(:transmission AS TEXT) IS NULL OR v.transmission_type::text = CAST(:transmission AS TEXT)) AND "
               + "(:minMileage IS NULL OR v.mileage_km >= :minMileage) AND "
               + "(:maxMileage IS NULL OR v.mileage_km <= :maxMileage) AND "
               + "(:startDate IS NULL OR v.created_at >= :startDate) AND "
               + "(:endDate IS NULL OR v.created_at <= :endDate) AND "
-              + "(:search IS NULL OR "
-              + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
-              + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
-              + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%'))",
+              + "(CAST(:search AS TEXT) IS NULL OR "
+              + "LOWER(v.brand::text) LIKE LOWER('%' || CAST(:search AS TEXT) || '%') OR "
+              + "LOWER(v.model::text) LIKE LOWER('%' || CAST(:search AS TEXT) || '%') OR "
+              + "LOWER(v.description::text) LIKE LOWER('%' || CAST(:search AS TEXT) || '%'))",
       countQuery =
           "SELECT COUNT(*) FROM vehicles v WHERE "
-              + "(:type IS NULL OR v.type = :type) AND "
-              + "(:status IS NULL OR v.status = :status) AND "
+              + "(CAST(:type AS TEXT) IS NULL OR v.type = CAST(:type AS TEXT)) AND "
+              + "(CAST(:status AS TEXT) IS NULL OR v.status = CAST(:status AS TEXT)) AND "
               + "(:minPrice IS NULL OR v.price >= :minPrice) AND "
               + "(:maxPrice IS NULL OR v.price <= :maxPrice) AND "
-              + "(:brand IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || :brand || '%')) AND "
-              + "(:model IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || :model || '%')) AND "
+              + "(CAST(:brand AS TEXT) IS NULL OR LOWER(v.brand::text) LIKE LOWER('%' || CAST(:brand AS TEXT) || '%')) AND "
+              + "(CAST(:model AS TEXT) IS NULL OR LOWER(v.model::text) LIKE LOWER('%' || CAST(:model AS TEXT) || '%')) AND "
               + "(:minYear IS NULL OR v.year >= :minYear) AND "
               + "(:maxYear IS NULL OR v.year <= :maxYear) AND "
-              + "(:fuelType IS NULL OR v.fuel_type::text = :fuelType) AND "
-              + "(:transmission IS NULL OR v.transmission_type::text = :transmission) AND "
+              + "(CAST(:fuelType AS TEXT) IS NULL OR v.fuel_type::text = CAST(:fuelType AS TEXT)) AND "
+              + "(CAST(:transmission AS TEXT) IS NULL OR v.transmission_type::text = CAST(:transmission AS TEXT)) AND "
               + "(:minMileage IS NULL OR v.mileage_km >= :minMileage) AND "
               + "(:maxMileage IS NULL OR v.mileage_km <= :maxMileage) AND "
               + "(:startDate IS NULL OR v.created_at >= :startDate) AND "
               + "(:endDate IS NULL OR v.created_at <= :endDate) AND "
-              + "(:search IS NULL OR "
-              + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
-              + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
-              + "LOWER(v.description::text) LIKE LOWER('%' || :search || '%'))",
+              + "(CAST(:search AS TEXT) IS NULL OR "
+              + "LOWER(v.brand::text) LIKE LOWER('%' || CAST(:search AS TEXT) || '%') OR "
+              + "LOWER(v.model::text) LIKE LOWER('%' || CAST(:search AS TEXT) || '%') OR "
+              + "LOWER(v.description::text) LIKE LOWER('%' || CAST(:search AS TEXT) || '%'))",
       nativeQuery = true)
   Page<Vehicle> searchPageable(
       @Param("type") String type,

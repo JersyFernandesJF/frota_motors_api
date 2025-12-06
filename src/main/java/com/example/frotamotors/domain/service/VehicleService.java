@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import com.example.frotamotors.infrastructure.persistence.AgencyRepository;
 import com.example.frotamotors.infrastructure.persistence.UserRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleHistoryRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
+import com.example.frotamotors.infrastructure.util.RsqlSpecificationBuilder;
 import com.example.frotamotors.infrastructure.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -43,6 +45,8 @@ public class VehicleService {
   @Autowired private AgencyRepository agencyRepository;
 
   @Autowired private VehicleHistoryRepository vehicleHistoryRepository;
+
+  @Autowired private RsqlSpecificationBuilder rsqlSpecificationBuilder;
 
   public Vehicle create(VehicleCreateDTO dto) {
     User owner =
@@ -276,6 +280,45 @@ public class VehicleService {
                 vehicle.getMedia().size(); // Trigger lazy load for media collection
               }
             });
+    return page;
+  }
+
+  /**
+   * Search vehicles using RSQL filter string.
+   *
+   * <p>RSQL allows dynamic querying with a simple syntax. Examples:
+   * <ul>
+   *   <li>type==CAR;price>=10000;price<=50000
+   *   <li>brand==Toyota;status==FOR_SALE
+   *   <li>year>=2020;fuelType==GASOLINE;transmissionType==AUTOMATIC
+   *   <li>owner.email==user@example.com
+   * </ul>
+   *
+   * @param rsqlFilter RSQL filter string (e.g., "type==CAR;price>=10000")
+   * @param pageable pagination and sorting parameters
+   * @return page of vehicles matching the RSQL filter
+   */
+  @Transactional(readOnly = true)
+  public Page<Vehicle> search(String rsqlFilter, Pageable pageable) {
+    Specification<Vehicle> spec = rsqlSpecificationBuilder.build(rsqlFilter, Vehicle.class);
+
+    Page<Vehicle> page = vehicleRepository.findAll(spec, pageable);
+
+    // Force initialization of lazy relationships to avoid LazyInitializationException
+    page.getContent()
+        .forEach(
+            vehicle -> {
+              if (vehicle.getOwner() != null) {
+                vehicle.getOwner().getId(); // Trigger lazy load
+              }
+              if (vehicle.getAgency() != null) {
+                vehicle.getAgency().getId(); // Trigger lazy load
+              }
+              if (vehicle.getMedia() != null) {
+                vehicle.getMedia().size(); // Trigger lazy load for media collection
+              }
+            });
+
     return page;
   }
 
