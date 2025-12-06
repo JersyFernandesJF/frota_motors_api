@@ -1,5 +1,18 @@
 package com.example.frotamotors.domain.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.frotamotors.domain.enums.ListingModerationStatus;
 import com.example.frotamotors.domain.enums.VehicleStatus;
 import com.example.frotamotors.domain.enums.VehicleType;
@@ -15,19 +28,9 @@ import com.example.frotamotors.infrastructure.persistence.UserRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleHistoryRepository;
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import com.example.frotamotors.infrastructure.util.SecurityUtils;
+
 import jakarta.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
