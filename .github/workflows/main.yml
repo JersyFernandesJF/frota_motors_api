@@ -11,6 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+      # AWS S3 Configuration
+      SPRING_S3_ACCESS_KEY: ${{ secrets.SPRING_S3_ACCESS_KEY }}
+      SPRING_S3_SECRET_KEY: ${{ secrets.SPRING_S3_SECRET_KEY }}
+      SPRING_S3_REGION: ${{ secrets.SPRING_S3_REGION }}
+      SPRING_S3_BUCKET_NAME: ${{ secrets.SPRING_S3_BUCKET_NAME }}
+      SPRING_S3_ENDPOINT: ${{ secrets.SPRING_S3_ENDPOINT }}
+      # JWT Configuration
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     
     steps:
     - name: Checkout código
@@ -56,6 +64,13 @@ jobs:
         host: ${{ secrets.SSH_AWS_SERVER_HOST }}
         username: ${{ secrets.SSH_AWS_SERVER_USER_NAME }}
         key: ${{ secrets.SSH_AWS_SERVER_PRIVATE_KEY }}
+        envs: |
+          SPRING_S3_ACCESS_KEY=${{ secrets.SPRING_S3_ACCESS_KEY }}
+          SPRING_S3_SECRET_KEY=${{ secrets.SPRING_S3_SECRET_KEY }}
+          SPRING_S3_REGION=${{ secrets.SPRING_S3_REGION }}
+          SPRING_S3_BUCKET_NAME=${{ secrets.SPRING_S3_BUCKET_NAME }}
+          SPRING_S3_ENDPOINT=${{ secrets.SPRING_S3_ENDPOINT }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
         script: |
           echo "Verificando se já existe uma instância rodando..."
           PID=$(ps aux | grep frota-motors-api | grep -v grep | awk '{print $2}')
@@ -71,4 +86,13 @@ jobs:
           
           chmod +x /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar
           
-          nohup java -jar /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar > /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api.log 2>&1 &
+          echo "Iniciando aplicação com variáveis de ambiente..."
+          nohup java \
+            -DSPRING_S3_ACCESS_KEY="$SPRING_S3_ACCESS_KEY" \
+            -DSPRING_S3_SECRET_KEY="$SPRING_S3_SECRET_KEY" \
+            -DSPRING_S3_REGION="$SPRING_S3_REGION" \
+            -DSPRING_S3_BUCKET_NAME="$SPRING_S3_BUCKET_NAME" \
+            -DSPRING_S3_ENDPOINT="$SPRING_S3_ENDPOINT" \
+            -DJWT_SECRET="$JWT_SECRET" \
+            -jar /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api-0.0.1-SNAPSHOT.jar > /home/ubuntu/frota-motors-deploy-artifacts/frota-motors-api.log 2>&1 &
+          echo "Aplicação iniciada em background!"
