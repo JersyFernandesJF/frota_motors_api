@@ -67,6 +67,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "(:transmission IS NULL OR v.transmission_type::text = :transmission) AND "
               + "(:minMileage IS NULL OR v.mileage_km >= :minMileage) AND "
               + "(:maxMileage IS NULL OR v.mileage_km <= :maxMileage) AND "
+              + "(:startDate IS NULL OR v.created_at >= :startDate) AND "
+              + "(:endDate IS NULL OR v.created_at <= :endDate) AND "
               + "(:search IS NULL OR "
               + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
               + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
@@ -85,6 +87,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
               + "(:transmission IS NULL OR v.transmission_type::text = :transmission) AND "
               + "(:minMileage IS NULL OR v.mileage_km >= :minMileage) AND "
               + "(:maxMileage IS NULL OR v.mileage_km <= :maxMileage) AND "
+              + "(:startDate IS NULL OR v.created_at >= :startDate) AND "
+              + "(:endDate IS NULL OR v.created_at <= :endDate) AND "
               + "(:search IS NULL OR "
               + "LOWER(v.brand::text) LIKE LOWER('%' || :search || '%') OR "
               + "LOWER(v.model::text) LIKE LOWER('%' || :search || '%') OR "
@@ -103,6 +107,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
       @Param("transmission") String transmission,
       @Param("minMileage") Integer minMileage,
       @Param("maxMileage") Integer maxMileage,
+      @Param("startDate") LocalDateTime startDate,
+      @Param("endDate") LocalDateTime endDate,
       @Param("search") String search,
       Pageable pageable);
 
@@ -164,4 +170,19 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
           "SELECT DISTINCT v FROM Vehicle v LEFT JOIN FETCH v.media LEFT JOIN FETCH v.owner LEFT JOIN FETCH v.agency",
       countQuery = "SELECT COUNT(DISTINCT v) FROM Vehicle v")
   Page<Vehicle> findAllWithMedia(Pageable pageable);
+
+  @Query(
+      "SELECT COALESCE(SUM(v.price), 0) FROM Vehicle v WHERE v.status = 'FOR_SALE' AND v.moderationStatus = 'APPROVED'")
+  BigDecimal sumPriceByActiveStatus();
+
+  @Query("SELECT COUNT(v) FROM Vehicle v WHERE v.price >= :minPrice AND v.price < :maxPrice")
+  Long countByPriceBetween(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
+
+  @Query("SELECT COUNT(v) FROM Vehicle v WHERE v.price >= :minPrice")
+  Long countByPriceGreaterThanEqual(@Param("minPrice") BigDecimal minPrice);
+
+  @Query(
+      "SELECT COALESCE(SUM(v.price), 0) FROM Vehicle v WHERE v.createdAt >= :startDate AND v.createdAt <= :endDate")
+  BigDecimal sumPriceByCreatedAtBetween(
+      @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

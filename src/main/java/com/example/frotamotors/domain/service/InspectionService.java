@@ -21,7 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class InspectionService {
 
@@ -52,10 +54,25 @@ public class InspectionService {
     return inspectionRepository.save(inspection);
   }
 
+  @Transactional(readOnly = true)
   public Inspection getById(UUID id) {
-    return inspectionRepository
+    Inspection inspection = inspectionRepository
         .findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Inspection not found"));
+    // Initialize lazy relationships
+    if (inspection.getVehicle() != null) {
+      inspection.getVehicle().getId();
+    }
+    if (inspection.getBuyer() != null) {
+      inspection.getBuyer().getId();
+    }
+    if (inspection.getSeller() != null) {
+      inspection.getSeller().getId();
+    }
+    if (inspection.getInspector() != null) {
+      inspection.getInspector().getId();
+    }
+    return inspection;
   }
 
   public Page<Inspection> getAll(Pageable pageable) {
@@ -68,9 +85,11 @@ public class InspectionService {
       UUID inspectorId,
       UUID vehicleId,
       InspectionStatus status,
+      LocalDateTime startDate,
+      LocalDateTime endDate,
       Pageable pageable) {
     return inspectionRepository.searchPageable(
-        buyerId, sellerId, inspectorId, vehicleId, status, pageable);
+        buyerId, sellerId, inspectorId, vehicleId, status, startDate, endDate, pageable);
   }
 
   @Transactional
@@ -166,5 +185,27 @@ public class InspectionService {
       throw new EntityNotFoundException("Inspection not found");
     }
     inspectionRepository.deleteById(id);
+  }
+
+  @Transactional
+  public void sendReminder(UUID id) {
+    Inspection inspection = getById(id);
+    
+    // TODO: Implement email/notification sending
+    // This should send reminders to buyer, seller, and inspector (if assigned)
+    // For now, we'll just log it
+    log.info(
+        "Sending reminder for inspection {} - Vehicle: {}, Buyer: {}, Seller: {}, Scheduled: {}",
+        inspection.getId(),
+        inspection.getVehicle() != null ? inspection.getVehicle().getId() : "N/A",
+        inspection.getBuyer() != null ? inspection.getBuyer().getEmail() : "N/A",
+        inspection.getSeller() != null ? inspection.getSeller().getEmail() : "N/A",
+        inspection.getScheduledAt());
+    
+    // In a real implementation, you would:
+    // 1. Send email to buyer
+    // 2. Send email to seller
+    // 3. Send email to inspector (if assigned)
+    // 4. Optionally send push notifications
   }
 }

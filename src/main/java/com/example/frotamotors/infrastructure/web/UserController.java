@@ -184,6 +184,14 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("{id}/reset-password")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<Void> resetPassword(
+      @PathVariable UUID id, @Valid @RequestBody com.example.frotamotors.infrastructure.dto.AdminResetPasswordRequestDTO request) {
+    userService.resetPassword(id, request);
+    return ResponseEntity.ok().build();
+  }
+
   @PostMapping("/export")
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<java.util.Map<String, String>> exportUsers(

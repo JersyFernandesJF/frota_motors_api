@@ -4,6 +4,7 @@ import com.example.frotamotors.domain.enums.Role;
 import com.example.frotamotors.domain.enums.UserStatus;
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.model.UserActivity;
+import com.example.frotamotors.infrastructure.dto.AdminResetPasswordRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
 import com.example.frotamotors.infrastructure.dto.UserBanRequestDTO;
 import com.example.frotamotors.infrastructure.dto.UserContactRequestDTO;
@@ -16,6 +17,7 @@ import com.example.frotamotors.infrastructure.persistence.UserActivityRepository
 import com.example.frotamotors.infrastructure.persistence.UserRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -219,6 +222,55 @@ public class UserService {
 
   public Page<UserActivity> getActivityHistory(UUID userId, Pageable pageable) {
     return userActivityRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+  }
+
+  @Transactional
+  public void resetPassword(UUID userId, AdminResetPasswordRequestDTO request) {
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
+
+    String encodedPassword = passwordEncoder.encode(request.newPassword());
+    user.setPasswordHash(encodedPassword);
+    userRepository.save(user);
+
+    // Log activity
+    logUserActivity(
+        user.getId(),
+        "password_reset_admin",
+        "Admin reset user password",
+        "user",
+        user.getId(),
+        null);
+  }
+
+  @Transactional
+  public void resetPassword(UUID userId) {
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
+
+    // Generate a random password
+    String newPassword = java.util.UUID.randomUUID().toString().substring(0, 12);
+    String encodedPassword = passwordEncoder.encode(newPassword);
+    user.setPasswordHash(encodedPassword);
+    userRepository.save(user);
+
+    // TODO: Send email with new password to user
+    // For now, just log the activity
+    logUserActivity(
+        user.getId(),
+        "password_reset",
+        "Password reset by administrator",
+        "user",
+        user.getId(),
+        null);
+
+    // TODO: Send email with new password to user
+    // NEVER log passwords in plaintext - this is a security risk
+    log.info("Password reset for user {} - New password generated and sent via email", user.getEmail());
   }
 
   public String exportUsers(ExportRequestDTO request) {

@@ -140,12 +140,14 @@ public class ComplaintService {
 
   public Page<Complaint> search(
       ComplaintStatus status,
+      ComplaintPriority priority,
       ComplaintType type,
       UUID reporterId,
       UUID reportedVehicleId,
+      String reason,
       Pageable pageable) {
     return complaintRepository.searchPageable(
-        status, type, reporterId, reportedVehicleId, pageable);
+        status, priority, type, reporterId, reportedVehicleId, reason, pageable);
   }
 
   public List<Complaint> getByReporter(UUID reporterId) {

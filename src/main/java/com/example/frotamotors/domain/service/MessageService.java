@@ -6,7 +6,9 @@ import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.model.UserBlock;
 import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
 import com.example.frotamotors.infrastructure.dto.MessageCreateDTO;
+import com.example.frotamotors.infrastructure.dto.UserWarnRequestDTO;
 import com.example.frotamotors.infrastructure.mapper.MessageMapper;
+import com.example.frotamotors.infrastructure.persistence.ComplaintRepository;
 import com.example.frotamotors.infrastructure.persistence.ConversationRepository;
 import com.example.frotamotors.infrastructure.persistence.MessageRepository;
 import com.example.frotamotors.infrastructure.persistence.UserBlockRepository;
@@ -16,12 +18,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class MessageService {
 
@@ -32,6 +36,8 @@ public class MessageService {
   @Autowired private UserRepository userRepository;
 
   @Autowired private UserBlockRepository userBlockRepository;
+
+  @Autowired private ComplaintRepository complaintRepository;
 
   @Transactional
   public Message sendMessage(MessageCreateDTO dto) {
@@ -115,6 +121,12 @@ public class MessageService {
     return conversationRepository.findByUserId(userId);
   }
 
+  public Conversation getConversationById(UUID conversationId) {
+    return conversationRepository
+        .findById(conversationId)
+        .orElse(null);
+  }
+
   public Page<Conversation> getConversationsByUser(UUID userId, Pageable pageable) {
     return conversationRepository.findByUserId(userId, pageable);
   }
@@ -184,8 +196,122 @@ public class MessageService {
     return conversationRepository.findAll(pageable);
   }
 
+  public Page<Conversation> getAllConversations(
+      String search, Boolean isReported, Boolean isBlocked, Pageable pageable) {
+    // If no filters are applied, use the simple method
+    if ((search == null || search.trim().isEmpty()) 
+        && isReported == null 
+        && isBlocked == null) {
+      return getAllConversations(pageable);
+    }
+    
+    // Get all conversations (without pagination) to apply filters
+    // TODO: Optimize this with a custom query in ConversationRepository for better performance
+    List<Conversation> allConversations = conversationRepository.findAll();
+    
+    // Apply filters
+    List<Conversation> filtered = allConversations.stream()
+        .filter(conversation -> {
+          // Filter by isReported: check if there are complaints about either user in the conversation
+          if (isReported != null && isReported) {
+            UUID user1Id = conversation.getUser1() != null ? conversation.getUser1().getId() : null;
+            UUID user2Id = conversation.getUser2() != null ? conversation.getUser2().getId() : null;
+            
+            boolean hasComplaints = false;
+            if (user1Id != null) {
+              hasComplaints = complaintRepository.findByReportedUserId(user1Id).stream()
+                  .anyMatch(c -> c.getStatus() == com.example.frotamotors.domain.enums.ComplaintStatus.PENDING);
+            }
+            if (!hasComplaints && user2Id != null) {
+              hasComplaints = complaintRepository.findByReportedUserId(user2Id).stream()
+                  .anyMatch(c -> c.getStatus() == com.example.frotamotors.domain.enums.ComplaintStatus.PENDING);
+            }
+            if (!hasComplaints) {
+              return false;
+            }
+          }
+          
+          // Filter by isBlocked: check if there is a block between the two users
+          if (isBlocked != null && isBlocked) {
+            UUID user1Id = conversation.getUser1() != null ? conversation.getUser1().getId() : null;
+            UUID user2Id = conversation.getUser2() != null ? conversation.getUser2().getId() : null;
+            
+            if (user1Id != null && user2Id != null) {
+              boolean hasBlock = userBlockRepository.existsByBlockerIdAndBlockedId(user1Id, user2Id)
+                  || userBlockRepository.existsByBlockerIdAndBlockedId(user2Id, user1Id);
+              if (!hasBlock) {
+                return false;
+              }
+            } else {
+              return false;
+            }
+          }
+          
+          // Filter by search: search in user names and emails
+          if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase();
+            boolean matches = false;
+            
+            if (conversation.getUser1() != null) {
+              matches = (conversation.getUser1().getName() != null 
+                      && conversation.getUser1().getName().toLowerCase().contains(searchLower))
+                  || (conversation.getUser1().getEmail() != null 
+                      && conversation.getUser1().getEmail().toLowerCase().contains(searchLower));
+            }
+            if (!matches && conversation.getUser2() != null) {
+              matches = (conversation.getUser2().getName() != null 
+                      && conversation.getUser2().getName().toLowerCase().contains(searchLower))
+                  || (conversation.getUser2().getEmail() != null 
+                      && conversation.getUser2().getEmail().toLowerCase().contains(searchLower));
+            }
+            
+            if (!matches) {
+              return false;
+            }
+          }
+          
+          return true;
+        })
+        .collect(java.util.stream.Collectors.toList());
+    
+    // Convert back to Page
+    int start = (int) pageable.getOffset();
+    int end = Math.min((start + pageable.getPageSize()), filtered.size());
+    List<Conversation> pageContent = start < filtered.size() ? filtered.subList(start, end) : java.util.Collections.emptyList();
+    
+    return new org.springframework.data.domain.PageImpl<>(
+        pageContent, pageable, filtered.size());
+  }
+
   public Page<Message> getAllMessages(Pageable pageable) {
     return messageRepository.findAll(pageable);
+  }
+
+  @Transactional
+  public void deleteMessage(UUID messageId, String reason) {
+    Message message =
+        messageRepository
+            .findById(messageId)
+            .orElseThrow(() -> new EntityNotFoundException("Message not found"));
+
+    // Log deletion reason before deleting
+    log.info("Deleting message {} - Reason: {}", messageId, reason);
+
+    messageRepository.delete(message);
+  }
+
+  @Transactional
+  public void warnUser(UUID userId, UserWarnRequestDTO request) {
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+    // Verify user exists (already done above)
+    // TODO: Send warning notification/email to user
+    // TODO: Log warning in user activity
+    log.info("Warning user {} ({}) - Message: {}, Reason: {}", 
+        userId, user.getEmail(), request.message(), request.reason());
   }
 
   public String exportMessages(ExportRequestDTO request) {

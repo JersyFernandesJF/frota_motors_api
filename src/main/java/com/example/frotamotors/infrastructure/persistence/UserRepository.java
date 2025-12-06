@@ -27,4 +27,7 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
   @Query("SELECT COUNT(u) FROM User u WHERE u.createdAt BETWEEN :start AND :end")
   Long countByCreatedAtBetween(
       @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+  @Query("SELECT COUNT(u) FROM User u WHERE u.createdAt < :date")
+  Long countByCreatedAtBefore(@Param("date") LocalDateTime date);
 }
