@@ -11,5 +11,11 @@ public record AgencyResponseDTO(
     String logoUrl,
     String description,
     String website,
+    UUID subscriptionId,
+    Boolean isActive,
+    Integer currentVehicleCount,
+    String phone,
+    String address,
+    String taxId,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}

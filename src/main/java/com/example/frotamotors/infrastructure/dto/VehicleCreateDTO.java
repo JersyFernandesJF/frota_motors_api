@@ -1,5 +1,6 @@
 package com.example.frotamotors.infrastructure.dto;
 
+import com.example.frotamotors.domain.enums.Currency;
 import com.example.frotamotors.domain.enums.VehicleStatus;
 import com.example.frotamotors.domain.enums.VehicleType;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +20,7 @@ public record VehicleCreateDTO(
     String vin,
     Integer mileageKm,
     @NotNull Double price,
-    @NotBlank String currency,
+    @NotNull Currency currency,
     String description,
     String fuelType,
     String transmissionType,

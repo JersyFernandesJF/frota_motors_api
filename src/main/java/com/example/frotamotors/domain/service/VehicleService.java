@@ -48,6 +48,9 @@ public class VehicleService {
 
   @Autowired private RsqlSpecificationBuilder rsqlSpecificationBuilder;
 
+  @Autowired private SubscriptionService subscriptionService;
+
+  @Transactional
   public Vehicle create(VehicleCreateDTO dto) {
     User owner =
         userRepository
@@ -60,10 +63,23 @@ public class VehicleService {
           agencyRepository
               .findById(dto.agencyId())
               .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
+      
+      // Validate subscription and vehicle limits for agencies
+      if (!subscriptionService.canCreateVehicle(agency.getId())) {
+        throw new IllegalStateException(
+            "Agency has reached the maximum number of vehicles allowed by subscription");
+      }
     }
 
     Vehicle vehicle = VehicleMapper.toEntity(dto, owner, agency);
-    return vehicleRepository.save(vehicle);
+    Vehicle saved = vehicleRepository.save(vehicle);
+    
+    // Increment vehicle count for agency if applicable
+    if (agency != null) {
+      subscriptionService.incrementVehicleCount(agency.getId());
+    }
+
+    return saved;
   }
 
   public List<Vehicle> getAll() {
@@ -142,7 +158,7 @@ public class VehicleService {
     existing.setVin(dto.vin());
     existing.setMileageKm(dto.mileageKm());
     existing.setPrice(BigDecimal.valueOf(dto.price()));
-    existing.setCurrency(dto.currency());
+    existing.setCurrency(dto.currency().name());
     existing.setDescription(dto.description());
     existing.setFuelType(dto.fuelType());
     existing.setTransmissionType(dto.transmissionType());
@@ -156,11 +172,21 @@ public class VehicleService {
     return vehicleRepository.save(existing);
   }
 
+  @Transactional
   public void delete(UUID id) {
-    if (!vehicleRepository.existsById(id)) {
-      throw new EntityNotFoundException("Vehicle not found");
-    }
+    Vehicle vehicle =
+        vehicleRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
+    
+    Agency agency = vehicle.getAgency();
+    
     vehicleRepository.deleteById(id);
+    
+    // Decrement vehicle count for agency if applicable
+    if (agency != null) {
+      subscriptionService.decrementVehicleCount(agency.getId());
+    }
   }
 
   public List<Vehicle> search(

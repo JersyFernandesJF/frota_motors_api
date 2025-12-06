@@ -39,6 +39,25 @@ public class Agency {
 
   private String website;
 
+  @OneToOne
+  @JoinColumn(name = "subscription_id")
+  private Subscription subscription;
+
+  @Column(name = "is_active", nullable = false)
+  private Boolean isActive = false;
+
+  @Column(name = "current_vehicle_count", nullable = false)
+  private Integer currentVehicleCount = 0;
+
+  @Column(length = 50)
+  private String phone;
+
+  @Column(columnDefinition = "TEXT")
+  private String address;
+
+  @Column(name = "tax_id", length = 100)
+  private String taxId;
+
   @CreationTimestamp
   @Column(updatable = false)
   private LocalDateTime createdAt;
