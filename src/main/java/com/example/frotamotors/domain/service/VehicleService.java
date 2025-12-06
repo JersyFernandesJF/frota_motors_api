@@ -214,8 +214,8 @@ public class VehicleService {
     // Apply dynamic sorting based on 'sort' parameter
     // Note: For native queries, we need to use SQL column names, not Java property names
     Pageable effectivePageable = pageable;
+    Sort sortSpec;
     if (sort != null && !sort.isBlank()) {
-      Sort sortSpec;
       switch (sort) {
         case "price-asc":
           sortSpec = Sort.by(Sort.Direction.ASC, "price");
@@ -234,9 +234,12 @@ public class VehicleService {
           sortSpec = Sort.by(Sort.Direction.DESC, "created_at");
           break;
       }
-      effectivePageable =
-          PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortSpec);
+    } else {
+      // Default sort: most recent first (using SQL column name for native query)
+      sortSpec = Sort.by(Sort.Direction.DESC, "created_at");
     }
+    effectivePageable =
+        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortSpec);
 
     Page<Vehicle> page =
         vehicleRepository.searchPageable(
