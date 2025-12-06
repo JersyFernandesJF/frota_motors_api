@@ -21,7 +21,7 @@ public class AwsS3Config {
   @Value("${spring.s3.secret.key:}")
   private String secretKey;
 
-  @Value("${spring.s3.region}")
+  @Value("${spring.s3.region:us-east-1}")
   private String region;
 
   @Value("${spring.s3.endpoint:}")
