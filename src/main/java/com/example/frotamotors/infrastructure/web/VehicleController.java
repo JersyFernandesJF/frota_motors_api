@@ -82,11 +82,27 @@ public class VehicleController {
 
     Page<Vehicle> page;
 
-    // If RSQL filter is provided, use it (preferred method)
-    if (filter != null && !filter.trim().isEmpty()) {
-      page = vehicleService.search(filter, pageable);
-    } else {
-      // Otherwise, use the legacy method with individual parameters (for backward compatibility)
+    // Check if individual parameters are provided (for backward compatibility)
+    boolean hasIndividualParams =
+        type != null
+            || status != null
+            || minPrice != null
+            || maxPrice != null
+            || brand != null
+            || model != null
+            || minYear != null
+            || maxYear != null
+            || fuelType != null
+            || transmission != null
+            || minMileage != null
+            || maxMileage != null
+            || location != null
+            || search != null
+            || startDate != null
+            || endDate != null;
+
+    if (hasIndividualParams) {
+      // Use legacy method for backward compatibility when individual parameters are provided
       page =
           vehicleService.search(
               type,
@@ -107,6 +123,11 @@ public class VehicleController {
               startDate,
               endDate,
               pageable);
+    } else {
+      // Always use RSQL (preferred method)
+      // RsqlSpecificationBuilder handles empty/null filters by returning all vehicles
+      String rsqlFilter = (filter != null && !filter.trim().isEmpty()) ? filter : null;
+      page = vehicleService.search(rsqlFilter, pageable);
     }
 
     List<VehicleSummaryDTO> content =
