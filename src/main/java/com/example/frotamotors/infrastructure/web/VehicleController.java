@@ -1,28 +1,10 @@
 package com.example.frotamotors.infrastructure.web;
 
-import com.example.frotamotors.domain.enums.VehicleStatus;
-import com.example.frotamotors.domain.enums.VehicleType;
-import com.example.frotamotors.domain.model.Vehicle;
-import com.example.frotamotors.domain.model.VehicleHistory;
-import com.example.frotamotors.domain.service.VehicleService;
-import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
-import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleApproveRequestDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleBulkApproveRequestDTO;
-import com.example.frotamotors.infrastructure.dto.VehicleBulkRejectRequestDTO;
-import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
-import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +23,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.frotamotors.domain.enums.VehicleStatus;
+import com.example.frotamotors.domain.enums.VehicleType;
+import com.example.frotamotors.domain.model.Vehicle;
+import com.example.frotamotors.domain.model.VehicleHistory;
+import com.example.frotamotors.domain.service.VehicleService;
+import com.example.frotamotors.infrastructure.dto.ExportRequestDTO;
+import com.example.frotamotors.infrastructure.dto.PageResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleApproveRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleBulkApproveRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleBulkRejectRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleCreateDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
+import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("api/v1/vehicles")
@@ -53,6 +56,7 @@ public class VehicleController {
   @GetMapping("/search")
   @Transactional(readOnly = true)
   public ResponseEntity<PageResponseDTO<VehicleSummaryDTO>> search(
+      @RequestParam(required = false) String filter,
       @RequestParam(required = false) VehicleType type,
       @RequestParam(required = false) VehicleStatus status,
       @RequestParam(required = false) BigDecimal minPrice,
@@ -76,26 +80,34 @@ public class VehicleController {
               direction = org.springframework.data.domain.Sort.Direction.DESC)
           Pageable pageable) {
 
-    Page<Vehicle> page =
-        vehicleService.search(
-            type,
-            status,
-            minPrice,
-            maxPrice,
-            brand,
-            model,
-            minYear,
-            maxYear,
-            fuelType,
-            transmission,
-            minMileage,
-            maxMileage,
-            location,
-            search,
-            sort,
-            startDate,
-            endDate,
-            pageable);
+    Page<Vehicle> page;
+
+    // If RSQL filter is provided, use it (preferred method)
+    if (filter != null && !filter.trim().isEmpty()) {
+      page = vehicleService.search(filter, pageable);
+    } else {
+      // Otherwise, use the legacy method with individual parameters (for backward compatibility)
+      page =
+          vehicleService.search(
+              type,
+              status,
+              minPrice,
+              maxPrice,
+              brand,
+              model,
+              minYear,
+              maxYear,
+              fuelType,
+              transmission,
+              minMileage,
+              maxMileage,
+              location,
+              search,
+              sort,
+              startDate,
+              endDate,
+              pageable);
+    }
 
     List<VehicleSummaryDTO> content =
         page.getContent().stream().map(VehicleMapper::toSummary).collect(Collectors.toList());
