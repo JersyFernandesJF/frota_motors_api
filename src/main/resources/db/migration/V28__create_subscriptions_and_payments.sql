@@ -48,3 +48,4 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_next_billing ON subscriptions(next_
 CREATE INDEX IF NOT EXISTS idx_subscription_payments_subscription ON subscription_payments(subscription_id);
 CREATE INDEX IF NOT EXISTS idx_subscription_payments_status ON subscription_payments(payment_status);
 CREATE INDEX IF NOT EXISTS idx_subscription_payments_due_date ON subscription_payments(due_date);
+
