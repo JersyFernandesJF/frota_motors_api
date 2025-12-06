@@ -145,11 +145,7 @@
 			<artifactId>rsql-parser</artifactId>
 			<version>2.1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>io.github.perplexhub</groupId>
-			<artifactId>rsql-jpa-specification</artifactId>
-			<version>5.0.0</version>
-		</dependency>
+		<!-- Removed rsql-jpa-specification due to compatibility issues - using manual implementation -->
 	</dependencies>
 
 	<build>
