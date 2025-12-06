@@ -2,6 +2,8 @@ package com.example.frotamotors.infrastructure.web;
 
 import com.example.frotamotors.domain.model.SystemConfig;
 import com.example.frotamotors.domain.service.SystemConfigService;
+import com.example.frotamotors.infrastructure.dto.ConnectionTestRequestDTO;
+import com.example.frotamotors.infrastructure.dto.ConnectionTestResponseDTO;
 import com.example.frotamotors.infrastructure.dto.SystemConfigResponseDTO;
 import com.example.frotamotors.infrastructure.dto.SystemConfigUpdateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -194,5 +196,13 @@ public class SystemConfigController {
               updated.getUpdatedAt());
       return ResponseEntity.ok(response);
     }
+  }
+
+  @PostMapping("/{key}/test-connection")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<ConnectionTestResponseDTO> testConnection(
+      @PathVariable String key, @Valid @RequestBody ConnectionTestRequestDTO request) {
+    ConnectionTestResponseDTO response = configService.testConnection(key, request);
+    return ResponseEntity.ok(response);
   }
 }

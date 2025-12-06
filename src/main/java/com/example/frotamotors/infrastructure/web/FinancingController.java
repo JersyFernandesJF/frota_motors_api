@@ -4,6 +4,7 @@ import com.example.frotamotors.domain.enums.FinancingStatus;
 import com.example.frotamotors.domain.model.Financing;
 import com.example.frotamotors.domain.service.FinancingService;
 import com.example.frotamotors.infrastructure.dto.CreditScoreSimulationDTO;
+import com.example.frotamotors.infrastructure.dto.FinancingApproveRequestDTO;
 import com.example.frotamotors.infrastructure.dto.FinancingCreateDTO;
 import com.example.frotamotors.infrastructure.dto.FinancingRejectRequestDTO;
 import com.example.frotamotors.infrastructure.dto.FinancingResponseDTO;
@@ -69,12 +70,18 @@ public class FinancingController {
       @RequestParam(required = false) UUID sellerId,
       @RequestParam(required = false) UUID vehicleId,
       @RequestParam(required = false) FinancingStatus status,
+      @RequestParam(required = false) java.math.BigDecimal minAmount,
+      @RequestParam(required = false) java.math.BigDecimal maxAmount,
+      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
+      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
               direction = org.springframework.data.domain.Sort.Direction.DESC)
           Pageable pageable) {
-    Page<Financing> page = financingService.search(buyerId, sellerId, vehicleId, status, pageable);
+    Page<Financing> page =
+        financingService.search(
+            buyerId, sellerId, vehicleId, status, minAmount, maxAmount, startDate, endDate, pageable);
 
     List<FinancingResponseDTO> content =
         page.getContent().stream().map(FinancingMapper::toResponse).collect(Collectors.toList());
@@ -87,8 +94,9 @@ public class FinancingController {
 
   @PostMapping("{id}/approve")
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<FinancingResponseDTO> approve(@PathVariable UUID id) {
-    Financing approved = financingService.approve(id);
+  public ResponseEntity<FinancingResponseDTO> approve(
+      @PathVariable UUID id, @Valid @RequestBody FinancingApproveRequestDTO request) {
+    Financing approved = financingService.approve(id, request);
     return ResponseEntity.ok(FinancingMapper.toResponse(approved));
   }
 

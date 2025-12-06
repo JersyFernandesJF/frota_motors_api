@@ -11,7 +11,6 @@ import com.example.frotamotors.infrastructure.dto.GoogleAuthRequestDTO;
 import com.example.frotamotors.infrastructure.dto.LoginRequestDTO;
 import com.example.frotamotors.infrastructure.dto.RefreshTokenRequestDTO;
 import com.example.frotamotors.infrastructure.dto.ResetPasswordRequestDTO;
-import com.example.frotamotors.infrastructure.dto.UserMeResponseDTO;
 import com.example.frotamotors.infrastructure.security.CustomUserDetailsService.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -157,7 +156,7 @@ public class AuthController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<UserMeResponseDTO> getCurrentUser() {
+  public ResponseEntity<AuthResponseDTO> getCurrentUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -173,15 +172,18 @@ public class AuthController {
         user = userService.updateUser(user);
       }
 
-      UserMeResponseDTO response =
-          new UserMeResponseDTO(
+      // Return AuthResponseDTO format for compatibility with frontend
+      // Note: token and refreshToken are not included as they should be in the request header
+      // Frontend should use the token from localStorage
+      AuthResponseDTO response =
+          new AuthResponseDTO(
+              null, // token - not returned for security reasons, use from header
+              null, // refreshToken - not returned for security reasons
               user.getId(),
-              user.getName(),
               user.getEmail(),
+              user.getName(),
               user.getRole(),
-              user.getPermissions(),
-              user.getImageUrl(),
-              user.getLastLogin());
+              user.getPermissions());
       return ResponseEntity.ok(response);
     }
     return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();

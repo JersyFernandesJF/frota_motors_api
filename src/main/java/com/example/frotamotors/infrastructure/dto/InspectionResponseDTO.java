@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public record InspectionResponseDTO(
     UUID id,
-    UUID vehicleId,
-    UUID buyerId,
-    UUID sellerId,
-    UUID inspectorId,
+    VehicleResponseDTO vehicle,
+    UserResponseDTO buyer,
+    UserResponseDTO seller,
+    UserResponseDTO inspector,
     InspectionStatus status,
     LocalDateTime scheduledAt,
     String location,

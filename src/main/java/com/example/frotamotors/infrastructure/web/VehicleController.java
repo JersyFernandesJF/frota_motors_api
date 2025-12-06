@@ -13,6 +13,8 @@ import com.example.frotamotors.infrastructure.dto.VehicleHistoryResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleRejectRequestDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleResponseDTO;
 import com.example.frotamotors.infrastructure.dto.VehicleSummaryDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleBulkApproveRequestDTO;
+import com.example.frotamotors.infrastructure.dto.VehicleBulkRejectRequestDTO;
 import com.example.frotamotors.infrastructure.mapper.VehicleMapper;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
@@ -66,6 +68,8 @@ public class VehicleController {
       @RequestParam(required = false) String location,
       @RequestParam(required = false) String search,
       @RequestParam(required = false) String sort,
+      @RequestParam(required = false) java.time.LocalDateTime startDate,
+      @RequestParam(required = false) java.time.LocalDateTime endDate,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
@@ -89,6 +93,8 @@ public class VehicleController {
             location,
             search,
             sort,
+            startDate,
+            endDate,
             pageable);
 
     List<VehicleSummaryDTO> content =
@@ -315,6 +321,36 @@ public class VehicleController {
         PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
 
     return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/bulk-approve")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<java.util.Map<String, Object>> bulkApprove(
+      @Valid @RequestBody VehicleBulkApproveRequestDTO request) {
+    List<Vehicle> approved = vehicleService.bulkApprove(request.vehicleIds(), request.notes());
+    return ResponseEntity.ok(
+        java.util.Map.of(
+            "message",
+            "Vehicles approved successfully",
+            "approvedCount",
+            approved.size(),
+            "totalCount",
+            request.vehicleIds().size()));
+  }
+
+  @PostMapping("/bulk-reject")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<java.util.Map<String, Object>> bulkReject(
+      @Valid @RequestBody VehicleBulkRejectRequestDTO request) {
+    List<Vehicle> rejected = vehicleService.bulkReject(request.vehicleIds(), request.reason());
+    return ResponseEntity.ok(
+        java.util.Map.of(
+            "message",
+            "Vehicles rejected successfully",
+            "rejectedCount",
+            rejected.size(),
+            "totalCount",
+            request.vehicleIds().size()));
   }
 
   @PostMapping("/export")

@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class VehicleService {
 
@@ -193,6 +195,8 @@ public class VehicleService {
       String location,
       String search,
       String sort,
+      LocalDateTime startDate,
+      LocalDateTime endDate,
       Pageable pageable) {
     // Validate price range
     if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
@@ -248,6 +252,8 @@ public class VehicleService {
             transmission,
             minMileage,
             maxMileage,
+            startDate,
+            endDate,
             search,
             effectivePageable);
     // Force initialization of lazy relationships to avoid LazyInitializationException
@@ -430,6 +436,74 @@ public class VehicleService {
 
   public Page<VehicleHistory> getVehicleHistory(UUID vehicleId, Pageable pageable) {
     return vehicleHistoryRepository.findByVehicleIdOrderByChangedAtDesc(vehicleId, pageable);
+  }
+
+  @Transactional
+  public List<Vehicle> bulkApprove(List<UUID> vehicleIds, String notes) {
+    UUID adminId = SecurityUtils.getCurrentUserId();
+    User admin = userRepository.findById(adminId).orElse(null);
+    List<Vehicle> approvedVehicles = new java.util.ArrayList<>();
+
+    for (UUID vehicleId : vehicleIds) {
+      try {
+        Vehicle vehicle = getById(vehicleId);
+        vehicle.setModerationStatus(ListingModerationStatus.APPROVED);
+        vehicle.setApprovedBy(admin);
+        vehicle.setApprovedAt(LocalDateTime.now());
+        vehicle.setPublishedAt(LocalDateTime.now());
+        vehicle.setRejectedBy(null);
+        vehicle.setRejectedAt(null);
+        vehicle.setRejectionReason(null);
+
+        Vehicle saved = vehicleRepository.save(vehicle);
+        approvedVehicles.add(saved);
+
+        // Log history
+        logVehicleHistory(
+            saved.getId(),
+            "approved",
+            "pending",
+            "approved",
+            adminId,
+            notes != null ? notes : "Aprovado em lote");
+      } catch (Exception e) {
+        // Log error but continue with other vehicles
+        log.error("Error approving vehicle {}: {}", vehicleId, e.getMessage());
+      }
+    }
+
+    return approvedVehicles;
+  }
+
+  @Transactional
+  public List<Vehicle> bulkReject(List<UUID> vehicleIds, String reason) {
+    UUID adminId = SecurityUtils.getCurrentUserId();
+    User admin = userRepository.findById(adminId).orElse(null);
+    List<Vehicle> rejectedVehicles = new java.util.ArrayList<>();
+
+    for (UUID vehicleId : vehicleIds) {
+      try {
+        Vehicle vehicle = getById(vehicleId);
+        vehicle.setModerationStatus(ListingModerationStatus.REJECTED);
+        vehicle.setRejectedBy(admin);
+        vehicle.setRejectedAt(LocalDateTime.now());
+        vehicle.setRejectionReason(reason);
+        vehicle.setApprovedBy(null);
+        vehicle.setApprovedAt(null);
+        vehicle.setPublishedAt(null);
+
+        Vehicle saved = vehicleRepository.save(vehicle);
+        rejectedVehicles.add(saved);
+
+        // Log history
+        logVehicleHistory(saved.getId(), "rejected", "pending", "rejected", adminId, reason);
+      } catch (Exception e) {
+        // Log error but continue with other vehicles
+        log.error("Error rejecting vehicle {}: {}", vehicleId, e.getMessage());
+      }
+    }
+
+    return rejectedVehicles;
   }
 
   public String exportVehicles(ExportRequestDTO request) {

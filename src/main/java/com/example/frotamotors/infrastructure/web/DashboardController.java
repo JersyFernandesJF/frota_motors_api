@@ -4,8 +4,11 @@ import com.example.frotamotors.domain.service.DashboardService;
 import com.example.frotamotors.infrastructure.dto.CategoryDistributionDTO;
 import com.example.frotamotors.infrastructure.dto.ChartDataDTO;
 import com.example.frotamotors.infrastructure.dto.DashboardStatsDTO;
+import com.example.frotamotors.infrastructure.dto.PriceDistributionDTO;
+import com.example.frotamotors.infrastructure.dto.RevenueTrendDTO;
 import com.example.frotamotors.infrastructure.dto.TopBrandDTO;
 import com.example.frotamotors.infrastructure.dto.UserActivityDTO;
+import com.example.frotamotors.infrastructure.dto.UserGrowthDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,5 +61,28 @@ public class DashboardController {
       @RequestParam(required = false) String date) {
     List<UserActivityDTO> activity = dashboardService.getUserActivity(date);
     return ResponseEntity.ok(activity);
+  }
+
+  @GetMapping("/charts/price-distribution")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<List<PriceDistributionDTO>> getPriceDistribution() {
+    List<PriceDistributionDTO> distribution = dashboardService.getPriceDistribution();
+    return ResponseEntity.ok(distribution);
+  }
+
+  @GetMapping("/charts/user-growth")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<List<UserGrowthDTO>> getUserGrowth(
+      @RequestParam(required = false, defaultValue = "30d") String period) {
+    List<UserGrowthDTO> growth = dashboardService.getUserGrowth(period);
+    return ResponseEntity.ok(growth);
+  }
+
+  @GetMapping("/charts/revenue-trend")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<List<RevenueTrendDTO>> getRevenueTrend(
+      @RequestParam(required = false, defaultValue = "30d") String period) {
+    List<RevenueTrendDTO> trend = dashboardService.getRevenueTrend(period);
+    return ResponseEntity.ok(trend);
   }
 }

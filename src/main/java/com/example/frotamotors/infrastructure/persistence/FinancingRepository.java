@@ -38,12 +38,20 @@ public interface FinancingRepository extends JpaRepository<Financing, UUID> {
           + "(:buyerId IS NULL OR f.buyer.id = :buyerId) AND "
           + "(:sellerId IS NULL OR f.seller.id = :sellerId) AND "
           + "(:vehicleId IS NULL OR f.vehicle.id = :vehicleId) AND "
-          + "(:status IS NULL OR f.status = :status)")
+          + "(:status IS NULL OR f.status = :status) AND "
+          + "(:minAmount IS NULL OR f.financingAmount >= :minAmount) AND "
+          + "(:maxAmount IS NULL OR f.financingAmount <= :maxAmount) AND "
+          + "(:startDate IS NULL OR f.createdAt >= :startDate) AND "
+          + "(:endDate IS NULL OR f.createdAt <= :endDate)")
   Page<Financing> searchPageable(
       @Param("buyerId") UUID buyerId,
       @Param("sellerId") UUID sellerId,
       @Param("vehicleId") UUID vehicleId,
       @Param("status") FinancingStatus status,
+      @Param("minAmount") java.math.BigDecimal minAmount,
+      @Param("maxAmount") java.math.BigDecimal maxAmount,
+      @Param("startDate") java.time.LocalDateTime startDate,
+      @Param("endDate") java.time.LocalDateTime endDate,
       Pageable pageable);
 
   Page<Financing> findByBuyerId(UUID buyerId, Pageable pageable);

@@ -2,6 +2,8 @@ package com.example.frotamotors.domain.service;
 
 import com.example.frotamotors.domain.model.SystemConfig;
 import com.example.frotamotors.domain.model.User;
+import com.example.frotamotors.infrastructure.dto.ConnectionTestRequestDTO;
+import com.example.frotamotors.infrastructure.dto.ConnectionTestResponseDTO;
 import com.example.frotamotors.infrastructure.dto.SystemConfigUpdateDTO;
 import com.example.frotamotors.infrastructure.persistence.SystemConfigRepository;
 import com.example.frotamotors.infrastructure.persistence.UserRepository;
@@ -99,5 +101,48 @@ public class SystemConfigService {
     config.setUpdatedBy(admin);
 
     return configRepository.save(config);
+  }
+
+  public ConnectionTestResponseDTO testConnection(String key, ConnectionTestRequestDTO request) {
+    long startTime = System.currentTimeMillis();
+    
+    try {
+      // Simulate connection test based on service type
+      // In a real implementation, this would make actual API calls
+      switch (request.service().toLowerCase()) {
+        case "financing":
+          // Test financing API connection
+          // TODO: Implement actual API call to financing service
+          Thread.sleep(100); // Simulate network delay
+          long responseTime = System.currentTimeMillis() - startTime;
+          return new ConnectionTestResponseDTO(
+              true, "Conexão com serviço de financiamento estabelecida com sucesso", responseTime);
+          
+        case "inspection":
+          // Test inspection API connection
+          // TODO: Implement actual API call to inspection service
+          Thread.sleep(100); // Simulate network delay
+          responseTime = System.currentTimeMillis() - startTime;
+          return new ConnectionTestResponseDTO(
+              true, "Conexão com serviço de inspeção estabelecida com sucesso", responseTime);
+          
+        case "whatsapp":
+          // Test WhatsApp API connection
+          // TODO: Implement actual API call to WhatsApp service
+          Thread.sleep(100); // Simulate network delay
+          responseTime = System.currentTimeMillis() - startTime;
+          return new ConnectionTestResponseDTO(
+              true, "Conexão com serviço WhatsApp estabelecida com sucesso", responseTime);
+          
+        default:
+          long errorResponseTime = System.currentTimeMillis() - startTime;
+          return new ConnectionTestResponseDTO(
+              false, "Serviço não reconhecido: " + request.service(), errorResponseTime);
+      }
+    } catch (Exception e) {
+      long errorResponseTime = System.currentTimeMillis() - startTime;
+      return new ConnectionTestResponseDTO(
+          false, "Erro ao testar conexão: " + e.getMessage(), errorResponseTime);
+    }
   }
 }

@@ -72,13 +72,15 @@ public class InspectionController {
       @RequestParam(required = false) UUID inspectorId,
       @RequestParam(required = false) UUID vehicleId,
       @RequestParam(required = false) InspectionStatus status,
+      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
+      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
               direction = org.springframework.data.domain.Sort.Direction.DESC)
           Pageable pageable) {
     Page<Inspection> page =
-        inspectionService.search(buyerId, sellerId, inspectorId, vehicleId, status, pageable);
+        inspectionService.search(buyerId, sellerId, inspectorId, vehicleId, status, startDate, endDate, pageable);
 
     List<InspectionResponseDTO> content =
         page.getContent().stream().map(InspectionMapper::toResponse).collect(Collectors.toList());
@@ -130,6 +132,13 @@ public class InspectionController {
       @PathVariable UUID id, @Valid @RequestBody InspectionReportUploadDTO request) {
     Inspection updated = inspectionService.uploadReport(id, request);
     return ResponseEntity.ok(InspectionMapper.toResponse(updated));
+  }
+
+  @PostMapping("{id}/send-reminder")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+  public ResponseEntity<Void> sendReminder(@PathVariable UUID id) {
+    inspectionService.sendReminder(id);
+    return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("{id}")

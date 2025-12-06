@@ -6,9 +6,12 @@ import com.example.frotamotors.domain.enums.PaymentStatus;
 import com.example.frotamotors.infrastructure.dto.CategoryDistributionDTO;
 import com.example.frotamotors.infrastructure.dto.ChartDataDTO;
 import com.example.frotamotors.infrastructure.dto.DashboardStatsDTO;
+import com.example.frotamotors.infrastructure.dto.PriceDistributionDTO;
+import com.example.frotamotors.infrastructure.dto.RevenueTrendDTO;
 import com.example.frotamotors.infrastructure.dto.TopBrandDTO;
 import com.example.frotamotors.infrastructure.dto.TrendDTO;
 import com.example.frotamotors.infrastructure.dto.UserActivityDTO;
+import com.example.frotamotors.infrastructure.dto.UserGrowthDTO;
 import com.example.frotamotors.infrastructure.persistence.ComplaintRepository;
 import com.example.frotamotors.infrastructure.persistence.MessageRepository;
 import com.example.frotamotors.infrastructure.persistence.PaymentRepository;
@@ -53,18 +56,21 @@ public class DashboardService {
     LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
     Long newUsersThisMonth = userRepository.countByCreatedAtAfter(startOfMonth.atStartOfDay());
 
-    // Conversion rate (completed payments / total payments)
-    Long totalPayments = paymentRepository.count();
+    // Conversion rate (views → messages → sales)
+    // For now, using a simplified calculation: completed payments / total messages
+    // This can be improved later with actual view tracking
     Long completedPayments = paymentRepository.countByStatus(PaymentStatus.COMPLETED);
     Double conversionRate = 0.0;
-    if (totalPayments > 0) {
-      conversionRate = (completedPayments.doubleValue() / totalPayments.doubleValue()) * 100.0;
+    if (totalMessages > 0) {
+      // Simplified: messages that resulted in completed sales
+      conversionRate = (completedPayments.doubleValue() / totalMessages.doubleValue()) * 100.0;
       conversionRate =
           BigDecimal.valueOf(conversionRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
-    // Total revenue (sum of completed payments)
-    BigDecimal totalRevenue = paymentRepository.sumAmountByStatus(PaymentStatus.COMPLETED);
+    // Total revenue (sum of prices of active approved listings)
+    // This represents the total value of active listings, not completed sales
+    BigDecimal totalRevenue = vehicleRepository.sumPriceByActiveStatus();
     if (totalRevenue == null) {
       totalRevenue = BigDecimal.ZERO;
     }
@@ -204,5 +210,141 @@ public class DashboardService {
     }
 
     return activity;
+  }
+
+  public List<PriceDistributionDTO> getPriceDistribution() {
+    List<PriceDistributionDTO> distribution = new ArrayList<>();
+    
+    // Define price ranges
+    BigDecimal[] ranges = {
+      BigDecimal.ZERO,
+      BigDecimal.valueOf(50000),
+      BigDecimal.valueOf(100000),
+      BigDecimal.valueOf(200000),
+      BigDecimal.valueOf(500000)
+    };
+    
+    String[] rangeLabels = {"0-50k", "50k-100k", "100k-200k", "200k-500k", "500k+"};
+    
+    for (int i = 0; i < ranges.length; i++) {
+      BigDecimal minPrice = ranges[i];
+      BigDecimal maxPrice = (i < ranges.length - 1) ? ranges[i + 1] : null;
+      
+      Long count;
+      if (maxPrice != null) {
+        count = vehicleRepository.countByPriceBetween(minPrice, maxPrice);
+      } else {
+        count = vehicleRepository.countByPriceGreaterThanEqual(minPrice);
+      }
+      
+      distribution.add(new PriceDistributionDTO(
+        rangeLabels[i],
+        count,
+        minPrice,
+        maxPrice != null ? maxPrice : BigDecimal.valueOf(Long.MAX_VALUE)
+      ));
+    }
+    
+    return distribution;
+  }
+
+  public List<UserGrowthDTO> getUserGrowth(String period) {
+    LocalDate endDate = LocalDate.now();
+    LocalDate startDate;
+    
+    switch (period) {
+      case "7d":
+        startDate = endDate.minusDays(7);
+        break;
+      case "30d":
+        startDate = endDate.minusDays(30);
+        break;
+      case "90d":
+        startDate = endDate.minusDays(90);
+        break;
+      case "1y":
+        startDate = endDate.minusYears(1);
+        break;
+      default:
+        startDate = endDate.minusDays(30);
+    }
+    
+    List<UserGrowthDTO> growth = new ArrayList<>();
+    LocalDate currentDate = startDate;
+    Long cumulativeTotal = userRepository.countByCreatedAtBefore(startDate.atStartOfDay());
+    
+    while (!currentDate.isAfter(endDate)) {
+      LocalDateTime startOfDay = currentDate.atStartOfDay();
+      LocalDateTime endOfDay = currentDate.atTime(23, 59, 59);
+      
+      Long newUsers = userRepository.countByCreatedAtBetween(startOfDay, endOfDay);
+      cumulativeTotal += newUsers;
+      
+      growth.add(new UserGrowthDTO(
+        currentDate.format(DateTimeFormatter.ISO_DATE),
+        newUsers,
+        cumulativeTotal
+      ));
+      
+      currentDate = currentDate.plusDays(1);
+    }
+    
+    return growth;
+  }
+
+  public List<RevenueTrendDTO> getRevenueTrend(String period) {
+    LocalDate endDate = LocalDate.now();
+    LocalDate startDate;
+    
+    switch (period) {
+      case "7d":
+        startDate = endDate.minusDays(7);
+        break;
+      case "30d":
+        startDate = endDate.minusDays(30);
+        break;
+      case "90d":
+        startDate = endDate.minusDays(90);
+        break;
+      case "1y":
+        startDate = endDate.minusYears(1);
+        break;
+      default:
+        startDate = endDate.minusDays(30);
+    }
+    
+    List<RevenueTrendDTO> trend = new ArrayList<>();
+    LocalDate currentDate = startDate;
+    
+    while (!currentDate.isAfter(endDate)) {
+      LocalDateTime startOfDay = currentDate.atStartOfDay();
+      LocalDateTime endOfDay = currentDate.atTime(23, 59, 59);
+      
+      BigDecimal revenue = vehicleRepository.sumPriceByCreatedAtBetween(startOfDay, endOfDay);
+      if (revenue == null) {
+        revenue = BigDecimal.ZERO;
+      }
+      
+      // Simple projection: average of last 7 days
+      BigDecimal projectedRevenue = revenue;
+      if (currentDate.isAfter(startDate.plusDays(6))) {
+        LocalDate weekStart = currentDate.minusDays(6);
+        BigDecimal weekRevenue = vehicleRepository.sumPriceByCreatedAtBetween(
+          weekStart.atStartOfDay(), endOfDay);
+        if (weekRevenue != null && weekRevenue.compareTo(BigDecimal.ZERO) > 0) {
+          projectedRevenue = weekRevenue.divide(BigDecimal.valueOf(7), 2, RoundingMode.HALF_UP);
+        }
+      }
+      
+      trend.add(new RevenueTrendDTO(
+        currentDate.format(DateTimeFormatter.ISO_DATE),
+        revenue,
+        projectedRevenue
+      ));
+      
+      currentDate = currentDate.plusDays(1);
+    }
+    
+    return trend;
   }
 }

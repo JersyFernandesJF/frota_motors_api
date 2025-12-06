@@ -45,14 +45,18 @@ public interface ComplaintRepository
   @Query(
       "SELECT c FROM Complaint c WHERE "
           + "(:status IS NULL OR c.status = :status) AND "
+          + "(:priority IS NULL OR c.priority = :priority) AND "
           + "(:type IS NULL OR c.type = :type) AND "
           + "(:reporterId IS NULL OR c.reporter.id = :reporterId) AND "
-          + "(:reportedVehicleId IS NULL OR c.reportedVehicle.id = :reportedVehicleId)")
+          + "(:reportedVehicleId IS NULL OR c.reportedVehicle.id = :reportedVehicleId) AND "
+          + "(:reason IS NULL OR LOWER(c.description) LIKE LOWER(CONCAT('%', :reason, '%')))")
   Page<Complaint> searchPageable(
       @Param("status") ComplaintStatus status,
+      @Param("priority") ComplaintPriority priority,
       @Param("type") ComplaintType type,
       @Param("reporterId") UUID reporterId,
       @Param("reportedVehicleId") UUID reportedVehicleId,
+      @Param("reason") String reason,
       Pageable pageable);
 
   Page<Complaint> findByReporterId(UUID reporterId, Pageable pageable);

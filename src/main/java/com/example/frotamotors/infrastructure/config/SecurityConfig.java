@@ -87,6 +87,8 @@ public class SecurityConfig {
     // Allow specific origins (required when allowCredentials is true)
     configuration.addAllowedOrigin("https://www.frotamotors.com");
     configuration.addAllowedOrigin("https://frotamotors.com");
+    configuration.addAllowedOrigin("https://www.admin.frotamotors.com");
+    configuration.addAllowedOrigin("https://admin.frotamotors.com");
     configuration.addAllowedOrigin("http://localhost:5173");
     configuration.addAllowedOrigin("http://localhost:3000");
     configuration.addAllowedOrigin("http://localhost:8080");

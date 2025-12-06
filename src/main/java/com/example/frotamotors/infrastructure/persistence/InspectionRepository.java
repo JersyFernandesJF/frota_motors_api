@@ -43,13 +43,17 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID> {
           + "(:sellerId IS NULL OR i.seller.id = :sellerId) AND "
           + "(:inspectorId IS NULL OR i.inspector.id = :inspectorId) AND "
           + "(:vehicleId IS NULL OR i.vehicle.id = :vehicleId) AND "
-          + "(:status IS NULL OR i.status = :status)")
+          + "(:status IS NULL OR i.status = :status) AND "
+          + "(:startDate IS NULL OR i.scheduledAt >= :startDate) AND "
+          + "(:endDate IS NULL OR i.scheduledAt <= :endDate)")
   Page<Inspection> searchPageable(
       @Param("buyerId") UUID buyerId,
       @Param("sellerId") UUID sellerId,
       @Param("inspectorId") UUID inspectorId,
       @Param("vehicleId") UUID vehicleId,
       @Param("status") InspectionStatus status,
+      @Param("startDate") java.time.LocalDateTime startDate,
+      @Param("endDate") java.time.LocalDateTime endDate,
       Pageable pageable);
 
   Page<Inspection> findByBuyerId(UUID buyerId, Pageable pageable);

@@ -47,9 +47,11 @@ public class ComplaintController {
   @GetMapping("/search")
   public ResponseEntity<PageResponseDTO<ComplaintResponseDTO>> search(
       @RequestParam(required = false) ComplaintStatus status,
+      @RequestParam(required = false) ComplaintPriority priority,
       @RequestParam(required = false) ComplaintType type,
       @RequestParam(required = false) UUID reporterId,
       @RequestParam(required = false) UUID reportedVehicleId,
+      @RequestParam(required = false) String reason,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
@@ -57,7 +59,7 @@ public class ComplaintController {
           Pageable pageable) {
 
     Page<Complaint> page =
-        complaintService.search(status, type, reporterId, reportedVehicleId, pageable);
+        complaintService.search(status, priority, type, reporterId, reportedVehicleId, reason, pageable);
 
     List<ComplaintResponseDTO> content =
         page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());

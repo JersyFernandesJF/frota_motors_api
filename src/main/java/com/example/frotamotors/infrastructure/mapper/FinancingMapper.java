@@ -15,11 +15,13 @@ public class FinancingMapper {
   public static FinancingResponseDTO toResponse(Financing financing) {
     return new FinancingResponseDTO(
         financing.getId(),
-        financing.getVehicle().getId(),
-        financing.getBuyer().getId(),
-        financing.getSeller().getId(),
+        VehicleMapper.toResponse(financing.getVehicle()),
+        UserMapper.toResponse(financing.getBuyer()),
+        UserMapper.toResponse(financing.getSeller()),
         financing.getStatus(),
         financing.getVehiclePrice(),
+        financing.getFinancingAmount().add(financing.getDownPayment()), // requestedAmount
+        financing.getFinancingAmount(), // approvedAmount (same as financingAmount for now)
         financing.getDownPayment(),
         financing.getFinancingAmount(),
         financing.getInterestRate(),
@@ -28,9 +30,10 @@ public class FinancingMapper {
         financing.getCreditScore(),
         financing.getCreditScoreSimulation(),
         financing.getRejectionReason(),
-        financing.getApprovedBy() != null ? financing.getApprovedBy().getId() : null,
+        null, // notes - not stored in entity yet
+        financing.getApprovedBy() != null ? UserMapper.toResponse(financing.getApprovedBy()) : null,
         financing.getApprovedAt(),
-        financing.getRejectedBy() != null ? financing.getRejectedBy().getId() : null,
+        financing.getRejectedBy() != null ? UserMapper.toResponse(financing.getRejectedBy()) : null,
         financing.getRejectedAt(),
         financing.getCreatedAt(),
         financing.getUpdatedAt());

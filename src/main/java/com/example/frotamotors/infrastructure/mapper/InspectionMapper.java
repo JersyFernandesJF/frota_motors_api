@@ -13,10 +13,10 @@ public class InspectionMapper {
   public static InspectionResponseDTO toResponse(Inspection inspection) {
     return new InspectionResponseDTO(
         inspection.getId(),
-        inspection.getVehicle().getId(),
-        inspection.getBuyer().getId(),
-        inspection.getSeller().getId(),
-        inspection.getInspector() != null ? inspection.getInspector().getId() : null,
+        VehicleMapper.toResponse(inspection.getVehicle()),
+        UserMapper.toResponse(inspection.getBuyer()),
+        UserMapper.toResponse(inspection.getSeller()),
+        inspection.getInspector() != null ? UserMapper.toResponse(inspection.getInspector()) : null,
         inspection.getStatus(),
         inspection.getScheduledAt(),
         inspection.getLocation(),

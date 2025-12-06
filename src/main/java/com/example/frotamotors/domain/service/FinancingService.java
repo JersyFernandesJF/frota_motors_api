@@ -5,6 +5,7 @@ import com.example.frotamotors.domain.model.Financing;
 import com.example.frotamotors.domain.model.User;
 import com.example.frotamotors.domain.model.Vehicle;
 import com.example.frotamotors.infrastructure.dto.CreditScoreSimulationDTO;
+import com.example.frotamotors.infrastructure.dto.FinancingApproveRequestDTO;
 import com.example.frotamotors.infrastructure.dto.FinancingCreateDTO;
 import com.example.frotamotors.infrastructure.dto.FinancingRejectRequestDTO;
 import com.example.frotamotors.infrastructure.mapper.FinancingMapper;
@@ -52,10 +53,28 @@ public class FinancingService {
     return financingRepository.save(financing);
   }
 
+  @Transactional(readOnly = true)
   public Financing getById(UUID id) {
-    return financingRepository
+    Financing financing = financingRepository
         .findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Financing not found"));
+    // Initialize lazy relationships
+    if (financing.getVehicle() != null) {
+      financing.getVehicle().getId();
+    }
+    if (financing.getBuyer() != null) {
+      financing.getBuyer().getId();
+    }
+    if (financing.getSeller() != null) {
+      financing.getSeller().getId();
+    }
+    if (financing.getApprovedBy() != null) {
+      financing.getApprovedBy().getId();
+    }
+    if (financing.getRejectedBy() != null) {
+      financing.getRejectedBy().getId();
+    }
+    return financing;
   }
 
   public Page<Financing> getAll(Pageable pageable) {
@@ -63,12 +82,21 @@ public class FinancingService {
   }
 
   public Page<Financing> search(
-      UUID buyerId, UUID sellerId, UUID vehicleId, FinancingStatus status, Pageable pageable) {
-    return financingRepository.searchPageable(buyerId, sellerId, vehicleId, status, pageable);
+      UUID buyerId,
+      UUID sellerId,
+      UUID vehicleId,
+      FinancingStatus status,
+      BigDecimal minAmount,
+      BigDecimal maxAmount,
+      LocalDateTime startDate,
+      LocalDateTime endDate,
+      Pageable pageable) {
+    return financingRepository.searchPageable(
+        buyerId, sellerId, vehicleId, status, minAmount, maxAmount, startDate, endDate, pageable);
   }
 
   @Transactional
-  public Financing approve(UUID id) {
+  public Financing approve(UUID id, FinancingApproveRequestDTO request) {
     Financing financing = getById(id);
     UUID adminId = SecurityUtils.getCurrentUserId();
     User admin = userRepository.findById(adminId).orElse(null);
@@ -79,6 +107,29 @@ public class FinancingService {
     financing.setRejectedBy(null);
     financing.setRejectedAt(null);
     financing.setRejectionReason(null);
+    
+    // Update financing amount and interest rate if provided
+    if (request.approvedAmount() != null) {
+      financing.setFinancingAmount(request.approvedAmount().subtract(financing.getDownPayment()));
+      // Recalculate monthly payment with new interest rate
+      if (request.finalInterestRate() != null) {
+        financing.setInterestRate(request.finalInterestRate());
+        // Recalculate monthly payment
+        BigDecimal monthlyRate =
+            request.finalInterestRate()
+                .divide(BigDecimal.valueOf(100), 6, java.math.RoundingMode.HALF_UP)
+                .divide(BigDecimal.valueOf(12), 6, java.math.RoundingMode.HALF_UP);
+        BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
+        BigDecimal onePlusRPowerN = onePlusR.pow(financing.getLoanTermMonths());
+        BigDecimal numerator = monthlyRate.multiply(onePlusRPowerN);
+        BigDecimal denominator = onePlusRPowerN.subtract(BigDecimal.ONE);
+        BigDecimal monthlyPayment =
+            financing.getFinancingAmount()
+                .multiply(numerator)
+                .divide(denominator, 2, java.math.RoundingMode.HALF_UP);
+        financing.setMonthlyPayment(monthlyPayment);
+      }
+    }
 
     return financingRepository.save(financing);
   }
