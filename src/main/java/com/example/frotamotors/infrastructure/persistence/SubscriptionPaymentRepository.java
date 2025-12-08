@@ -10,4 +10,3 @@ import org.springframework.stereotype.Repository;
 public interface SubscriptionPaymentRepository extends JpaRepository<SubscriptionPayment, UUID> {
   List<SubscriptionPayment> findBySubscriptionIdOrderByCreatedAtDesc(UUID subscriptionId);
 }
-

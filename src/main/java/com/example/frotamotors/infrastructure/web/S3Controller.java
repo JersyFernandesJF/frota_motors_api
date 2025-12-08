@@ -1,17 +1,6 @@
 package com.example.frotamotors.infrastructure.web;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.example.frotamotors.infrastructure.services.AwsS3Client;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +11,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/s3")
@@ -82,10 +80,7 @@ public class S3Controller {
             responseCode = "200",
             description = "File deleted successfully",
             content = @Content(mediaType = "text/plain", schema = @Schema(type = "string"))),
-        @ApiResponse(
-            responseCode = "400",
-            description = "Invalid file key",
-            content = @Content),
+        @ApiResponse(responseCode = "400", description = "Invalid file key", content = @Content),
         @ApiResponse(
             responseCode = "500",
             description = "Error during file deletion",
@@ -114,10 +109,7 @@ public class S3Controller {
             responseCode = "200",
             description = "File deleted successfully",
             content = @Content(mediaType = "text/plain", schema = @Schema(type = "string"))),
-        @ApiResponse(
-            responseCode = "400",
-            description = "Invalid URL",
-            content = @Content),
+        @ApiResponse(responseCode = "400", description = "Invalid URL", content = @Content),
         @ApiResponse(
             responseCode = "500",
             description = "Error during file deletion",
@@ -142,5 +134,3 @@ public class S3Controller {
     }
   }
 }
-
-

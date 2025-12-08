@@ -16,12 +16,12 @@ import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -56,9 +56,10 @@ public class InspectionService {
 
   @Transactional(readOnly = true)
   public Inspection getById(UUID id) {
-    Inspection inspection = inspectionRepository
-        .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Inspection not found"));
+    Inspection inspection =
+        inspectionRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Inspection not found"));
     // Initialize lazy relationships
     if (inspection.getVehicle() != null) {
       inspection.getVehicle().getId();
@@ -190,7 +191,7 @@ public class InspectionService {
   @Transactional
   public void sendReminder(UUID id) {
     Inspection inspection = getById(id);
-    
+
     // TODO: Implement email/notification sending
     // This should send reminders to buyer, seller, and inspector (if assigned)
     // For now, we'll just log it
@@ -201,7 +202,7 @@ public class InspectionService {
         inspection.getBuyer() != null ? inspection.getBuyer().getEmail() : "N/A",
         inspection.getSeller() != null ? inspection.getSeller().getEmail() : "N/A",
         inspection.getScheduledAt());
-    
+
     // In a real implementation, you would:
     // 1. Send email to buyer
     // 2. Send email to seller

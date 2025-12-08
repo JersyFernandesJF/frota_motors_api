@@ -41,4 +41,3 @@ public class SubscriptionPaymentService {
     return paymentRepository.findBySubscriptionIdOrderByCreatedAtDesc(subscriptionId);
   }
 }
-

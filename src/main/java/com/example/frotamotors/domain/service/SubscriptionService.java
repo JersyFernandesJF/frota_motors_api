@@ -34,13 +34,12 @@ public class SubscriptionService {
         .findByAgencyIdAndStatus(dto.agencyId(), SubscriptionStatus.ACTIVE)
         .ifPresent(
             existing -> {
-              throw new IllegalStateException(
-                  "Agency already has an active subscription");
+              throw new IllegalStateException("Agency already has an active subscription");
             });
 
     Subscription subscription = SubscriptionMapper.toEntity(dto, agency);
     subscription.setStatus(SubscriptionStatus.ACTIVE);
-    
+
     // Set end date if provided, otherwise calculate from start date
     if (dto.startDate() != null) {
       subscription.setEndDate(dto.startDate().plusMonths(1));
@@ -49,7 +48,7 @@ public class SubscriptionService {
     }
 
     Subscription saved = subscriptionRepository.save(subscription);
-    
+
     // Update agency with subscription reference and activate it
     agency.setSubscription(saved);
     agency.setIsActive(true);
@@ -73,20 +72,16 @@ public class SubscriptionService {
   public Subscription getActiveSubscriptionByAgencyId(UUID agencyId) {
     return subscriptionRepository
         .findByAgencyIdAndStatus(agencyId, SubscriptionStatus.ACTIVE)
-        .orElseThrow(
-            () ->
-                new EntityNotFoundException(
-                    "Active subscription not found for agency"));
+        .orElseThrow(() -> new EntityNotFoundException("Active subscription not found for agency"));
   }
 
   @Transactional
   public Subscription renewSubscription(UUID subscriptionId) {
     Subscription subscription = getSubscriptionById(subscriptionId);
-    
+
     if (subscription.getStatus() != SubscriptionStatus.ACTIVE
         && subscription.getStatus() != SubscriptionStatus.EXPIRED) {
-      throw new IllegalStateException(
-          "Only active or expired subscriptions can be renewed");
+      throw new IllegalStateException("Only active or expired subscriptions can be renewed");
     }
 
     subscription.setStatus(SubscriptionStatus.ACTIVE);
@@ -102,7 +97,7 @@ public class SubscriptionService {
     Subscription subscription = getSubscriptionById(subscriptionId);
     subscription.setStatus(SubscriptionStatus.CANCELLED);
     subscription.setAutoRenew(false);
-    
+
     Agency agency = subscription.getAgency();
     agency.setIsActive(false);
     agencyRepository.save(agency);
@@ -114,7 +109,7 @@ public class SubscriptionService {
   public Subscription suspendSubscription(UUID subscriptionId) {
     Subscription subscription = getSubscriptionById(subscriptionId);
     subscription.setStatus(SubscriptionStatus.SUSPENDED);
-    
+
     Agency agency = subscription.getAgency();
     agency.setIsActive(false);
     agencyRepository.save(agency);
@@ -126,7 +121,7 @@ public class SubscriptionService {
     try {
       Subscription subscription = getActiveSubscriptionByAgencyId(agencyId);
       Agency agency = subscription.getAgency();
-      
+
       return agency.getCurrentVehicleCount() < subscription.getMaxVehicles();
     } catch (EntityNotFoundException e) {
       return false;
@@ -138,7 +133,7 @@ public class SubscriptionService {
         agencyRepository
             .findById(agencyId)
             .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
-    
+
     agency.setCurrentVehicleCount(agency.getCurrentVehicleCount() + 1);
     agencyRepository.save(agency);
   }
@@ -148,7 +143,7 @@ public class SubscriptionService {
         agencyRepository
             .findById(agencyId)
             .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
-    
+
     int currentCount = agency.getCurrentVehicleCount();
     if (currentCount > 0) {
       agency.setCurrentVehicleCount(currentCount - 1);
@@ -160,4 +155,3 @@ public class SubscriptionService {
     return subscriptionRepository.findAll();
   }
 }
-

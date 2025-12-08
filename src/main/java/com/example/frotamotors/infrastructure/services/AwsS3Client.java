@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import javax.imageio.ImageIO;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import net.coobird.thumbnailator.Thumbnails;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -81,7 +81,9 @@ public class AwsS3Client {
     // Key format: frotamotors_{identifier}_{timestamp}_{random}{extension}
     // UUID ensures concurrent uploads within the same second never collide.
     String uniqueSuffix = UUID.randomUUID().toString().replace("-", "");
-    String key = String.format("frotamotors_%s_%s_%s%s", identifier, now.format(formatter), uniqueSuffix, extension);
+    String key =
+        String.format(
+            "frotamotors_%s_%s_%s%s", identifier, now.format(formatter), uniqueSuffix, extension);
 
     // Compress image before upload
     CompressedImageResult compressionResult = compressImage(file);
@@ -102,9 +104,7 @@ public class AwsS3Client {
     return getFileUrl(key);
   }
 
-  /**
-   * Result class for compressed image
-   */
+  /** Result class for compressed image */
   private static class CompressedImageResult {
     private final InputStream inputStream;
     private final long size;
@@ -124,8 +124,7 @@ public class AwsS3Client {
   }
 
   /**
-   * Compress image to reduce file size while maintaining quality
-   * Max width: 1920px, Quality: 85%
+   * Compress image to reduce file size while maintaining quality Max width: 1920px, Quality: 85%
    *
    * @param file Original image file
    * @return Compressed image result with InputStream and size
@@ -152,7 +151,8 @@ public class AwsS3Client {
       }
 
       // Calculate new dimensions maintaining aspect ratio
-      double scale = Math.min((double) maxWidth / originalWidth, (double) maxHeight / originalHeight);
+      double scale =
+          Math.min((double) maxWidth / originalWidth, (double) maxHeight / originalHeight);
       int newWidth = (int) (originalWidth * scale);
       int newHeight = (int) (originalHeight * scale);
 
@@ -252,5 +252,3 @@ public class AwsS3Client {
     return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
   }
 }
-
-

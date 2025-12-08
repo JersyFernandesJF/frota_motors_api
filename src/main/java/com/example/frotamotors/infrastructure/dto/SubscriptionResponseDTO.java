@@ -22,4 +22,3 @@ public record SubscriptionResponseDTO(
     Boolean autoRenew,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}
-

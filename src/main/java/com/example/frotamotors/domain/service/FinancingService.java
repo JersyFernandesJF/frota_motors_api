@@ -55,9 +55,10 @@ public class FinancingService {
 
   @Transactional(readOnly = true)
   public Financing getById(UUID id) {
-    Financing financing = financingRepository
-        .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Financing not found"));
+    Financing financing =
+        financingRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Financing not found"));
     // Initialize lazy relationships
     if (financing.getVehicle() != null) {
       financing.getVehicle().getId();
@@ -107,7 +108,7 @@ public class FinancingService {
     financing.setRejectedBy(null);
     financing.setRejectedAt(null);
     financing.setRejectionReason(null);
-    
+
     // Update financing amount and interest rate if provided
     if (request.approvedAmount() != null) {
       financing.setFinancingAmount(request.approvedAmount().subtract(financing.getDownPayment()));
@@ -116,7 +117,8 @@ public class FinancingService {
         financing.setInterestRate(request.finalInterestRate());
         // Recalculate monthly payment
         BigDecimal monthlyRate =
-            request.finalInterestRate()
+            request
+                .finalInterestRate()
                 .divide(BigDecimal.valueOf(100), 6, java.math.RoundingMode.HALF_UP)
                 .divide(BigDecimal.valueOf(12), 6, java.math.RoundingMode.HALF_UP);
         BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
@@ -124,7 +126,8 @@ public class FinancingService {
         BigDecimal numerator = monthlyRate.multiply(onePlusRPowerN);
         BigDecimal denominator = onePlusRPowerN.subtract(BigDecimal.ONE);
         BigDecimal monthlyPayment =
-            financing.getFinancingAmount()
+            financing
+                .getFinancingAmount()
                 .multiply(numerator)
                 .divide(denominator, 2, java.math.RoundingMode.HALF_UP);
         financing.setMonthlyPayment(monthlyPayment);

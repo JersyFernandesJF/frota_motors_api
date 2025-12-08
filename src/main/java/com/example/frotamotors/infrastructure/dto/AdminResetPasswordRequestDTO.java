@@ -5,4 +5,3 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AdminResetPasswordRequestDTO(
     @NotBlank(message = "New password is required") @StrongPassword String newPassword) {}
-

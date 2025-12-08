@@ -133,20 +133,20 @@ public class MessageController {
     // Verify that the userId is part of the conversation
     com.example.frotamotors.domain.model.Conversation conversation =
         messageService.getConversationById(conversationId);
-    
+
     if (conversation == null) {
       throw new jakarta.persistence.EntityNotFoundException("Conversation not found");
     }
-    
+
     // Verify userId is part of the conversation
-    boolean isPartOfConversation = 
+    boolean isPartOfConversation =
         (conversation.getUser1() != null && conversation.getUser1().getId().equals(userId))
-        || (conversation.getUser2() != null && conversation.getUser2().getId().equals(userId));
-    
+            || (conversation.getUser2() != null && conversation.getUser2().getId().equals(userId));
+
     if (!isPartOfConversation) {
       throw new IllegalStateException("User is not part of this conversation");
     }
-    
+
     String reason = request != null ? request.reason() : "Bloqueado pelo administrador";
     // Block the user in the conversation context
     UUID adminId = SecurityUtils.getCurrentUserId();
@@ -161,20 +161,20 @@ public class MessageController {
     // Verify that the userId is part of the conversation
     com.example.frotamotors.domain.model.Conversation conversation =
         messageService.getConversationById(conversationId);
-    
+
     if (conversation == null) {
       throw new jakarta.persistence.EntityNotFoundException("Conversation not found");
     }
-    
+
     // Verify userId is part of the conversation
-    boolean isPartOfConversation = 
+    boolean isPartOfConversation =
         (conversation.getUser1() != null && conversation.getUser1().getId().equals(userId))
-        || (conversation.getUser2() != null && conversation.getUser2().getId().equals(userId));
-    
+            || (conversation.getUser2() != null && conversation.getUser2().getId().equals(userId));
+
     if (!isPartOfConversation) {
       throw new IllegalStateException("User is not part of this conversation");
     }
-    
+
     UUID adminId = SecurityUtils.getCurrentUserId();
     messageService.unblockUser(adminId, userId);
     return ResponseEntity.ok().build();
@@ -207,7 +207,8 @@ public class MessageController {
               sort = "lastMessageAt",
               direction = org.springframework.data.domain.Sort.Direction.DESC)
           Pageable pageable) {
-    Page<Conversation> page = messageService.getAllConversations(search, isReported, isBlocked, pageable);
+    Page<Conversation> page =
+        messageService.getAllConversations(search, isReported, isBlocked, pageable);
 
     List<ConversationResponseDTO> content =
         page.getContent().stream()

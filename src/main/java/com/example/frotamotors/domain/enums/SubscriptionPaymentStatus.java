@@ -6,4 +6,3 @@ public enum SubscriptionPaymentStatus {
   FAILED,
   REFUNDED
 }
-

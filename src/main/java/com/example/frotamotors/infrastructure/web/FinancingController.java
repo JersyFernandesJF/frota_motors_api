@@ -72,8 +72,14 @@ public class FinancingController {
       @RequestParam(required = false) FinancingStatus status,
       @RequestParam(required = false) java.math.BigDecimal minAmount,
       @RequestParam(required = false) java.math.BigDecimal maxAmount,
-      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
-      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
+      @RequestParam(required = false)
+          @org.springframework.format.annotation.DateTimeFormat(
+              iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME)
+          java.time.LocalDateTime startDate,
+      @RequestParam(required = false)
+          @org.springframework.format.annotation.DateTimeFormat(
+              iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME)
+          java.time.LocalDateTime endDate,
       @PageableDefault(
               size = 20,
               sort = "createdAt",
@@ -81,7 +87,8 @@ public class FinancingController {
           Pageable pageable) {
     Page<Financing> page =
         financingService.search(
-            buyerId, sellerId, vehicleId, status, minAmount, maxAmount, startDate, endDate, pageable);
+            buyerId, sellerId, vehicleId, status, minAmount, maxAmount, startDate, endDate,
+            pageable);
 
     List<FinancingResponseDTO> content =
         page.getContent().stream().map(FinancingMapper::toResponse).collect(Collectors.toList());

@@ -69,4 +69,3 @@ public class Subscription {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 }
-

@@ -19,4 +19,3 @@ public @interface ValidCurrency {
 
   Class<? extends Payload>[] payload() default {};
 }
-

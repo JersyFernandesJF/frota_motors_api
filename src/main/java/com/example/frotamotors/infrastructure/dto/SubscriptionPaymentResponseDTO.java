@@ -17,4 +17,3 @@ public record SubscriptionPaymentResponseDTO(
     LocalDateTime paymentDate,
     LocalDateTime dueDate,
     LocalDateTime createdAt) {}
-

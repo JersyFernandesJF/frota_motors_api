@@ -59,7 +59,8 @@ public class ComplaintController {
           Pageable pageable) {
 
     Page<Complaint> page =
-        complaintService.search(status, priority, type, reporterId, reportedVehicleId, reason, pageable);
+        complaintService.search(
+            status, priority, type, reporterId, reportedVehicleId, reason, pageable);
 
     List<ComplaintResponseDTO> content =
         page.getContent().stream().map(ComplaintMapper::toResponse).collect(Collectors.toList());

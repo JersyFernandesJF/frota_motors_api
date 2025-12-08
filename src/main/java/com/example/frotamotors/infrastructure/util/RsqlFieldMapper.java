@@ -45,6 +45,7 @@ public class RsqlFieldMapper {
    * Creates a field mapper for Vehicle entity.
    *
    * <p>Maps common frontend field names to entity properties:
+   *
    * <ul>
    *   <li>mileage -> mileageKm
    *   <li>createdAt -> createdAt
@@ -93,6 +94,3 @@ public class RsqlFieldMapper {
     return Function.identity();
   }
 }
-
-
-

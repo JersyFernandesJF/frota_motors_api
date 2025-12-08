@@ -270,7 +270,8 @@ public class UserService {
 
     // TODO: Send email with new password to user
     // NEVER log passwords in plaintext - this is a security risk
-    log.info("Password reset for user {} - New password generated and sent via email", user.getEmail());
+    log.info(
+        "Password reset for user {} - New password generated and sent via email", user.getEmail());
   }
 
   public String exportUsers(ExportRequestDTO request) {

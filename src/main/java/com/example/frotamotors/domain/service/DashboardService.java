@@ -214,7 +214,7 @@ public class DashboardService {
 
   public List<PriceDistributionDTO> getPriceDistribution() {
     List<PriceDistributionDTO> distribution = new ArrayList<>();
-    
+
     // Define price ranges
     BigDecimal[] ranges = {
       BigDecimal.ZERO,
@@ -223,35 +223,35 @@ public class DashboardService {
       BigDecimal.valueOf(200000),
       BigDecimal.valueOf(500000)
     };
-    
+
     String[] rangeLabels = {"0-50k", "50k-100k", "100k-200k", "200k-500k", "500k+"};
-    
+
     for (int i = 0; i < ranges.length; i++) {
       BigDecimal minPrice = ranges[i];
       BigDecimal maxPrice = (i < ranges.length - 1) ? ranges[i + 1] : null;
-      
+
       Long count;
       if (maxPrice != null) {
         count = vehicleRepository.countByPriceBetween(minPrice, maxPrice);
       } else {
         count = vehicleRepository.countByPriceGreaterThanEqual(minPrice);
       }
-      
-      distribution.add(new PriceDistributionDTO(
-        rangeLabels[i],
-        count,
-        minPrice,
-        maxPrice != null ? maxPrice : BigDecimal.valueOf(Long.MAX_VALUE)
-      ));
+
+      distribution.add(
+          new PriceDistributionDTO(
+              rangeLabels[i],
+              count,
+              minPrice,
+              maxPrice != null ? maxPrice : BigDecimal.valueOf(Long.MAX_VALUE)));
     }
-    
+
     return distribution;
   }
 
   public List<UserGrowthDTO> getUserGrowth(String period) {
     LocalDate endDate = LocalDate.now();
     LocalDate startDate;
-    
+
     switch (period) {
       case "7d":
         startDate = endDate.minusDays(7);
@@ -268,34 +268,32 @@ public class DashboardService {
       default:
         startDate = endDate.minusDays(30);
     }
-    
+
     List<UserGrowthDTO> growth = new ArrayList<>();
     LocalDate currentDate = startDate;
     Long cumulativeTotal = userRepository.countByCreatedAtBefore(startDate.atStartOfDay());
-    
+
     while (!currentDate.isAfter(endDate)) {
       LocalDateTime startOfDay = currentDate.atStartOfDay();
       LocalDateTime endOfDay = currentDate.atTime(23, 59, 59);
-      
+
       Long newUsers = userRepository.countByCreatedAtBetween(startOfDay, endOfDay);
       cumulativeTotal += newUsers;
-      
-      growth.add(new UserGrowthDTO(
-        currentDate.format(DateTimeFormatter.ISO_DATE),
-        newUsers,
-        cumulativeTotal
-      ));
-      
+
+      growth.add(
+          new UserGrowthDTO(
+              currentDate.format(DateTimeFormatter.ISO_DATE), newUsers, cumulativeTotal));
+
       currentDate = currentDate.plusDays(1);
     }
-    
+
     return growth;
   }
 
   public List<RevenueTrendDTO> getRevenueTrend(String period) {
     LocalDate endDate = LocalDate.now();
     LocalDate startDate;
-    
+
     switch (period) {
       case "7d":
         startDate = endDate.minusDays(7);
@@ -312,39 +310,37 @@ public class DashboardService {
       default:
         startDate = endDate.minusDays(30);
     }
-    
+
     List<RevenueTrendDTO> trend = new ArrayList<>();
     LocalDate currentDate = startDate;
-    
+
     while (!currentDate.isAfter(endDate)) {
       LocalDateTime startOfDay = currentDate.atStartOfDay();
       LocalDateTime endOfDay = currentDate.atTime(23, 59, 59);
-      
+
       BigDecimal revenue = vehicleRepository.sumPriceByCreatedAtBetween(startOfDay, endOfDay);
       if (revenue == null) {
         revenue = BigDecimal.ZERO;
       }
-      
+
       // Simple projection: average of last 7 days
       BigDecimal projectedRevenue = revenue;
       if (currentDate.isAfter(startDate.plusDays(6))) {
         LocalDate weekStart = currentDate.minusDays(6);
-        BigDecimal weekRevenue = vehicleRepository.sumPriceByCreatedAtBetween(
-          weekStart.atStartOfDay(), endOfDay);
+        BigDecimal weekRevenue =
+            vehicleRepository.sumPriceByCreatedAtBetween(weekStart.atStartOfDay(), endOfDay);
         if (weekRevenue != null && weekRevenue.compareTo(BigDecimal.ZERO) > 0) {
           projectedRevenue = weekRevenue.divide(BigDecimal.valueOf(7), 2, RoundingMode.HALF_UP);
         }
       }
-      
-      trend.add(new RevenueTrendDTO(
-        currentDate.format(DateTimeFormatter.ISO_DATE),
-        revenue,
-        projectedRevenue
-      ));
-      
+
+      trend.add(
+          new RevenueTrendDTO(
+              currentDate.format(DateTimeFormatter.ISO_DATE), revenue, projectedRevenue));
+
       currentDate = currentDate.plusDays(1);
     }
-    
+
     return trend;
   }
 }
