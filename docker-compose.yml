@@ -42,6 +42,7 @@ services:
       SPRINGDOC_SWAGGER_UI_PATH: /swagger-ui.html
       SPRINGDOC_SWAGGER_UI_URL: /v3/api-docs
       SPRINGDOC_API_DOCS_PATH: /v3/api-docs
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "9090:9090"
     networks:
