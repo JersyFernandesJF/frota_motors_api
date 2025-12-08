@@ -35,6 +35,7 @@ public class VehicleMapper {
 
     return new VehicleSummaryDTO(
         vehicle.getId(),
+        vehicle.getOwner() != null ? vehicle.getOwner().getId() : null,
         vehicle.getType(),
         vehicle.getStatus(),
         vehicle.getBrand(),

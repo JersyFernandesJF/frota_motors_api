@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record VehicleSummaryDTO(
     UUID id,
+    UUID ownerId, // Nullable - pode ser null se não houver owner
     VehicleType type,
     VehicleStatus status,
     String brand,
