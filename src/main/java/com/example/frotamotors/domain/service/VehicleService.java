@@ -325,7 +325,47 @@ public class VehicleService {
   public Page<Vehicle> search(String rsqlFilter, Pageable pageable) {
     Specification<Vehicle> spec = rsqlSpecificationBuilder.build(rsqlFilter, Vehicle.class);
 
-    Page<Vehicle> page = vehicleRepository.findAll(spec, pageable);
+    // Processar sort do Pageable para converter valores como 'recent' para 'createdAt,desc'
+    Pageable effectivePageable = pageable;
+    Sort sort = pageable.getSort();
+    if (sort.isSorted()) {
+      Sort.Order firstOrder = sort.iterator().next();
+      String property = firstOrder.getProperty();
+      Sort.Direction direction = firstOrder.getDirection();
+      
+      // Mapear valores de sort conhecidos
+      String mappedProperty = property;
+      Sort.Direction mappedDirection = direction;
+      
+      if ("recent".equals(property)) {
+        mappedProperty = "createdAt";
+        mappedDirection = Sort.Direction.DESC; // recent sempre é DESC
+      } else if ("price_asc".equals(property) || "price-asc".equals(property)) {
+        mappedProperty = "price";
+        mappedDirection = Sort.Direction.ASC;
+      } else if ("price_desc".equals(property) || "price-desc".equals(property)) {
+        mappedProperty = "price";
+        mappedDirection = Sort.Direction.DESC;
+      } else if ("mileage_asc".equals(property) || "mileage-asc".equals(property)) {
+        mappedProperty = "mileageKm";
+        mappedDirection = Sort.Direction.ASC;
+      } else if ("year_desc".equals(property) || "year-desc".equals(property)) {
+        mappedProperty = "year";
+        mappedDirection = Sort.Direction.DESC;
+      }
+      
+      // Se a propriedade foi mapeada ou a direção mudou, criar novo Sort
+      if (!mappedProperty.equals(property) || mappedDirection != direction) {
+        Sort newSort = Sort.by(mappedDirection, mappedProperty);
+        effectivePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), newSort);
+      }
+    } else {
+      // Se não há sort, usar padrão: createdAt DESC
+      Sort defaultSort = Sort.by(Sort.Direction.DESC, "createdAt");
+      effectivePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
+    }
+
+    Page<Vehicle> page = vehicleRepository.findAll(spec, effectivePageable);
 
     // Force initialization of lazy relationships to avoid LazyInitializationException
     page.getContent()
