@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
   Optional<Subscription> findByAgencyId(UUID agencyId);
-  
+
   Optional<Subscription> findByAgencyIdAndStatus(UUID agencyId, SubscriptionStatus status);
 }
-

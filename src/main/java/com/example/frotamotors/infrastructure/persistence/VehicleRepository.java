@@ -1,11 +1,14 @@
 package com.example.frotamotors.infrastructure.persistence;
 
+import com.example.frotamotors.domain.enums.ListingModerationStatus;
+import com.example.frotamotors.domain.enums.VehicleStatus;
+import com.example.frotamotors.domain.enums.VehicleType;
+import com.example.frotamotors.domain.model.Vehicle;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,11 +16,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import com.example.frotamotors.domain.enums.ListingModerationStatus;
-import com.example.frotamotors.domain.enums.VehicleStatus;
-import com.example.frotamotors.domain.enums.VehicleType;
-import com.example.frotamotors.domain.model.Vehicle;
 
 @Repository
 public interface VehicleRepository
@@ -180,7 +178,8 @@ public interface VehicleRepository
   BigDecimal sumPriceByActiveStatus();
 
   @Query("SELECT COUNT(v) FROM Vehicle v WHERE v.price >= :minPrice AND v.price < :maxPrice")
-  Long countByPriceBetween(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
+  Long countByPriceBetween(
+      @Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
 
   @Query("SELECT COUNT(v) FROM Vehicle v WHERE v.price >= :minPrice")
   Long countByPriceGreaterThanEqual(@Param("minPrice") BigDecimal minPrice);

@@ -17,4 +17,3 @@ public record SubscriptionPaymentCreateDTO(
     String transactionId,
     LocalDateTime paymentDate,
     @NotNull LocalDateTime dueDate) {}
-

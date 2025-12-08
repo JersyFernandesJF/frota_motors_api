@@ -36,17 +36,14 @@ public class SubscriptionMapper {
     subscription.setCurrency(dto.currency());
     subscription.setMaxVehicles(dto.maxVehicles());
     subscription.setStatus(com.example.frotamotors.domain.enums.SubscriptionStatus.PENDING);
-    subscription.setStartDate(
-        dto.startDate() != null ? dto.startDate() : LocalDateTime.now());
+    subscription.setStartDate(dto.startDate() != null ? dto.startDate() : LocalDateTime.now());
     subscription.setAutoRenew(dto.autoRenew() != null ? dto.autoRenew() : true);
-    
+
     // Set next billing date to 1 month from start date
     if (subscription.getStartDate() != null) {
-      subscription.setNextBillingDate(
-          subscription.getStartDate().plusMonths(1));
+      subscription.setNextBillingDate(subscription.getStartDate().plusMonths(1));
     }
-    
+
     return subscription;
   }
 }
-

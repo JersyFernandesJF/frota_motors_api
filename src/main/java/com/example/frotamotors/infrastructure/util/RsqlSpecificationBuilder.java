@@ -1,14 +1,5 @@
 package com.example.frotamotors.infrastructure.util;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
-
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.AndNode;
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
@@ -20,6 +11,13 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 /**
  * Utility class to build JPA Specifications from RSQL filter strings.
@@ -81,7 +79,9 @@ public class RsqlSpecificationBuilder {
    * @return a Specification that can be used with JpaRepository.findAll()
    */
   public <T> Specification<T> build(
-      String rsqlFilter, Class<T> entityClass, java.util.function.Function<String, String> fieldMapper) {
+      String rsqlFilter,
+      Class<T> entityClass,
+      java.util.function.Function<String, String> fieldMapper) {
     if (rsqlFilter == null || rsqlFilter.trim().isEmpty()) {
       // Return a specification that matches all (no filtering)
       return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
@@ -103,7 +103,8 @@ public class RsqlSpecificationBuilder {
     return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
   }
 
-  private <T> Specification<T> createLogicalSpecification(LogicalNode node, @SuppressWarnings("unused") Class<T> entityClass) {
+  private <T> Specification<T> createLogicalSpecification(
+      LogicalNode node, @SuppressWarnings("unused") Class<T> entityClass) {
     List<Specification<T>> specs =
         node.getChildren().stream()
             .map(child -> createSpecification(child, entityClass))
@@ -178,8 +179,7 @@ public class RsqlSpecificationBuilder {
                     .map(arg -> convertValue(arg, fieldType))
                     .collect(Collectors.toList())));
       case "=like=":
-        return criteriaBuilder.like(
-            (Path<String>) fieldPath, "%" + arguments.get(0) + "%");
+        return criteriaBuilder.like((Path<String>) fieldPath, "%" + arguments.get(0) + "%");
       case "=ilike=":
         return criteriaBuilder.like(
             criteriaBuilder.lower((Path<String>) fieldPath),
@@ -212,4 +212,3 @@ public class RsqlSpecificationBuilder {
     return value;
   }
 }
-

@@ -5,4 +5,3 @@ public enum SubscriptionPlanType {
   PREMIUM,
   ENTERPRISE
 }
-

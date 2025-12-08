@@ -105,7 +105,7 @@ public class SystemConfigService {
 
   public ConnectionTestResponseDTO testConnection(String key, ConnectionTestRequestDTO request) {
     long startTime = System.currentTimeMillis();
-    
+
     try {
       // Simulate connection test based on service type
       // In a real implementation, this would make actual API calls
@@ -117,7 +117,7 @@ public class SystemConfigService {
           long responseTime = System.currentTimeMillis() - startTime;
           return new ConnectionTestResponseDTO(
               true, "Conexão com serviço de financiamento estabelecida com sucesso", responseTime);
-          
+
         case "inspection":
           // Test inspection API connection
           // TODO: Implement actual API call to inspection service
@@ -125,7 +125,7 @@ public class SystemConfigService {
           responseTime = System.currentTimeMillis() - startTime;
           return new ConnectionTestResponseDTO(
               true, "Conexão com serviço de inspeção estabelecida com sucesso", responseTime);
-          
+
         case "whatsapp":
           // Test WhatsApp API connection
           // TODO: Implement actual API call to WhatsApp service
@@ -133,7 +133,7 @@ public class SystemConfigService {
           responseTime = System.currentTimeMillis() - startTime;
           return new ConnectionTestResponseDTO(
               true, "Conexão com serviço WhatsApp estabelecida com sucesso", responseTime);
-          
+
         default:
           long errorResponseTime = System.currentTimeMillis() - startTime;
           return new ConnectionTestResponseDTO(

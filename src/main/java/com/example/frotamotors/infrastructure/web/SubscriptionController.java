@@ -25,9 +25,7 @@ public class SubscriptionController {
   public ResponseEntity<List<SubscriptionResponseDTO>> getAll() {
     List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
     List<SubscriptionResponseDTO> response =
-        subscriptions.stream()
-            .map(SubscriptionMapper::toResponse)
-            .collect(Collectors.toList());
+        subscriptions.stream().map(SubscriptionMapper::toResponse).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 
@@ -67,4 +65,3 @@ public class SubscriptionController {
     return ResponseEntity.ok(SubscriptionMapper.toResponse(subscription));
   }
 }
-

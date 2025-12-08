@@ -16,4 +16,3 @@ public record SubscriptionCreateDTO(
     @NotNull @Positive Integer maxVehicles,
     LocalDateTime startDate,
     Boolean autoRenew) {}
-

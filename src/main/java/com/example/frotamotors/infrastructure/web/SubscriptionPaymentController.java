@@ -30,12 +30,9 @@ public class SubscriptionPaymentController {
   @GetMapping("subscription/{subscriptionId}")
   public ResponseEntity<List<SubscriptionPaymentResponseDTO>> getBySubscriptionId(
       @PathVariable UUID subscriptionId) {
-    List<SubscriptionPayment> payments =
-        paymentService.getPaymentsBySubscriptionId(subscriptionId);
+    List<SubscriptionPayment> payments = paymentService.getPaymentsBySubscriptionId(subscriptionId);
     List<SubscriptionPaymentResponseDTO> response =
-        payments.stream()
-            .map(SubscriptionPaymentMapper::toResponse)
-            .collect(Collectors.toList());
+        payments.stream().map(SubscriptionPaymentMapper::toResponse).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 
@@ -46,4 +43,3 @@ public class SubscriptionPaymentController {
     return ResponseEntity.ok(SubscriptionPaymentMapper.toResponse(payment));
   }
 }
-

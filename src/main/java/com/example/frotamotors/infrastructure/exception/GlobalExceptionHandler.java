@@ -119,14 +119,16 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponseDTO> handleIOException(
       java.io.IOException ex, WebRequest request) {
     log.error("IO error: {}", ex.getMessage(), ex);
-    
+
     // Check for S3/AWS errors
     String exceptionMessage = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
     String exceptionClass = ex.getClass().getSimpleName().toLowerCase();
-    
+
     String message = ex.getMessage();
-    if (exceptionMessage.contains("s3") || exceptionMessage.contains("aws") 
-        || exceptionMessage.contains("bucket") || exceptionClass.contains("s3")) {
+    if (exceptionMessage.contains("s3")
+        || exceptionMessage.contains("aws")
+        || exceptionMessage.contains("bucket")
+        || exceptionClass.contains("s3")) {
       if (exceptionMessage.contains("upload") || exceptionMessage.contains("putobject")) {
         message = "Erro ao fazer upload da imagem. Por favor, tente novamente.";
       } else if (exceptionMessage.contains("not authorized") || exceptionMessage.contains("403")) {
@@ -137,7 +139,7 @@ public class GlobalExceptionHandler {
         message = "Erro ao acessar o serviço de armazenamento. Tente novamente mais tarde.";
       }
     }
-    
+
     ErrorResponseDTO error =
         ErrorResponseDTO.of(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),

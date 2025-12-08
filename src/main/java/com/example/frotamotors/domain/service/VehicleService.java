@@ -1,19 +1,5 @@
 package com.example.frotamotors.domain.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.frotamotors.domain.enums.ListingModerationStatus;
 import com.example.frotamotors.domain.enums.VehicleStatus;
 import com.example.frotamotors.domain.enums.VehicleType;
@@ -30,9 +16,20 @@ import com.example.frotamotors.infrastructure.persistence.VehicleHistoryReposito
 import com.example.frotamotors.infrastructure.persistence.VehicleRepository;
 import com.example.frotamotors.infrastructure.util.RsqlSpecificationBuilder;
 import com.example.frotamotors.infrastructure.util.SecurityUtils;
-
 import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -63,7 +60,7 @@ public class VehicleService {
           agencyRepository
               .findById(dto.agencyId())
               .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
-      
+
       // Validate subscription and vehicle limits for agencies
       if (!subscriptionService.canCreateVehicle(agency.getId())) {
         throw new IllegalStateException(
@@ -73,7 +70,7 @@ public class VehicleService {
 
     Vehicle vehicle = VehicleMapper.toEntity(dto, owner, agency);
     Vehicle saved = vehicleRepository.save(vehicle);
-    
+
     // Increment vehicle count for agency if applicable
     if (agency != null) {
       subscriptionService.incrementVehicleCount(agency.getId());
@@ -178,11 +175,11 @@ public class VehicleService {
         vehicleRepository
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
-    
+
     Agency agency = vehicle.getAgency();
-    
+
     vehicleRepository.deleteById(id);
-    
+
     // Decrement vehicle count for agency if applicable
     if (agency != null) {
       subscriptionService.decrementVehicleCount(agency.getId());
@@ -271,8 +268,7 @@ public class VehicleService {
       // Default sort: most recent first (using SQL column name for native query)
       sortSpec = Sort.by(Sort.Direction.DESC, "created_at");
     }
-    effectivePageable =
-        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortSpec);
+    effectivePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortSpec);
 
     Page<Vehicle> page =
         vehicleRepository.searchPageable(
@@ -313,6 +309,7 @@ public class VehicleService {
    * Search vehicles using RSQL filter string.
    *
    * <p>RSQL allows dynamic querying with a simple syntax. Examples:
+   *
    * <ul>
    *   <li>type==CAR;price>=10000;price<=50000
    *   <li>brand==Toyota;status==FOR_SALE

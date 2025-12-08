@@ -35,7 +35,9 @@ public class ComplaintMapper {
             : null,
         complaint.getReviewedBy() != null ? UserMapper.toResponse(complaint.getReviewedBy()) : null,
         complaint.getResolvedBy() != null ? UserMapper.toResponse(complaint.getResolvedBy()) : null,
-        complaint.getDismissedBy() != null ? UserMapper.toResponse(complaint.getDismissedBy()) : null,
+        complaint.getDismissedBy() != null
+            ? UserMapper.toResponse(complaint.getDismissedBy())
+            : null,
         complaint.getAdminNotes(),
         complaint.getResolution(),
         complaint.getResolvedAt(),
