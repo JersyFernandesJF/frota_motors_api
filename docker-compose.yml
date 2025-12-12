@@ -43,6 +43,8 @@ services:
       SPRINGDOC_SWAGGER_UI_URL: /v3/api-docs
       SPRINGDOC_API_DOCS_PATH: /v3/api-docs
       JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_OAUTH_ENABLED: "true"
+      GOOGLE_CLIENT_ID: "898655353004-g86an961p32fi6jfei71qc5nqssrte54.apps.googleusercontent.com"
     ports:
       - "9090:9090"
     networks:
