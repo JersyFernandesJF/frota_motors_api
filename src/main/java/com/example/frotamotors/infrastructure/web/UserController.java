@@ -40,165 +40,168 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
 
-  @Autowired private UserService userService;
+	@Autowired
+	private UserService userService;
 
-  @GetMapping
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<PageResponseDTO<UserResponseDTO>> getAllUsers(
-      @RequestParam(required = false) Role role,
-      @RequestParam(required = false) UserStatus status,
-      @RequestParam(required = false) String search,
-      @PageableDefault(
-              size = 20,
-              sort = "createdAt",
-              direction = org.springframework.data.domain.Sort.Direction.DESC)
-          Pageable pageable) {
-    Page<User> page = userService.getAllUsers(pageable, role, status, search);
+	@GetMapping
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<PageResponseDTO<UserResponseDTO>> getAllUsers(
+			@RequestParam(required = false) Role role,
+			@RequestParam(required = false) UserStatus status,
+			@RequestParam(required = false) String search,
+			@PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+		Page<User> page = userService.getAllUsers(pageable, role, status, search);
 
-    List<UserResponseDTO> content =
-        page.getContent().stream().map(UserMapper::toResponse).collect(Collectors.toList());
+		List<UserResponseDTO> content = page.getContent().stream().map(UserMapper::toResponse)
+				.collect(Collectors.toList());
 
-    PageResponseDTO<UserResponseDTO> response =
-        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
+		PageResponseDTO<UserResponseDTO> response = PageResponseDTO.of(content, page.getNumber(), page.getSize(),
+				page.getTotalElements());
 
-    return ResponseEntity.ok(response);
-  }
+		return ResponseEntity.ok(response);
+	}
 
-  @GetMapping("/me")
-  public ResponseEntity<UserResponseDTO> getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-      CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-      User user = userService.getUserById(userDetails.getUserId());
-      return ResponseEntity.ok(UserMapper.toResponse(user));
-    }
-    return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
-  }
+	@GetMapping("/me")
+	public ResponseEntity<UserResponseDTO> getCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+			User user = userService.getUserById(userDetails.getUserId());
+			return ResponseEntity.ok(UserMapper.toResponse(user));
+		}
+		return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+	}
 
-  @GetMapping("{id}")
-  public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
-    User user = userService.getUserById(id);
-    return ResponseEntity.ok(UserMapper.toResponse(user));
-  }
+	@DeleteMapping("/me")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<Void> deleteCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+			UUID userId = userDetails.getUserId();
+			userService.deleteUser(userId);
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+	}
 
-  @PostMapping
-  public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO dto) {
-    return ResponseEntity.ok(userService.createUser(dto));
-  }
+	@GetMapping("{id}")
+	public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
+		User user = userService.getUserById(id);
+		return ResponseEntity.ok(UserMapper.toResponse(user));
+	}
 
-  @PutMapping("{id}")
-  @PreAuthorize(
-      "hasRole('ADMIN') or (hasAnyRole('BUYER', 'OWNER', 'AGENT') and @securityUtils.isCurrentUser(#id))")
-  public ResponseEntity<UserResponseDTO> updateUser(
-      @PathVariable UUID id, @Valid @RequestBody UserUpdateDTO dto) {
-    User updated = userService.updateUser(id, dto);
-    return ResponseEntity.ok(UserMapper.toResponse(updated));
-  }
+	@PostMapping
+	public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO dto) {
+		return ResponseEntity.ok(userService.createUser(dto));
+	}
 
-  @DeleteMapping("{id}")
-  @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
-    userService.deleteUser(id);
-    return ResponseEntity.noContent().build();
-  }
+	@PutMapping("{id}")
+	@PreAuthorize("hasRole('ADMIN') or (hasAnyRole('BUYER', 'OWNER', 'AGENT') and @securityUtils.isCurrentUser(#id))")
+	public ResponseEntity<UserResponseDTO> updateUser(
+			@PathVariable UUID id, @Valid @RequestBody UserUpdateDTO dto) {
+		User updated = userService.updateUser(id, dto);
+		return ResponseEntity.ok(UserMapper.toResponse(updated));
+	}
 
-  @PostMapping("{id}/suspend")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<UserResponseDTO> suspendUser(
-      @PathVariable UUID id, @Valid @RequestBody UserSuspendRequestDTO request) {
-    User user = userService.suspendUser(id, request);
-    return ResponseEntity.ok(UserMapper.toResponse(user));
-  }
+	@DeleteMapping("{id}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+		userService.deleteUser(id);
+		return ResponseEntity.noContent().build();
+	}
 
-  @PostMapping("{id}/ban")
-  @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<UserResponseDTO> banUser(
-      @PathVariable UUID id, @Valid @RequestBody UserBanRequestDTO request) {
-    User user = userService.banUser(id, request);
-    return ResponseEntity.ok(UserMapper.toResponse(user));
-  }
+	@PostMapping("{id}/suspend")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<UserResponseDTO> suspendUser(
+			@PathVariable UUID id, @Valid @RequestBody UserSuspendRequestDTO request) {
+		User user = userService.suspendUser(id, request);
+		return ResponseEntity.ok(UserMapper.toResponse(user));
+	}
 
-  @PostMapping("{id}/reactivate")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<UserResponseDTO> reactivateUser(@PathVariable UUID id) {
-    User user = userService.reactivateUser(id);
-    return ResponseEntity.ok(UserMapper.toResponse(user));
-  }
+	@PostMapping("{id}/ban")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<UserResponseDTO> banUser(
+			@PathVariable UUID id, @Valid @RequestBody UserBanRequestDTO request) {
+		User user = userService.banUser(id, request);
+		return ResponseEntity.ok(UserMapper.toResponse(user));
+	}
 
-  @PostMapping("{id}/contact")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<Void> contactUser(
-      @PathVariable UUID id, @Valid @RequestBody UserContactRequestDTO request) {
-    userService.contactUser(id, request);
-    return ResponseEntity.ok().build();
-  }
+	@PostMapping("{id}/reactivate")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<UserResponseDTO> reactivateUser(@PathVariable UUID id) {
+		User user = userService.reactivateUser(id);
+		return ResponseEntity.ok(UserMapper.toResponse(user));
+	}
 
-  @GetMapping("{id}/activity-history")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<PageResponseDTO<UserActivityResponseDTO>> getActivityHistory(
-      @PathVariable UUID id,
-      @PageableDefault(
-              size = 20,
-              sort = "createdAt",
-              direction = org.springframework.data.domain.Sort.Direction.DESC)
-          Pageable pageable) {
-    Page<UserActivity> page = userService.getActivityHistory(id, pageable);
+	@PostMapping("{id}/contact")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<Void> contactUser(
+			@PathVariable UUID id, @Valid @RequestBody UserContactRequestDTO request) {
+		userService.contactUser(id, request);
+		return ResponseEntity.ok().build();
+	}
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    List<UserActivityResponseDTO> content =
-        page.getContent().stream()
-            .map(
-                activity -> {
-                  try {
-                    java.util.Map<String, Object> metadata = null;
-                    if (activity.getMetadata() != null && !activity.getMetadata().isEmpty()) {
-                      metadata =
-                          objectMapper.readValue(
-                              activity.getMetadata(),
-                              new TypeReference<java.util.Map<String, Object>>() {});
-                    }
-                    return new UserActivityResponseDTO(
-                        activity.getId(),
-                        activity.getType(),
-                        activity.getDescription(),
-                        activity.getRelatedEntityType(),
-                        activity.getRelatedEntityId(),
-                        metadata,
-                        activity.getCreatedAt());
-                  } catch (Exception e) {
-                    return new UserActivityResponseDTO(
-                        activity.getId(),
-                        activity.getType(),
-                        activity.getDescription(),
-                        activity.getRelatedEntityType(),
-                        activity.getRelatedEntityId(),
-                        null,
-                        activity.getCreatedAt());
-                  }
-                })
-            .collect(Collectors.toList());
+	@GetMapping("{id}/activity-history")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<PageResponseDTO<UserActivityResponseDTO>> getActivityHistory(
+			@PathVariable UUID id,
+			@PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+		Page<UserActivity> page = userService.getActivityHistory(id, pageable);
 
-    PageResponseDTO<UserActivityResponseDTO> response =
-        PageResponseDTO.of(content, page.getNumber(), page.getSize(), page.getTotalElements());
+		ObjectMapper objectMapper = new ObjectMapper();
+		List<UserActivityResponseDTO> content = page.getContent().stream()
+				.map(
+						activity -> {
+							try {
+								java.util.Map<String, Object> metadata = null;
+								if (activity.getMetadata() != null && !activity.getMetadata().isEmpty()) {
+									metadata = objectMapper.readValue(
+											activity.getMetadata(),
+											new TypeReference<java.util.Map<String, Object>>() {
+											});
+								}
+								return new UserActivityResponseDTO(
+										activity.getId(),
+										activity.getType(),
+										activity.getDescription(),
+										activity.getRelatedEntityType(),
+										activity.getRelatedEntityId(),
+										metadata,
+										activity.getCreatedAt());
+							} catch (Exception e) {
+								return new UserActivityResponseDTO(
+										activity.getId(),
+										activity.getType(),
+										activity.getDescription(),
+										activity.getRelatedEntityType(),
+										activity.getRelatedEntityId(),
+										null,
+										activity.getCreatedAt());
+							}
+						})
+				.collect(Collectors.toList());
 
-    return ResponseEntity.ok(response);
-  }
+		PageResponseDTO<UserActivityResponseDTO> response = PageResponseDTO.of(content, page.getNumber(),
+				page.getSize(), page.getTotalElements());
 
-  @PostMapping("{id}/reset-password")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<Void> resetPassword(
-      @PathVariable UUID id,
-      @Valid @RequestBody
-          com.example.frotamotors.infrastructure.dto.AdminResetPasswordRequestDTO request) {
-    userService.resetPassword(id, request);
-    return ResponseEntity.ok().build();
-  }
+		return ResponseEntity.ok(response);
+	}
 
-  @PostMapping("/export")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-  public ResponseEntity<java.util.Map<String, String>> exportUsers(
-      @Valid @RequestBody ExportRequestDTO request) {
-    String result = userService.exportUsers(request);
-    return ResponseEntity.ok(java.util.Map.of("message", result));
-  }
+	@PostMapping("{id}/reset-password")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<Void> resetPassword(
+			@PathVariable UUID id,
+			@Valid @RequestBody com.example.frotamotors.infrastructure.dto.AdminResetPasswordRequestDTO request) {
+		userService.resetPassword(id, request);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/export")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+	public ResponseEntity<java.util.Map<String, String>> exportUsers(
+			@Valid @RequestBody ExportRequestDTO request) {
+		String result = userService.exportUsers(request);
+		return ResponseEntity.ok(java.util.Map.of("message", result));
+	}
 }
